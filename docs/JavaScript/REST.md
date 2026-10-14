@@ -1,5 +1,3 @@
-#Programação / #Backend / #API
-
 ## Introdução
 
 **REST (Representational State Transfer)** é um **estilo arquitetural** que define um conjunto de princípios e restrições para organizar a comunicação entre sistemas distribuídos.

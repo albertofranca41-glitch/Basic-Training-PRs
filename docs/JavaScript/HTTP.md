@@ -1,5 +1,3 @@
-#Programação / #Web / [[Internet]] / [[Cliente e Servidor]] / [[API]] / [[REST]]
-
 ## 1. HTTP - Hypertext Transfer Protocol
 
 ### Definição

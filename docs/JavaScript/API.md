@@ -1,6 +1,3 @@
-#Programação / #Backend / #API
-
-
 ## Introdução
 
 **API (Application Programming Interface)** é uma interface que define como diferentes componentes ou sistemas de software podem **interagir entre si**.
