@@ -544,7 +544,7 @@ const patchBlog = async (id) => {
     const data = await res.json();
     console.log(data);
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 };
 
@@ -711,12 +711,11 @@ Se o navegador bloquear uma requisição por **CORS**, siga o tutorial do Basic 
 Depois que tudo funcionar, estas melhorias deixam o código mais profissional (e costumam ser bem vistas em revisões):
 
 1. **Retornar os dados.** `getAllBlog`, `getSingleBlog`, `updateSingleBlog` e `patchBlog` só fazem `console.log(data)`. Fazer `return data;` permite reaproveitar o resultado.
-2. **Consistência.** `patchBlog` usa `console.log(err)` no `catch`, enquanto as outras usam `console.error(err)`.
-3. **Mensagens de erro mais claras:**
+2. **Mensagens de erro mais claras:**
    ```js
    throw new Error(`Erro HTTP ${res.status} ao criar o blog`);
    ```
-4. **Evitar repetição.** Todas as funções repetem `try / fetch / if (!res.ok) / res.json()`. Dá para extrair uma função auxiliar:
+3. **Evitar repetição.** Todas as funções repetem `try / fetch / if (!res.ok) / res.json()`. Dá para extrair uma função auxiliar:
    ```js
    const request = async (url, options) => {
      const res = await fetch(url, options);
@@ -724,9 +723,9 @@ Depois que tudo funcionar, estas melhorias deixam o código mais profissional (e
      return res.status === 204 ? null : res.json();
    };
    ```
-5. **`Accept` em vez de `Content-Type` nos GET.** Em requisições sem corpo, `Content-Type` não é necessário; o cabeçalho `Accept: application/json` é o adequado para dizer qual formato você espera receber.
-6. **Indentação consistente.** Use **espaços** (ou tabs), nunca os dois misturados.
-7. **Credenciais.** Aqui as credenciais são as do ambiente local de treinamento, então é aceitável para a atividade. Em projetos reais, **nunca** versione senhas: use variáveis de ambiente.
+4. **`Accept` em vez de `Content-Type` nos GET.** Em requisições sem corpo, `Content-Type` não é necessário; o cabeçalho `Accept: application/json` é o adequado para dizer qual formato você espera receber.
+5. **Indentação consistente.** Use **espaços** (ou tabs), nunca os dois misturados.
+6. **Credenciais.** Aqui as credenciais são as do ambiente local de treinamento, então é aceitável para a atividade. Em projetos reais, **nunca** versione senhas: use variáveis de ambiente.
 
 ## 2.6 Erros comuns
 
