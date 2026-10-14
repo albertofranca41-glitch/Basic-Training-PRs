@@ -705,7 +705,7 @@ Para testar as alterações no próprio navegador, use o arquivo [`test-blogs.ht
 4. Abra a cópia de `test-blogs.html` no navegador. Use **Criar blog** e **Listar blogs** para testar; para buscar, atualizar ou excluir, informe antes um ID no campo. Lembre-se de que excluir remove o blog do Liferay.
 5. Abra as ferramentas do desenvolvedor com **F12** (ou clique com o botão direito e escolha **Inspecionar**). Na aba **Console**, veja os `console.log`/erros; na aba **Network (Rede)**, acompanhe as requisições, respostas e códigos HTTP. O resultado da operação também aparece na página.
 
-Se o navegador bloquear uma requisição por **CORS**, confira o Console e a configuração do servidor. Isso pode acontecer ao abrir o HTML como arquivo local ou quando a origem da página não é permitida pelo Liferay. Nesse caso, sirva os arquivos por um servidor local e configure o Liferay para aceitar essa origem; copiar o HTML, por si só, não remove a política CORS.
+Se o navegador bloquear uma requisição por **CORS**, siga o tutorial do Basic Training para habilitar o CORS especificamente para esse endpoint.
 
 ## 2.5 Pontos de melhoria
 
