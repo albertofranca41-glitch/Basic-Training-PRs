@@ -2,8 +2,8 @@
 
 1. [Bem-Vindo](docs/Beginning)
 
-1. [JavaScript](docs/guidelines)
+1. [JavaScript](docs/JavaScript)
 
-1. [Service-Builder](docs/posture)
+1. [Service-Builder](docs/Service-Builder)
 
-1. [REST-Builder](docs/basic-apps)
+1. [REST-Builder](docs/REST-Builder)
