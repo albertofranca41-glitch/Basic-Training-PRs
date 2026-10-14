@@ -697,7 +697,7 @@ main();
 
 > Cada `await` faz a função esperar a anterior terminar. Isso é importante: não dá para buscar o blog antes de ele ter sido criado.
 
-Para testar as alterações no próprio navegador, use o arquivo `test-blogs.html` que acompanha esta pasta:
+Para testar as alterações no próprio navegador, use o arquivo [`test-blogs.html`](./test-blogs.html) que acompanha esta pasta. Abra o link para consultar ou baixar o arquivo e copie-o para a pasta do seu JavaScript:
 
 1. Deixe o **Liferay rodando** em `localhost:8080` e confirme o **ID do seu site**. Ajuste `urlBlogPostings` no seu JavaScript se o ID for diferente de `20117`.
 2. Copie `test-blogs.html` para a pasta onde está o seu arquivo `PR.js` (ou o JavaScript com as funções CRUD). O HTML carrega `./PR.js`, então os dois arquivos precisam ficar lado a lado. Se o seu arquivo tiver outro nome, altere o atributo `src` da tag `<script>` no HTML.
