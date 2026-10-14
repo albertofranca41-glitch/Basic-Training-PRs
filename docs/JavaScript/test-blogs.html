@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Teste das funções de blog</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.5;
+        margin: 2rem auto;
+        max-width: 760px;
+        padding: 0 1rem;
+      }
+
+      .actions {
+        display: grid;
+        gap: 0.75rem;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        margin-top: 1rem;
+      }
+
+      label {
+        display: block;
+        margin-top: 1rem;
+      }
+
+      input,
+      button {
+        font: inherit;
+        padding: 0.55rem;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      pre {
+        background: #f3f4f6;
+        border-radius: 4px;
+        min-height: 3rem;
+        overflow-wrap: anywhere;
+        padding: 1rem;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Teste das funções de blog</h1>
+    <p>Use os botões para chamar as funções definidas em <code>PR.js</code>.</p>
+
+    <label for="blog-id">ID do blog (necessário para buscar, atualizar ou excluir)</label>
+    <input id="blog-id" type="text" placeholder="Digite o ID do blog" />
+
+    <div class="actions">
+      <button type="button" data-action="create">Criar blog</button>
+      <button type="button" data-action="list">Listar blogs</button>
+      <button type="button" data-action="get">Buscar blog por ID</button>
+      <button type="button" data-action="update">Atualizar blog (PUT)</button>
+      <button type="button" data-action="patch">Alterar título (PATCH)</button>
+      <button type="button" data-action="delete">Excluir blog</button>
+    </div>
+
+    <h2>Resultado</h2>
+    <pre id="result" aria-live="polite">Aguardando uma ação.</pre>
+
+    <script src="./PR.js"></script>
+    <script>
+      const result = document.querySelector("#result");
+      const blogIdInput = document.querySelector("#blog-id");
+
+      const actions = {
+        create: () => postBlog(),
+        list: () => getAllBlog(),
+        get: (id) => getSingleBlog(id),
+        update: (id) => updateSingleBlog(id),
+        patch: (id) => patchBlog(id),
+        delete: (id) => deleteBlog(id),
+      };
+
+      document.querySelectorAll("button[data-action]").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const action = button.dataset.action;
+          const needsId = ["get", "update", "patch", "delete"].includes(action);
+          const id = blogIdInput.value.trim();
+
+          if (needsId && !id) {
+            result.textContent = "Digite o ID do blog antes de continuar.";
+            blogIdInput.focus();
+            return;
+          }
+
+          result.textContent = "Executando...";
+
+          try {
+            const value = await actions[action](...(needsId ? [id] : []));
+            result.textContent = value === undefined
+              ? "Função concluída. Consulte o console do navegador para ver os dados."
+              : JSON.stringify(value, null, 2) ?? "Concluído sem conteúdo.";
+          } catch (error) {
+            result.textContent = `Erro: ${error.message}`;
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

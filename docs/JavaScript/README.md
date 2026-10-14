@@ -310,6 +310,15 @@ node --version    # deve mostrar v18 ou maior
 git --version
 ```
 
+## Recursos adicionais
+
+Os arquivos abaixo aprofundam os conceitos apresentados nesta etapa. Leia-os como complemento quando quiser explorar cada assunto com mais detalhes:
+
+- [Cliente e servidor](./Cliente%20e%20Servidor.md): explica os papéis de cliente e servidor e como eles trocam requisições e respostas.
+- [HTTP](./HTTP.md): detalha métodos, cabeçalhos, corpo das mensagens e códigos de status.
+- [API](./API.md): apresenta APIs como contratos de comunicação entre sistemas e como são usadas no backend.
+- [REST](./REST.md): aprofunda recursos, URLs e métodos HTTP em APIs REST.
+
 ---
 
 # Etapa 2 – O código
@@ -688,21 +697,15 @@ main();
 
 > Cada `await` faz a função esperar a anterior terminar. Isso é importante: não dá para buscar o blog antes de ele ter sido criado.
 
-Para rodar:
+Para testar as alterações no próprio navegador, use o arquivo `test-blogs.html` que acompanha esta pasta:
 
-1. Deixe o **Liferay rodando** em `localhost:8080`.
-2. Confirme o **ID do seu site** e ajuste em `urlBlogPostings`, se for diferente de `20117`.
-3. No terminal, na pasta do arquivo:
+1. Deixe o **Liferay rodando** em `localhost:8080` e confirme o **ID do seu site**. Ajuste `urlBlogPostings` no seu JavaScript se o ID for diferente de `20117`.
+2. Copie `test-blogs.html` para a pasta onde está o seu arquivo `PR.js` (ou o JavaScript com as funções CRUD). O HTML carrega `./PR.js`, então os dois arquivos precisam ficar lado a lado. Se o seu arquivo tiver outro nome, altere o atributo `src` da tag `<script>` no HTML.
+3. Para usar os botões do HTML, deixe as funções disponíveis no escopo global e não execute `main()` automaticamente ao carregar o JavaScript. O HTML chama cada operação separadamente.
+4. Abra a cópia de `test-blogs.html` no navegador. Use **Criar blog** e **Listar blogs** para testar; para buscar, atualizar ou excluir, informe antes um ID no campo. Lembre-se de que excluir remove o blog do Liferay.
+5. Abra as ferramentas do desenvolvedor com **F12** (ou clique com o botão direito e escolha **Inspecionar**). Na aba **Console**, veja os `console.log`/erros; na aba **Network (Rede)**, acompanhe as requisições, respostas e códigos HTTP. O resultado da operação também aparece na página.
 
-```bash
-node nome-do-arquivo.js
-```
-
-4. Observe a saída: você deve ver o blog sendo criado, listado, alterado e apagado.
-
-Para **conferir no Liferay**, comente temporariamente o `deleteBlog(id)`, rode de novo e veja o blog na área de Blogs do site.
-
-> **Por que Node e não o console do navegador?** Se você colar o código no console de uma página **de outro endereço**, o navegador pode bloquear a requisição por regras de segurança chamadas **CORS**. O Node não tem essa restrição.
+Se o navegador bloquear uma requisição por **CORS**, confira o Console e a configuração do servidor. Isso pode acontecer ao abrir o HTML como arquivo local ou quando a origem da página não é permitida pelo Liferay. Nesse caso, sirva os arquivos por um servidor local e configure o Liferay para aceitar essa origem; copiar o HTML, por si só, não remove a política CORS.
 
 ## 2.5 Pontos de melhoria
 
