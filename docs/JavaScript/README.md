@@ -1,14 +1,13 @@
-# Guia: Atividade de JavaScript com a Headless Delivery API (CRUD de Blog Postings) e como enviar o Pull Request ao Brian
+# Guia: Atividade de JavaScript com a Headless Delivery API (CRUD de Blog Postings)
 
-Este guia ensina, do zero, a fazer a atividade em que você escreve um código **JavaScript** que conversa com o **Liferay DXP** por meio de **requisições HTTP** (criar, listar, buscar, atualizar e apagar blogs), e depois mostra como **enviar o Pull Request (PR)** para o Brian.
+Este guia ensina, do zero, a fazer a atividade em que você escreve um código **JavaScript** que conversa com o **Liferay DXP** por meio de **requisições HTTP** (criar, listar, buscar, atualizar e apagar blogs).
 
-Ele está dividido em **3 etapas**:
+Ele está dividido em **2 etapas**:
 
 | Etapa | O que você vai aprender |
 |---|---|
 | **Etapa 1 – Teoria** | Conceitos necessários: cliente/servidor, HTTP, API, REST, JSON, autenticação, Promises, `async/await` e `fetch` |
 | **Etapa 2 – O código** | O código completo da atividade, comentado, e explicado parte por parte |
-| **Etapa 3 – O Pull Request** | Passo a passo para versionar o código e enviá-lo para revisão |
 
 ---
 
