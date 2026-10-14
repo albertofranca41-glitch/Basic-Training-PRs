@@ -2,7 +2,7 @@
 
 1. [Bem-Vindo](docs/Beginning)
 
-1. [JavaScript](docs/JavaScript)
+1. [JavaScript](docs/JavaScript/README.md)
 
 1. [Service-Builder](docs/Service-Builder)
 
