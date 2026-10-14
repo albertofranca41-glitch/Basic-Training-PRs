@@ -1,5 +1,3 @@
-#Programação / #Web / [[HTTP]]
-
 ## Definição
 
 **Cliente-servidor** é um modelo arquitetural de comunicação no qual um **cliente** inicia requisições por determinados recursos ou serviços, enquanto um **servidor** recebe essas requisições, processa-as e fornece as respostas correspondentes.
