@@ -4,5 +4,5 @@ Nesta pasta estão os materiais dos dois Pull Requests de Service Builder do Bas
 
 ## PRs de Service Builder
 
-- [1º PR – Estrutura do projeto e configuração do Service Builder](./First_PR.md): preparação do ambiente, criação dos módulos `api` e `service`, configuração do `service.xml` e geração das entidades e serviços.
-- [2º PR – Implementação e consumo dos serviços](./Second_PR.md): implementação de serviços locais e remotos, regras de permissão e consumo das operações a partir de um portlet e de chamadas JSONWS.
+- [1º PR – Buscas com Finder Methods](./First_PR.md): implementação de métodos de busca para as entidades do Service Builder usando os Finder Methods declarados no `service.xml`, com chamadas pelos serviços locais e remotos.
+- [2º PR – Buscas com Dynamic Query](./Second_PR.md): implementação das mesmas buscas do primeiro PR usando Dynamic Query como método alternativo de consulta.
