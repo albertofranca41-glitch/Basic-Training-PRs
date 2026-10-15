@@ -27,6 +27,7 @@ O guia está dividido em duas etapas principais:
   - [1.9 Autenticação e verificação de permissão](#19-autenticação-e-verificação-de-permissão)
   - [1.10 Portlets e JSON Web Services](#110-portlets-e-json-web-services)
   - [1.11 Pré-requisitos e visão geral do fluxo](#111-pré-requisitos-e-visão-geral-do-fluxo)
+  - [1.12 Recursos adicionais](#112-recursos-adicionais)
 - [Etapa 2 – O código e os testes](#etapa-2--o-código-e-os-testes)
   - [2.1 Visão geral dos arquivos](#21-visão-geral-dos-arquivos)
   - [2.2 `H7G5EntryLocalServiceImpl.java`](#22-h7g5entrylocalserviceimpljava)
@@ -437,6 +438,12 @@ Banco de dados
 O caminho do portlet é parecido, mas começa na renderização da página e na chamada do serviço por injeção OSGi.
 
 ---
+
+## 1.12 Recursos adicionais
+
+- [Entendendo o fluxo de requisição no Liferay](./entendendo-fluxo-requisicao-liferay.md)
+- [Introdução ao OSGi no Liferay](./introducao-osgi-liferay.md)
+- [Introdução ao Service Builder do Liferay](./introducao-service-builder-liferay.md)
 
 # Etapa 2 – O código e os testes
 
