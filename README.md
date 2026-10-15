@@ -1,7 +1,7 @@
 <h1 align="center">Basic Training Liferay</h1>
 
 <p align="center">
-  <sub>Guias de estudo para o Projeto Soli Deo Gloria</sub>
+  Guias de estudo para o Projeto Soli Deo Gloria
 </p>
 
 ---
