@@ -51,11 +51,6 @@ Conceitos
 - [HTTP](docs/JavaScript/HTTP.md): conceitos de HTTP.
 - [Cliente e servidor](docs/JavaScript/Cliente%20e%20Servidor.md): como cliente e servidor se comunicam.
 
-Pull Requests
-
-- [Primeiro PR: CRUD de blogs](docs/JavaScript/First_PR.md)
-- [Segundo PR: upload de documentos](docs/JavaScript/Second_PR.md)
-
 ### Service Builder
 
 Conceitos
@@ -64,8 +59,3 @@ Conceitos
 - [Fluxo de requisição no Liferay](docs/Service-Builder/entendendo-fluxo-requisicao-liferay.md): como uma requisição é tratada.
 - [Introdução ao OSGi no Liferay](docs/Service-Builder/introducao-osgi-liferay.md): primeiros passos com OSGi.
 - [Introdução ao Service Builder](docs/Service-Builder/introducao-service-builder-liferay.md): o que é e como funciona.
-
-Pull Requests
-
-- [Primeiro PR: Finder Methods](docs/Service-Builder/First_PR.md)
-- [Segundo PR: Dynamic Query](docs/Service-Builder/Second_PR.md)
