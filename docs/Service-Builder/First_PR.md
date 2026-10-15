@@ -1,6 +1,6 @@
 # Guia: Primeiro Pull Request de Service Builder no Liferay
 
-Este guia explica, do zero, a atividade em que você implementa métodos de consulta para a entidade `H7G5Entry` usando **Service Builder**, divide a lógica entre **Local Service** e **Remote Service**, testa os métodos por meio de um portlet e de requisições `curl` e prepara os arquivos para enviar o primeiro **Pull Request (PR)**.
+Este guia explica, do zero, a atividade em que você implementa métodos de consulta para a entidade `H7G5Entry` usando **Service Builder**, divide a lógica entre **Local Service** e **Remote Service** e testa os métodos por meio de um portlet e de requisições `curl`.
 
 A ideia é entender não apenas *o que* escrever, mas também **por que cada arquivo existe e como os componentes se comunicam**. Como Service Builder gera boa parte do código automaticamente, é importante distinguir o código que você implementa daquele que a ferramenta gera.
 
@@ -9,7 +9,7 @@ O guia está dividido em duas etapas principais:
 | Etapa | O que você vai aprender |
 |---|---|
 | **Etapa 1 – Teoria** | Arquitetura do Liferay, Service Builder, `service.xml`, finders, persistência, Local Service, Remote Service, permissões, portlets e JSON Web Services |
-| **Etapa 2 – O código e o Pull Request** | Os quatro arquivos personalizados da atividade, explicação parte por parte, execução dos testes e preparação do PR |
+| **Etapa 2 – O código e os testes** | Os arquivos personalizados da atividade, explicação parte por parte e execução dos testes |
 
 ---
 
@@ -27,15 +27,14 @@ O guia está dividido em duas etapas principais:
   - [1.9 Autenticação e verificação de permissão](#19-autenticação-e-verificação-de-permissão)
   - [1.10 Portlets e JSON Web Services](#110-portlets-e-json-web-services)
   - [1.11 Pré-requisitos e visão geral do fluxo](#111-pré-requisitos-e-visão-geral-do-fluxo)
-- [Etapa 2 – O código e o Pull Request](#etapa-2--o-código-e-o-pull-request)
+- [Etapa 2 – O código e os testes](#etapa-2--o-código-e-os-testes)
   - [2.1 Visão geral dos arquivos](#21-visão-geral-dos-arquivos)
   - [2.2 `H7G5EntryLocalServiceImpl.java`](#22-h7g5entrylocalserviceimpljava)
   - [2.3 `H7G5EntryServiceImpl.java`](#23-h7g5entryserviceimpljava)
   - [2.4 `H7G5Portlet.java`](#24-h7g5portletjava)
   - [2.5 Script `curl`](#25-script-curl)
   - [2.6 Como executar e testar](#26-como-executar-e-testar)
-  - [2.7 Como preparar e enviar o Pull Request](#27-como-preparar-e-enviar-o-pull-request)
-  - [2.8 Erros comuns](#28-erros-comuns)
+  - [2.7 Erros comuns](#27-erros-comuns)
   - [Para praticar](#para-praticar)
 
 ---
@@ -411,7 +410,7 @@ Antes de testar a atividade, você precisa de:
 | Projeto Gradle com os módulos `h7g5-api`, `h7g5-service` e `h7g5-web` | Contém os contratos, implementações e portlet |
 | Java/Gradle compatíveis com a versão do projeto | Compilam e empacotam os módulos |
 | Usuário válido no Liferay | Autentica as chamadas `curl` e permite testar a regra de e-mail |
-| Git e acesso ao repositório do exercício | Permitem preparar e enviar o Pull Request |
+| Git e acesso ao repositório do exercício | Permitem acompanhar as alterações nos arquivos da atividade |
 
 O fluxo da consulta feita pelo script é:
 
@@ -439,7 +438,7 @@ O caminho do portlet é parecido, mas começa na renderização da página e na 
 
 ---
 
-# Etapa 2 – O código e o Pull Request
+# Etapa 2 – O código e os testes
 
 ## 2.1 Visão geral dos arquivos
 
@@ -1137,81 +1136,7 @@ Rodar cada `curl` separadamente costuma facilitar o diagnóstico, especialmente 
 | Erro de entidade inexistente | Uma consulta individual por `key` ou pela combinação de campos não encontrou resultado |
 | Erro de conexão | O Liferay não está rodando ou a porta não é `8080` |
 
-## 2.7 Como preparar e enviar o Pull Request
-
-O objetivo não é enviar o projeto inteiro nem o código gerado. O PR deve conter as implementações personalizadas que demonstram os finders, a verificação de permissão e as chamadas de teste.
-
-### Parte 1 — Conferir os arquivos
-
-Antes de adicionar os arquivos ao Git, confirme que o conjunto contém:
-
-- `H7G5EntryLocalServiceImpl.java`;
-- `H7G5EntryServiceImpl.java`;
-- `H7G5Portlet.java`;
-- o script `.sh` com os comandos `curl`.
-
-Não adicione o `service.xml` nem os arquivos Java gerados pelo Service Builder a este PR, conforme a instrução do exercício. O `service.xml` foi usado como referência para implementar o código, mas não faz parte do conjunto a ser enviado.
-
-### Parte 2 — Inspecionar as mudanças
-
-Use Git para ver quais arquivos foram modificados:
-
-```bash
-git status
-git diff
-```
-
-`git status` mostra os arquivos modificados, adicionados ou ainda não rastreados. `git diff` ajuda a revisar as alterações antes de criar o commit.
-
-Depois de confirmar os caminhos corretos, adicione apenas os arquivos pretendidos. Exemplo ilustrativo — ajuste os caminhos à estrutura real do seu projeto:
-
-```bash
-git add caminho/para/H7G5EntryLocalServiceImpl.java
-git add caminho/para/H7G5EntryServiceImpl.java
-git add caminho/para/H7G5Portlet.java
-git add caminho/para/test-h7g5-entry.sh
-```
-
-Confira o que ficará no commit:
-
-```bash
-git diff --cached
-```
-
-Esse comando mostra as alterações que já foram preparadas para o próximo commit. Se aparecer algum arquivo gerado ou o `service.xml`, retire-o da seleção antes de continuar.
-
-### Parte 3 — Criar o commit
-
-Depois de revisar as alterações:
-
-```bash
-git commit -m "Add H7G5Entry finder service methods"
-```
-
-A mensagem é um exemplo de descrição objetiva; você pode ajustá-la ao padrão adotado no repositório.
-
-### Parte 4 — Enviar a branch
-
-Envie a branch que contém o commit ao repositório remoto que você usa para contribuir. O comando concreto depende do nome configurado para o remoto e da branch atual. Um exemplo comum é:
-
-```bash
-git push origin nome-da-sua-branch
-```
-
-Substitua `nome-da-sua-branch` pelo nome real. Não execute literalmente com o texto de exemplo.
-
-### Parte 5 — Abrir o Pull Request no GitHub
-
-1. Abra no GitHub o repositório para o qual a atividade instrui enviar o PR — no tutorial, o destinatário é `brianchandotcom`.
-2. Escolha a opção para comparar a sua branch com a branch de destino do repositório original.
-3. Confirme que a base e a branch de origem estão corretas.
-4. Revise a lista de arquivos incluídos. Ela deve mostrar as implementações personalizadas e o script de shell, sem `service.xml` e sem os arquivos Java gerados.
-5. Escreva um título e uma descrição objetivos, explicando que o PR adiciona métodos de consulta no Local Service, aplica a checagem simples de e-mail no Remote Service, demonstra a chamada pelo portlet e inclui comandos `curl` para testar JSONWS.
-6. Envie o PR e acompanhe eventuais comentários da revisão.
-
-> Um Pull Request não é simplesmente enviar arquivos: ele propõe que um conjunto de commits da sua branch seja integrado a outra branch. Por isso, a revisão do diff e a escolha correta do repositório de destino são tão importantes quanto o código.
-
-## 2.8 Erros comuns
+## 2.7 Erros comuns
 
 | Sintoma | Causa provável | Como resolver |
 |---|---|---|
@@ -1225,7 +1150,6 @@ Substitua `nome-da-sua-branch` pelo nome real. Não execute literalmente com o t
 | A chamada termina em `401` ou erro de autenticação | Credenciais inválidas ou usuário inexistente | Confirme a conta e a senha no Liferay local |
 | A regra de permissão bloqueia um teste | O e-mail não termina com `@liferay.com` | Para testar sucesso, use uma conta de treinamento com o sufixo permitido; para testar bloqueio, use uma conta válida com outro domínio |
 | O portlet cria pastas repetidamente | O método `doView` cria uma pasta em toda renderização | É o comportamento demonstrativo do código; evite atualizar a página desnecessariamente durante o teste |
-| O PR contém muitos arquivos inesperados | O `git add` incluiu arquivos gerados ou alterações de outros exercícios | Revise `git status` e `git diff --cached`; deixe no commit somente os arquivos pedidos |
 
 ## Para praticar
 
@@ -1234,10 +1158,10 @@ Substitua `nome-da-sua-branch` pelo nome real. Não execute literalmente com o t
 3. O que aconteceria se `_checkPermission()` fosse retirado do Remote Service? Qual requisito de acesso deixaria de ser aplicado?
 4. Por que o portlet chama `H7G5EntryService` em vez de consultar `h7g5EntryPersistence` diretamente?
 5. Execute um dos comandos `curl` com um nome que não existe e compare o resultado com uma consulta que retorna registros.
-6. Rode `git diff --cached` antes de fazer o commit e identifique qual arquivo é personalizado e qual seria gerado pelo Service Builder.
+6. Compare uma chamada que retorna registros com outra que produz uma lista vazia e explique a diferença entre os resultados.
 
 ---
 
 ## Referência principal
 
-Este guia foi elaborado com base no tutorial de Service Builder do Liferay fornecido para a atividade e nos quatro arquivos de referência do primeiro Pull Request: `H7G5EntryLocalServiceImpl.java`, `H7G5EntryServiceImpl.java`, `H7G5Portlet.java` e o script de testes `curl`. O `service.xml` foi utilizado para explicar a origem dos finders e dos serviços gerados, mas, conforme a atividade, não faz parte dos arquivos a serem enviados neste PR.
+Este guia foi elaborado com base no tutorial de Service Builder do Liferay fornecido para a atividade e nos quatro arquivos de referência do primeiro PR: `H7G5EntryLocalServiceImpl.java`, `H7G5EntryServiceImpl.java`, `H7G5Portlet.java` e o script de testes `curl`. O `service.xml` é apresentado como contexto para explicar a origem dos finders e dos serviços gerados.
