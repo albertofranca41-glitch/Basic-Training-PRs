@@ -60,3 +60,10 @@ Conceitos
 - [Fluxo de requisição no Liferay](docs/Service-Builder/entendendo-fluxo-requisicao-liferay.md): como uma requisição é tratada.
 - [Introdução ao OSGi no Liferay](docs/Service-Builder/introducao-osgi-liferay.md): primeiros passos com OSGi.
 - [Introdução ao Service Builder](docs/Service-Builder/introducao-service-builder-liferay.md): o que é e como funciona.
+
+### REST Builder
+
+Conceitos
+
+- [Índice dos guias](docs/REST-Builder/README.md): visão geral dos materiais de Service Builder.
+
