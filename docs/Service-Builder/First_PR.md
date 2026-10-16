@@ -838,6 +838,8 @@ Declarar `throws PortalException` é suficiente porque `PrincipalException` herd
 
 ## 2.4 `H7G5Portlet.java`
 
+> **Nota sobre a implementação:** a estrutura inicial deste portlet já fazia parte do projeto; boa parte do código é de apoio e utiliza serviços disponibilizados pelo Service Builder. Nesta atividade, a alteração feita neste arquivo foi a inclusão do bloco `try/catch` ao final de `doView(...)`, para tratar possíveis erros na chamada ao serviço.
+
 ### Código completo
 
 ```java
