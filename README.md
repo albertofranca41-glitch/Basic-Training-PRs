@@ -48,6 +48,7 @@ Conceitos
 
 - [Índice dos guias](docs/JavaScript/README.md): visão geral dos materiais de JavaScript.
 - [API](docs/JavaScript/API.md): conceitos de API.
+- [REST](docs/JavaScript/REST.md): conceitos de REST.
 - [HTTP](docs/JavaScript/HTTP.md): conceitos de HTTP.
 - [Cliente e servidor](docs/JavaScript/Cliente%20e%20Servidor.md): como cliente e servidor se comunicam.
 
