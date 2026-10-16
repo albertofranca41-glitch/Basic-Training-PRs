@@ -37,12 +37,22 @@ O fluxo geral é:
 A lógica é a mesma da atividade; apenas organizei a indentação e acrescentei comentários para facilitar o estudo.
 
 ```html
-<form id="myForm">
-  <input type="file" id="fileInput" />
-  <button type="submit">Upload</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Uploading a document</title>
+  </head>
+  <body>
+    <h1>Post documents to Documents and Media</h1>
 
-<div id="output"></div>
+    <form id="myForm">
+      <input type="file" id="fileInput" />
+      <button type="submit">Upload</button>
+    </form>
+
+    <div id="output"></div>
 
 <script>
   // ================================================================
@@ -126,6 +136,8 @@ A lógica é a mesma da atividade; apenas organizei a indentação e acrescentei
     await uploadDoc(file);
   });
 </script>
+  </body>
+</html>
 ```
 
 ### 3.3 Explicação por partes
