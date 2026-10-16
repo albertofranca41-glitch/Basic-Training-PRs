@@ -246,7 +246,7 @@ Os arquivos abaixo aprofundam conceitos usados nesta etapa. Leia-os como complem
 
 ## 2.1 Visão geral
 
-O arquivo `Main.java` tem **um método `main`** (que executa o ciclo completo) e **doze métodos auxiliares**, um por operação:
+O arquivo `Test.java` tem **um método `main`** (que executa o ciclo completo) e **doze métodos auxiliares**, um por operação:
 
 ```
 main():          orquestra tudo (cria, consulta, atualiza, limpa)
@@ -282,7 +282,7 @@ O fluxo do `main` é:
 
 ## 2.2 Código completo comentado
 
-> A lógica é exatamente a do código da atividade. Salve o arquivo como `Main.java` (o nome do arquivo deve ser igual ao nome da classe pública).
+> A lógica é exatamente a do código da atividade. Salve o arquivo como `Test.java` (o nome do arquivo deve ser igual ao nome da classe pública).
 
 ```java
 import com.acme.headless.r3b2.client.dto.v1_0.Foo;
@@ -290,7 +290,7 @@ import com.acme.headless.r3b2.client.dto.v1_0.Goo;
 import com.acme.headless.r3b2.client.resource.v1_0.FooResource;
 import com.acme.headless.r3b2.client.resource.v1_0.GooResource;
 
-public class Main {
+public class Test {
 
     public static void main(String[] args) throws Exception {
         // Guardam os IDs gerados pelo servidor. Começam como null para
@@ -731,7 +731,7 @@ Você deve ver um arquivo parecido com `com.acme.headless.r3b2.client-1.0.0.jar`
 mkdir not-a-gradle-project && cd not-a-gradle-project
 ```
 
-**4. Salve o código como `Main.java` nessa pasta**
+**4. Salve o código como `Test.java` nessa pasta**
 
 **5. Compile, informando o client JAR no classpath**
 
@@ -742,7 +742,7 @@ javac -classpath .:../headless-r3b2-client/build/libs/\* *.java
 **6. Execute**
 
 ```bash
-java -classpath .:../headless-r3b2-client/build/libs/* Main
+java -classpath .:../headless-r3b2-client/build/libs/* Test
 ```
 
 > No **Windows**, o separador do classpath é `;` em vez de `:` (ex.: `-classpath ".;..\headless-r3b2-client\build\libs\*"`).
@@ -779,8 +779,8 @@ Depois que tudo funcionar, estas melhorias deixam o código mais profissional:
 | Sintoma | Causa provável | Como resolver |
 |---|---|---|
 | `package com.acme.headless.r3b2.client... does not exist` | O client JAR não está no classpath, ou não foi gerado | Rode `./gradlew headless-r3b2-client:jar` e confira o `-classpath` |
-| `class Main is public, should be declared in a file named Main.java` | O nome do arquivo não bate com o da classe | Salve como `Main.java` |
-| `Could not find or load main class Main` | Esqueceu o `.` no classpath ou está em outra pasta | Rode no mesmo diretório do `Main.class`, com `-classpath .:...` |
+| `class Test is public, should be declared in a file named Test.java` | O nome do arquivo não bate com o da classe | Salve como `Test.java` |
+| `Could not find or load main class Test` | Esqueceu o `.` no classpath ou está em outra pasta | Rode no mesmo diretório do `Test.class`, com `-classpath .:...` |
 | `HTTP 401` (Unauthorized) | Usuário ou senha incorretos | Confira em `.authentication(...)` |
 | `HTTP 404` (Not Found) | API não implantada, ou o id não existe | Faça o deploy de `api` e `impl` e confira em `/o/api` |
 | `Connection refused` | Liferay desligado ou porta errada | Suba o Liferay e confira `localhost:8080` |
