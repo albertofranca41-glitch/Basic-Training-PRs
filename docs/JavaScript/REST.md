@@ -1,273 +1,218 @@
-## Introdução
+# REST — Representational State Transfer
 
-**REST (Representational State Transfer)** é um **estilo arquitetural** que define um conjunto de princípios e restrições para organizar a comunicação entre sistemas distribuídos.
+## Definição
 
-Em uma API RESTful, a comunicação é geralmente organizada em torno de **recursos**, que são identificados por URIs, e as operações sobre esses recursos são realizadas utilizando métodos HTTP padronizados, como `GET`, `POST`, `PUT` e `DELETE`.
+**REST** (*Representational State Transfer*) é um estilo arquitetural para sistemas distribuídos, apresentado por Roy Fielding em sua tese de doutorado, em 2000.
 
-A ideia central é proporcionar uma forma de comunicação **padronizada, previsível e uniforme** entre cliente e servidor.
+Ele define um conjunto de restrições arquiteturais que orientam como os componentes de um sistema devem interagir. Essas restrições favorecem características como escalabilidade, separação de responsabilidades e independência entre cliente e servidor.
 
-> **REST organiza a comunicação em torno de recursos e utiliza uma interface uniforme para permitir que clientes interajam com esses recursos.**
+REST é frequentemente utilizado no desenvolvimento de APIs web. Nesses casos, o HTTP costuma ser o protocolo de comunicação, mas **REST e HTTP não são a mesma coisa**: HTTP é um protocolo, enquanto REST é um estilo arquitetural.
 
----
+## Conceitos-chave
 
-## Recursos
+### Recurso
 
-Um dos conceitos fundamentais do REST é o **recurso**.
+Em REST, o conceito central é o **recurso** (*resource*).
 
-Um recurso representa alguma entidade ou informação que pode ser identificada pelo sistema.
+Um recurso representa algo que pode ser identificado e acessado por meio de uma interface. Por exemplo:
 
-Por exemplo:
+- Um produto;
+- Um usuário;
+- Uma publicação de blog;
+- Uma coleção de artigos.
 
-```
-/users
-/products
-/orders
-```
+Um recurso não precisa corresponder diretamente a uma tabela ou registro do banco de dados. Ele é uma abstração apresentada pela interface do sistema.
 
-Um recurso específico pode ser identificado por um identificador:
+### URI — Identificação de recursos
 
-```
-/users/10
-/products/42
-/orders/135
-```
+Cada recurso pode ser identificado por uma URI (*Uniform Resource Identifier*).
 
-Nesse modelo, a URL não representa necessariamente uma operação. Ela identifica o **recurso** com o qual o cliente deseja interagir.
+Por exemplo, em uma API de produtos:
 
----
-
-## Métodos HTTP
-
-As operações realizadas sobre os recursos são normalmente expressas através dos métodos HTTP.
-
-|Método|Operação comum|
-|---|---|
-|`GET`|Obter um recurso|
-|`POST`|Criar um novo recurso|
-|`PUT`|Substituir/atualizar um recurso|
-|`PATCH`|Atualizar parcialmente um recurso|
-|`DELETE`|Remover um recurso|
-
-Por exemplo:
-
-```http
-GET /users/10
+```text
+https://api.exemplo.com/produtos
+https://api.exemplo.com/produtos/42
 ```
 
-pode representar:
+A primeira URI pode identificar uma coleção de produtos, enquanto a segunda pode identificar um produto específico, cujo identificador é `42`.
 
-> "Obter o usuário identificado por 10."
+A URI identifica o recurso, mas não determina, por si só, qual operação será executada sobre ele.
 
-Enquanto:
+### Representação
 
-```http
-DELETE /users/10
-```
+Um cliente geralmente não recebe o recurso em si como um objeto interno do servidor. Ele recebe uma **representação do recurso**.
 
-representa:
+Essa representação contém dados que descrevem o estado do recurso em um formato adequado à comunicação.
 
-> "Remover o usuário identificado por 10."
+Por exemplo, uma representação JSON de um produto poderia ser:
 
-Observe que a URL continua identificando o mesmo recurso. O que muda é a **operação solicitada**, representada pelo método HTTP.
-
----
-
-## REST e HTTP
-
-REST e HTTP não são a mesma coisa.
-
-**HTTP** é um protocolo de comunicação.
-
-**REST** é um estilo arquitetural.
-
-Entretanto, HTTP possui características que se encaixam muito bem nas restrições do REST, por isso é extremamente comum encontrar APIs REST implementadas sobre HTTP.
-
-Podemos visualizar a relação assim:
-
-```
-REST
- │
- │ estilo arquitetural
- ▼
-API RESTful
- │
- │ frequentemente utiliza
- ▼
-HTTP
- │
- ├── GET
- ├── POST
- ├── PUT
- ├── PATCH
- └── DELETE
-```
-
----
-
-## Interface uniforme
-
-Um dos princípios mais importantes do REST é a ideia de uma **interface uniforme**.
-
-Em vez de cada recurso possuir uma forma completamente diferente de interação, a API utiliza uma estrutura consistente.
-
-Por exemplo:
-
-```
-GET    /users
-POST   /users
-
-GET    /users/10
-PUT    /users/10
-DELETE /users/10
-```
-
-O cliente aprende um conjunto relativamente pequeno de regras que pode utilizar para interagir com diferentes recursos.
-
----
-
-## Stateless
-
-Uma API REST deve seguir o princípio de **statelessness**.
-
-Isso significa que cada requisição deve conter as informações necessárias para que o servidor consiga processá-la, sem depender de um estado de sessão armazenado no servidor entre requisições.
-
-Por exemplo:
-
-```
-Request 1
-Cliente ──────────────► Servidor
-
-Request 2
-Cliente ──────────────► Servidor
-
-Request 3
-Cliente ──────────────► Servidor
-```
-
-O servidor não deve precisar interpretar a terceira requisição apenas com base no que aconteceu nas duas anteriores.
-
-Isso facilita aspectos como escalabilidade e distribuição das requisições entre diferentes servidores.
-
----
-
-## Representação de recursos
-
-O cliente normalmente não recebe o recurso interno exatamente como ele existe no servidor.
-
-Ele recebe uma **representação** desse recurso.
-
-Por exemplo:
-
-```
-Recurso interno
-     │
-     │ representação
-     ▼
-JSON
-
+```json
 {
-  "id": 10,
-  "name": "Alberto"
+  "id": 42,
+  "name": "Teclado",
+  "price": 150.00
 }
 ```
 
-O recurso pode existir internamente como um objeto Java, uma entidade de banco de dados ou outra estrutura, enquanto sua representação para o cliente pode ser um documento JSON.
+JSON é um formato comum para representar recursos em APIs REST, mas não é uma exigência universal do REST. Outros formatos também podem ser utilizados.
 
----
+## REST e HTTP
 
-# Estrutura de uma API RESTful
+Em APIs web que utilizam HTTP, os métodos HTTP indicam a semântica da operação solicitada pelo cliente.
 
-Podemos visualizar uma comunicação REST de maneira simplificada:
+Considere uma API que disponibiliza recursos de produtos:
 
-```
-┌──────────┐
-│  Cliente │
-└────┬─────┘
-     │
-     │ HTTP Request
-     │
-     │ GET /users/10
-     ▼
-┌──────────────┐
-│ API RESTful  │
-└──────┬───────┘
-       │
-       │ processa a requisição
-       ▼
-┌──────────────┐
-│   Sistema    │
-│              │
-│ Banco /      │
-│ Serviços /   │
-│ Regras       │
-└──────┬───────┘
-       │
-       │ representação
-       ▼
-┌──────────────┐
-│ HTTP Response│
-│              │
-│ JSON         │
-└──────────────┘
-```
+| Método | URI | Finalidade comum |
+|---|---|---|
+| `GET` | `/produtos` | Consultar a coleção de produtos |
+| `GET` | `/produtos/42` | Consultar um produto específico |
+| `POST` | `/produtos` | Solicitar a criação de um produto |
+| `PUT` | `/produtos/42` | Substituir a representação de um produto |
+| `PATCH` | `/produtos/42` | Solicitar uma alteração parcial |
+| `DELETE` | `/produtos/42` | Solicitar a remoção de um produto |
 
----
+Esses exemplos mostram convenções comuns em APIs HTTP. O comportamento exato de cada operação depende do contrato da API.
 
-# REST na prática
+É importante observar que **REST não é simplesmente utilizar os métodos HTTP**. Uma API não se torna RESTful apenas porque possui endpoints e responde a requisições HTTP.
 
-Considere uma API que disponibiliza usuários.
+## Como funciona uma requisição REST
 
-### Listar usuários
+Uma interação típica entre um cliente e uma API web pode ser representada assim:
 
-```http
-GET /users
+```text
+Cliente
+   |
+   | Requisição HTTP
+   | GET /produtos/42
+   v
+API / Servidor
+   |
+   | Interpreta a requisição
+   | Executa a lógica necessária
+   | Consulta dados, se necessário
+   v
+Resposta HTTP
+   |
+   | Status: 200 OK
+   | Content-Type: application/json
+   | Corpo: representação do produto
+   v
+Cliente
 ```
 
-### Obter um usuário
+O cliente não precisa conhecer os detalhes internos da implementação do servidor. Ele precisa conhecer a interface disponibilizada pela API e respeitar seu contrato.
 
-```http
-GET /users/10
+Da mesma forma, o servidor pode alterar sua implementação interna sem necessariamente exigir mudanças no cliente, desde que preserve o comportamento contratual esperado.
+
+## Restrições arquiteturais do REST
+
+REST não é apenas um conjunto de convenções para nomear URLs. O estilo arquitetural descrito por Roy Fielding apresenta seis restrições.
+
+### 1. Cliente-servidor
+
+A arquitetura separa as responsabilidades do cliente e do servidor.
+
+O cliente cuida das necessidades relacionadas à interação com o usuário ou ao consumo da interface. O servidor cuida da disponibilização dos recursos e das funcionalidades correspondentes.
+
+Essa separação permite que cada lado evolua de forma relativamente independente.
+
+### 2. Ausência de estado de sessão no servidor (*stateless*)
+
+Cada requisição deve conter as informações necessárias para que o servidor a compreenda e processe, sem depender de um contexto de sessão armazenado no servidor a partir de requisições anteriores.
+
+Isso não significa que o servidor não possa armazenar dados persistentes, como usuários, produtos ou publicações. A restrição diz respeito ao estado da interação entre cliente e servidor.
+
+Por exemplo, uma API pode receber um token de autenticação em cada requisição, em vez de depender de um contexto de sessão mantido no servidor.
+
+### 3. Capacidade de armazenamento em cache
+
+As respostas devem indicar se podem ou não ser armazenadas em cache.
+
+Quando aplicável, o cache pode reduzir requisições desnecessárias e melhorar o desempenho. O comportamento depende das regras de cache e dos cabeçalhos apropriados.
+
+### 4. Interface uniforme
+
+A interação com os recursos segue uma interface padronizada. Essa restrição é uma das características centrais do REST e possui quatro aspectos:
+
+- **Identificação dos recursos:** os recursos são identificados, normalmente, por URIs.
+- **Manipulação por representações:** as representações recebidas ou enviadas são utilizadas para consultar ou alterar recursos.
+- **Mensagens autodescritivas:** as mensagens carregam informações suficientes para que sejam interpretadas conforme a interface e o protocolo.
+- **Hipermídia como mecanismo do estado da aplicação (HATEOAS):** as representações podem incluir links e controles que orientam o cliente sobre as próximas ações disponíveis.
+
+O último aspecto é especialmente importante: uma API que utiliza HTTP, JSON e URLs organizadas por recursos pode seguir algumas convenções REST sem implementar integralmente a restrição de interface uniforme, especialmente HATEOAS.
+
+### 5. Sistema em camadas
+
+A arquitetura pode ser composta por camadas intermediárias, como proxies, gateways, balanceadores de carga e servidores de cache.
+
+O cliente não precisa conhecer toda a estrutura interna pela qual a requisição passa. Cada camada pode cumprir uma responsabilidade específica.
+
+### 6. Código sob demanda (opcional)
+
+O servidor pode, opcionalmente, enviar código executável ao cliente para ampliar suas funcionalidades, como scripts JavaScript.
+
+Essa restrição é opcional no REST; as demais restrições arquiteturais devem ser respeitadas para que o sistema seja considerado RESTful segundo o modelo completo.
+
+## RESTful: o que significa?
+
+O termo **RESTful** costuma descrever uma API ou um sistema que segue os princípios e as restrições do estilo arquitetural REST.
+
+Na prática, o termo é frequentemente utilizado de maneira mais ampla para APIs que organizam recursos em URIs e utilizam os métodos e os códigos de status HTTP de forma coerente.
+
+Entretanto, há uma diferença entre seguir convenções comuns de APIs REST e satisfazer todas as restrições arquiteturais definidas por Fielding. A presença de endpoints como `/produtos/42` e de respostas JSON, por si só, não comprova conformidade integral com REST.
+
+## REST, API e HTTP: qual é a diferença?
+
+Esses conceitos estão relacionados, mas representam coisas diferentes:
+
+| Conceito | O que representa |
+|---|---|
+| **API** | Uma interface ou contrato por meio do qual um componente disponibiliza funcionalidades ou dados a outros componentes. |
+| **HTTP** | Um protocolo que define a semântica e a estrutura das mensagens de comunicação na Web. |
+| **REST** | Um estilo arquitetural que define restrições para organizar a interação entre componentes de sistemas distribuídos. |
+| **JSON** | Um formato textual de intercâmbio de dados que pode ser utilizado nas representações transmitidas por uma API. |
+
+Uma API web pode utilizar HTTP sem ser RESTful. Também pode utilizar JSON sem ser RESTful. Esses elementos são comuns em APIs REST, mas não são suficientes, isoladamente, para caracterizar o estilo arquitetural.
+
+## Relação com o Liferay Headless Delivery API
+
+O Liferay disponibiliza APIs Headless que permitem a outros componentes consultar e manipular recursos da plataforma por meio de requisições HTTP.
+
+Por exemplo, no Headless Delivery, uma aplicação JavaScript pode consultar publicações de blog utilizando um endpoint semelhante a:
+
+```text
+GET /o/headless-delivery/v1.0/sites/20117/blog-postings
 ```
 
-### Criar um usuário
+Nesse cenário:
 
-```http
-POST /users
-```
+- **JavaScript** atua como cliente;
+- **HTTP** transporta a requisição e a resposta;
+- **Headless Delivery API** disponibiliza uma interface para acessar os recursos do Liferay;
+- **JSON** pode transportar a representação dos dados;
+- **Liferay** processa a requisição e executa as operações necessárias.
 
-### Atualizar um usuário
+O identificador `20117` é um exemplo de ID de site e pode variar conforme a instalação.
 
-```http
-PUT /users/10
-```
+Essa separação permite que uma aplicação cliente consuma os recursos do Liferay sem precisar conhecer todos os detalhes de sua implementação interna.
 
-### Remover um usuário
+## Resumo
 
-```http
-DELETE /users/10
-```
+REST é um estilo arquitetural para sistemas distribuídos, frequentemente utilizado na construção de APIs web.
 
-A estrutura permanece consistente porque a API utiliza **recursos + uma interface uniforme de interação**.
+Para compreender esse modelo, é importante distinguir:
 
----
+- **Recursos:** aquilo que a API disponibiliza para consulta ou manipulação;
+- **URIs:** identificadores utilizados para referenciar recursos;
+- **Representações:** dados que descrevem os recursos em formatos como JSON;
+- **HTTP:** protocolo frequentemente utilizado para transportar as mensagens;
+- **Restrições REST:** princípios arquiteturais que orientam a interação entre cliente e servidor.
 
-# REST e outras abordagens
+A ideia central não é apenas criar URLs e executar operações CRUD. É organizar a comunicação por meio de uma interface uniforme, com responsabilidades separadas e mensagens que permitam aos componentes interagir sem depender dos detalhes internos uns dos outros.
 
-REST é apenas uma das maneiras de construir APIs.
+## Referências
 
-- [[API]]
-- [[RPC]]
-- [[GraphQL]]
-
-Uma maneira inicial de diferenciar as abordagens é:
-
-```
-REST
-→ Interagir com recursos.
-
-RPC
-→ Executar operações remotas.
-
-GraphQL
-→ Solicitar exatamente os dados desejados através de uma
-```
+- Fielding, Roy Thomas. *Architectural Styles and the Design of Network-based Software Architectures* (2000), capítulo 5 — [Tese de doutorado](https://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm).
+- Fielding, Roy Thomas. *REST APIs must be hypertext-driven* (2008) — [Artigo original](https://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven).
+- MDN Web Docs — [An overview of HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview).
+- Liferay Learn — [Headless APIs](https://learn.liferay.com/).

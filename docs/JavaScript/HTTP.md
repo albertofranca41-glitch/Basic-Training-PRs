@@ -375,62 +375,9 @@ R$ 3.500
 
 ## 10. HTTP e APIs
 
-Aqui começa a conexão direta com **REST**, que você já estudou.
+HTTP é um protocolo de comunicação; API é uma interface que define como um software pode utilizar funcionalidades ou dados de outro. Uma API Web pode usar HTTP para transportar suas requisições e respostas, mas os conceitos não são sinônimos.
 
-Uma API pode utilizar HTTP como mecanismo de comunicação:
-
-```
-Cliente
-   │
-   │ HTTP
-   ▼
-  API
-   │
-   ▼
-Backend
-```
-
-Por exemplo:
-```http
-GET /users/10
-```
-
-```http
-POST /users
-```
-
-```http
-PUT /users/10
-```
-
-```http
-DELETE /users/10
-```
-
-O HTTP fornece os **métodos, mensagens, headers, status codes etc.**
-
-Uma arquitetura como REST utiliza essas capacidades do HTTP para estruturar a comunicação com recursos.
-
-Portanto, **REST e HTTP não são sinônimos**.
-
-Podemos pensar:
-
-```
-HTTP
-│
-├── métodos
-├── headers
-├── status codes
-├── request
-├── response
-└── outras regras do protocolo
-       │
-       ▼
-	  REST
-	   │
-	   └── utiliza HTTP seguindo determinados princípios
-	       para estruturar APIs orientadas a recursos
-```
+REST é uma abordagem arquitetural que pode organizar APIs usando HTTP. A definição de API, os endpoints e as abordagens REST, RPC e GraphQL são explicados em [API.md](./API.md).
 
 ---
 
