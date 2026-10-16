@@ -66,4 +66,5 @@ Conceitos
 Conceitos
 
 - [Índice dos guias](docs/REST-Builder/README.md): visão geral dos materiais de Service Builder.
+- [REST](docs/JavaScript/REST.md): conceitos de REST.
 
