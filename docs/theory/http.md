@@ -377,7 +377,7 @@ R$ 3.500
 
 HTTP é um protocolo de comunicação; API é uma interface que define como um software pode utilizar funcionalidades ou dados de outro. Uma API Web pode usar HTTP para transportar suas requisições e respostas, mas os conceitos não são sinônimos.
 
-REST é uma abordagem arquitetural que pode organizar APIs usando HTTP. A definição de API, os endpoints e as abordagens REST, RPC e GraphQL são explicados em [API.md](./API.md).
+REST é uma abordagem arquitetural que pode organizar APIs usando HTTP. A definição de API, os endpoints e as abordagens REST, RPC e GraphQL são explicados em [API](./api.md).
 
 ---
 

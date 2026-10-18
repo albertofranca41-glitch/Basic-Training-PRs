@@ -23,16 +23,16 @@ Um bom ponto de partida é o guia de início, que também explica como trabalhar
 
 ## Organização
 
-Todo o material fica na pasta `docs/`, dividido por tema. Cada pasta tem um `README.md` que funciona como índice.
+Os conceitos estão reunidos em `docs/theory/`, independentemente da trilha em que são usados. As pastas de cada trilha contêm os guias de atividade/PR e um `README.md` como índice. Os textos estão em português; nomes de arquivos e pastas usam inglês e `kebab-case`.
 
 ```text
 docs/
-├── Beginning/         início e Pull Requests
-├── JavaScript/        conceitos e PRs de JavaScript
-└── Service-Builder/   conceitos e PRs de Service Builder
+├── getting-started/   início e Pull Requests
+├── theory/            conceitos compartilhados
+├── javascript/        guias de atividade/PR de JavaScript
+├── rest-builder/      guias de atividade/PR de REST Builder
+└── service-builder/   guias de atividade/PR de Service Builder
 ```
-
-Dentro de JavaScript e Service Builder, os guias seguem a mesma lógica: primeiro os conceitos, depois os Pull Requests do treinamento.
 
 ---
 
@@ -40,31 +40,12 @@ Dentro de JavaScript e Service Builder, os guias seguem a mesma lógica: primeir
 
 ### Início
 
-- [Guia de início e Pull Requests](docs/Beginning/README.md): como começar e como trabalhar com Pull Requests.
+- [Guia de início e Pull Requests](docs/getting-started/README.md): como começar e como trabalhar com Pull Requests.
 
-### JavaScript
+### Trilhas de estudo
 
-Conceitos
-
-- [Índice dos guias](docs/JavaScript/README.md): visão geral dos materiais de JavaScript.
-- [API](docs/JavaScript/API.md): conceitos de API.
-- [REST](docs/JavaScript/REST.md): conceitos de REST.
-- [HTTP](docs/JavaScript/HTTP.md): conceitos de HTTP.
-- [Cliente e servidor](docs/JavaScript/Cliente%20e%20Servidor.md): como cliente e servidor se comunicam.
-
-### Service Builder
-
-Conceitos
-
-- [Índice dos guias](docs/Service-Builder/README.md): visão geral dos materiais de Service Builder.
-- [Fluxo de requisição no Liferay](docs/Service-Builder/entendendo-fluxo-requisicao-liferay.md): como uma requisição é tratada.
-- [Introdução ao OSGi no Liferay](docs/Service-Builder/introducao-osgi-liferay.md): primeiros passos com OSGi.
-- [Introdução ao Service Builder](docs/Service-Builder/introducao-service-builder-liferay.md): o que é e como funciona.
-
-### REST Builder
-
-Conceitos
-
-- [Índice dos guias](docs/REST-Builder/README.md): visão geral dos materiais de Service Builder.
-- [REST](docs/JavaScript/REST.md): conceitos de REST.
+- [Índice dos conceitos](docs/theory/README.md): materiais teóricos compartilhados entre as trilhas.
+- [JavaScript](docs/javascript/README.md): guias de atividade e PRs.
+- [REST Builder](docs/rest-builder/README.md): guias de atividade e PRs.
+- [Service Builder](docs/service-builder/README.md): guias de atividade e PRs.
 

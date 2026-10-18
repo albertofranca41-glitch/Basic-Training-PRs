@@ -441,9 +441,9 @@ O caminho do portlet é parecido, mas começa na renderização da página e na 
 
 ## 1.12 Recursos adicionais
 
-- [Entendendo o fluxo de requisição no Liferay](./entendendo-fluxo-requisicao-liferay.md)
-- [Introdução ao OSGi no Liferay](./introducao-osgi-liferay.md)
-- [Introdução ao Service Builder do Liferay](./introducao-service-builder-liferay.md)
+- [Entendendo o fluxo de requisição no Liferay](../theory/liferay-request-flow.md)
+- [Introdução ao OSGi no Liferay](../theory/osgi-in-liferay.md)
+- [Introdução ao Service Builder do Liferay](../theory/service-builder-introduction.md)
 
 # Etapa 2 – O código e os testes
 

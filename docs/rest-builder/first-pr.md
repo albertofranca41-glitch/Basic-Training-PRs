@@ -482,20 +482,21 @@ Antes de executar o programa, confirme também que a API `headless-r3b2/v1.0` es
 
 ## Recursos adicionais
 
-Os materiais abaixo aprofundam conceitos usados nesta atividade. Os links levam a documentos existentes no repositório ou a referências oficiais.
+Os materiais abaixo aprofundam os conceitos da atividade. Os quatro primeiros documentos aprofundam REST Builder; os demais retomam fundamentos compartilhados com outras trilhas.
+
+### Conceitos de REST Builder
+
+- [JSON](../theory/json.md): formato usado para representar e transportar dados entre sistemas.
+- [JSONWS e RPC](../theory/jsonws-and-rpc.md): chamadas remotas de operações e sua relação com o JSONWS do Liferay.
+- [OpenAPI](../theory/openapi.md): descrição estruturada dos caminhos, operações, parâmetros e dados de uma API.
+- [DTOs e Schemas](../theory/dtos-and-schemas.md): objetos de transferência e modelos de dados descritos no contrato.
 
 ### Fundamentos da comunicação
 
-- [Cliente e servidor](../JavaScript/Cliente%20e%20Servidor.md): papéis, requisições e respostas.
-- [HTTP](../JavaScript/HTTP.md): métodos, URLs, cabeçalhos, corpos e códigos de status.
-- [REST](../JavaScript/REST.md): recursos, representações e métodos HTTP.
-- [API](../JavaScript/API.md): conceito de interface e contrato entre sistemas.
-
-### Documentação oficial
-
-- [REST Builder — documentação do Liferay](https://learn.liferay.com/w/dxp/integration/headless-apis/rest-builder): documentação oficial sobre geração de APIs REST no Liferay.
-- [OpenAPI Specification](https://spec.openapis.org/oas/latest.html): especificação oficial do formato OpenAPI.
-- [HTTP — MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/HTTP): referência sobre o protocolo HTTP e suas operações.
+- [Cliente e servidor](../theory/client-server.md): papéis, requisições e respostas.
+- [HTTP](../theory/http.md): métodos, URLs, cabeçalhos, corpos e códigos de status.
+- [REST](../theory/rest.md): recursos, representações e métodos HTTP.
+- [API](../theory/api.md): conceito de interface e contrato entre sistemas.
 
 
 # Etapa 2 – O código

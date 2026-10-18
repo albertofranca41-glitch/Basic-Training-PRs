@@ -313,10 +313,10 @@ git --version
 
 Os arquivos abaixo aprofundam os conceitos apresentados nesta etapa. Leia-os como complemento quando quiser explorar cada assunto com mais detalhes:
 
-- [Cliente e servidor](./Cliente%20e%20Servidor.md): explica os papéis de cliente e servidor e como eles trocam requisições e respostas.
-- [HTTP](./HTTP.md): detalha métodos, cabeçalhos, corpo das mensagens e códigos de status.
-- [API](./API.md): apresenta APIs como contratos de comunicação entre sistemas e como são usadas no backend.
-- [REST](./REST.md): aprofunda recursos, URLs e métodos HTTP em APIs REST.
+- [Cliente e servidor](../theory/client-server.md): explica os papéis de cliente e servidor e como eles trocam requisições e respostas.
+- [HTTP](../theory/http.md): detalha métodos, cabeçalhos, corpo das mensagens e códigos de status.
+- [API](../theory/api.md): apresenta APIs como contratos de comunicação entre sistemas e como são usadas no backend.
+- [REST](../theory/rest.md): aprofunda recursos, URLs e métodos HTTP em APIs REST.
 
 ---
 
@@ -696,7 +696,7 @@ main();
 
 > Cada `await` faz a função esperar a anterior terminar. Isso é importante: não dá para buscar o blog antes de ele ter sido criado.
 
-Para testar as alterações no próprio navegador, use o arquivo [`test-blogs.html`](./test-blogs.html) que acompanha esta pasta. Abra o link para consultar ou baixar o arquivo e copie-o para a pasta do seu JavaScript:
+Para testar as alterações no próprio navegador, use o arquivo [`test-blogs.html`](test-blogs.html) que acompanha esta pasta. Abra o link para consultar ou baixar o arquivo e copie-o para a pasta do seu JavaScript:
 
 1. Deixe o **Liferay rodando** em `localhost:8080` e confirme o **ID do seu site**. Ajuste `urlBlogPostings` no seu JavaScript se o ID for diferente de `20117`.
 2. Copie `test-blogs.html` para a pasta onde está o seu arquivo `PR.js` (ou o JavaScript com as funções CRUD). O HTML carrega `./PR.js`, então os dois arquivos precisam ficar lado a lado. Se o seu arquivo tiver outro nome, altere o atributo `src` da tag `<script>` no HTML.

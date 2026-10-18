@@ -1,0 +1,10 @@
+# Service Builder
+
+Nesta pasta estão os materiais dos dois Pull Requests de Service Builder do Basic Training. Acesse cada guia pelo link correspondente:
+
+Os conceitos compartilhados estão no [índice de teoria](../theory/README.md).
+
+## PRs de Service Builder
+
+- [1º PR – Buscas com Finder Methods](first-pr.md): implementação de métodos de busca para as entidades do Service Builder usando os Finder Methods declarados no `service.xml`, com chamadas pelos serviços locais e remotos.
+- [2º PR – Buscas com Dynamic Query](second-pr.md): implementação das mesmas buscas do primeiro PR usando Dynamic Query como método alternativo de consulta.

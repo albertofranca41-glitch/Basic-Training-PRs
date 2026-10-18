@@ -251,7 +251,7 @@ Uma **API Web** permite que softwares interajam por tecnologias da Web. Muitas A
 
 HTTP define as regras dessas mensagens, incluindo métodos, URLs, headers, bodies e códigos de status. API define o contrato de interação: quais operações estão disponíveis, quais entradas esperam e quais resultados podem retornar. Portanto, uma API Web pode usar HTTP, mas API e HTTP não são a mesma coisa.
 
-Para os detalhes de requisições, respostas, métodos, headers e códigos de status, consulte [HTTP.md](./HTTP.md). Nesta seção, basta lembrar que o contrato da API determina como interpretar a comunicação HTTP.
+Para os detalhes de requisições, respostas, métodos, headers e códigos de status, consulte [HTTP](./http.md). Nesta seção, basta lembrar que o contrato da API determina como interpretar a comunicação HTTP.
 
 ---
 
