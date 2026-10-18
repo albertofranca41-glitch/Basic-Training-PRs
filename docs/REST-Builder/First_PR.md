@@ -1,4 +1,4 @@
-# Guia: Atividade de REST Builder (Primeiro PR: Client JAR com Foo e Goo) *Esse markdown nao foi revisado ainda
+# Guia: Atividade de REST Builder (Primeiro PR: Client JAR com Foo e Goo)
 
 Este guia ensina, do zero, a fazer a atividade em que você usa o **client JAR** gerado pelo **REST Builder** para escrever um código **Java** que conversa com a API `headless-r3b2` do **Liferay DXP** (criar, listar, buscar, atualizar e apagar **Foos** e **Goos**).
 
@@ -16,17 +16,18 @@ Ele está dividido em **2 etapas**:
 ## Sumário
 
 - [Etapa 1 – Teoria](#etapa-1--teoria)
-  - [1.1 Revisão rápida: HTTP, REST e JSON](#11-revisão-rápida-http-rest-e-json)
-  - [1.2 JSONWS × REST (RPC × REST)](#12-jsonws--rest-rpc--rest)
-  - [1.3 OpenAPI](#13-openapi)
-  - [1.4 O que é o REST Builder](#14-o-que-é-o-rest-builder)
-  - [1.5 Os módulos do projeto liferay-r3b2](#15-os-módulos-do-projeto-liferay-r3b2)
-  - [1.6 Arquivos gerados × arquivos que você implementa](#16-arquivos-gerados--arquivos-que-você-implementa)
+  - [1.1 Revisão rápida: cliente, servidor, HTTP, REST e JSON](#11-revisão-rápida-cliente-servidor-http-rest-e-json)
+  - [1.2 JSONWS × REST: RPC e recursos HTTP](#12-jsonws--rest-rpc-e-recursos-http)
+  - [1.3 OpenAPI: o contrato da API](#13-openapi-o-contrato-da-api)
+  - [1.4 O que é o REST Builder?](#14-o-que-é-o-rest-builder)
+  - [1.5 Os módulos do projeto `liferay-r3b2`](#15-os-módulos-do-projeto-liferay-r3b2)
+  - [1.6 Código gerado e código implementado pelo desenvolvedor](#16-código-gerado-e-código-implementado-pelo-desenvolvedor)
   - [1.7 A API de exemplo: Foo e Goo](#17-a-api-de-exemplo-foo-e-goo)
-  - [1.8 API Explorer: conferindo a API no navegador](#18-api-explorer-conferindo-a-api-no-navegador)
+  - [1.8 API Explorer: verificando a API no navegador](#18-api-explorer-verificando-a-api-no-navegador)
   - [1.9 Client JAR × OSGi Resource](#19-client-jar--osgi-resource)
   - [1.10 O padrão Builder](#110-o-padrão-builder)
   - [1.11 Pré-requisitos do ambiente](#111-pré-requisitos-do-ambiente)
+- [Recursos adicionais](#recursos-adicionais)
 - [Etapa 2 – O código](#etapa-2--o-código)
   - [2.1 Visão geral](#21-visão-geral)
   - [2.2 Código completo comentado](#22-código-completo-comentado)
@@ -40,188 +41,434 @@ Ele está dividido em **2 etapas**:
 
 # Etapa 1 – Teoria
 
-Antes do código, vamos entender o "mundo" em que ele vive. Se você já conhece algum tópico, pode pular.
+Antes de escrever o código, vamos entender como o REST Builder se encaixa no ecossistema do Liferay e como um programa Java pode consumir uma API REST por meio de um *client JAR*.
 
-## 1.1 Revisão rápida: HTTP, REST e JSON
+Esta etapa apresenta os conceitos necessários para acompanhar a atividade. Se você já conhece algum deles, pode utilizar os links de recursos adicionais no final para consultar apenas o que precisar.
 
-Este guia parte do princípio de que você já viu os conceitos básicos (por exemplo, no guia da atividade de JavaScript). Um resumo do que importa aqui:
+## 1.1 Revisão rápida: cliente, servidor, HTTP, REST e JSON
 
-- **Cliente e servidor:** o **servidor** é o Liferay DXP em `http://localhost:8080`; o **cliente** é o seu código (agora em **Java**, não mais JavaScript).
-- **HTTP:** cada conversa é uma requisição + uma resposta. Os métodos `POST`, `GET`, `PUT`, `PATCH` e `DELETE` correspondem às operações do **CRUD** (criar, ler, atualizar, apagar).
-- **REST:** estilo de API em que tudo é um **recurso** identificado por uma URL, e o método HTTP é o verbo.
-- **JSON:** formato de texto em que os dados trafegam.
+Esta atividade utiliza conceitos semelhantes aos da atividade de JavaScript com a Headless Delivery API. A diferença principal está na maneira como o programa cliente realiza as requisições.
 
-A grande diferença desta atividade: em JavaScript você montava a requisição **à mão** (`fetch`, cabeçalhos, `JSON.stringify`). Aqui, o **client JAR** faz tudo isso por você: você trabalha com **objetos Java** (`Foo`, `Goo`) e **métodos** (`postFoo`, `getFoo`...), e a biblioteca cuida do HTTP e do JSON por baixo.
+### Cliente e servidor
 
-Para aprofundar, veja os arquivos em [Recursos adicionais](#recursos-adicionais).
+O **cliente** é o programa que solicita uma operação. O **servidor** é o sistema que recebe a solicitação, processa a operação e devolve uma resposta.
 
-## 1.2 JSONWS × REST (RPC × REST)
+Nesta atividade:
 
-O Liferay tem duas formas principais de expor serviços por HTTP:
+- **Servidor:** o Liferay DXP, executado em `http://localhost:8080`.
+- **Cliente:** o programa Java que utiliza o *client JAR* para consumir a API `headless-r3b2`.
 
-| | **JSONWS** | **REST (Headless)** |
+Embora ambos estejam sendo executados no mesmo computador, eles desempenham papéis diferentes. O programa Java continua sendo um cliente externo ao Liferay.
+
+### HTTP
+
+O **HTTP (Hypertext Transfer Protocol)** é o protocolo utilizado na comunicação entre o cliente e o servidor.
+
+Uma requisição HTTP pode conter:
+
+- **Método:** indica a operação solicitada, como `GET`, `POST`, `PUT`, `PATCH` ou `DELETE`.
+- **URL:** identifica o destino da requisição.
+- **Cabeçalhos:** transportam informações adicionais, como o tipo de conteúdo e as credenciais de autenticação.
+- **Corpo:** contém dados enviados ao servidor, quando necessário.
+
+O servidor processa a requisição e devolve uma resposta com um código de status e, dependendo da operação, um corpo com os dados retornados.
+
+### REST
+
+**REST (Representational State Transfer)** é um estilo arquitetural utilizado para estruturar sistemas que se comunicam por meio de recursos.
+
+Em uma API REST, os recursos são identificados por URLs, enquanto os métodos HTTP indicam as operações solicitadas sobre eles.
+
+Por exemplo:
+
+- `POST /foo`: solicita a criação de um Foo.
+- `GET /foo`: solicita a listagem de Foos.
+- `GET /foo/123`: solicita a consulta de um Foo específico.
+- `DELETE /foo/123`: solicita a exclusão de um Foo.
+
+Esses caminhos são exemplos ilustrativos. Os caminhos efetivamente utilizados nesta atividade estão definidos no contrato da API.
+
+### JSON
+
+**JSON (JavaScript Object Notation)** é um formato textual utilizado para representar e transportar dados estruturados.
+
+Uma representação de um Foo poderia ser:
+
+```json
+{
+  "name": "Exemplo",
+  "description": "Um recurso de demonstração"
+}
+```
+
+O cliente envia ou recebe esses dados conforme o contrato da API.
+
+É importante perceber que JSON e Java são coisas diferentes: JSON é um formato de dados, enquanto Java é uma linguagem de programação.
+
+### O que muda nesta atividade?
+
+Na atividade de JavaScript, você utilizava `fetch`, configurava os cabeçalhos HTTP e convertia objetos JavaScript em JSON com `JSON.stringify`.
+
+Nesta atividade, você utiliza objetos Java, como `Foo` e `Goo`, e métodos como `postFoo` e `getFoo`. O *client JAR* cuida de boa parte da comunicação HTTP e da conversão entre os objetos Java e os dados transmitidos.
+
+Isso não elimina o HTTP nem o JSON. Apenas permite trabalhar em um nível de abstração mais alto.
+
+## 1.2 JSONWS × REST: RPC e recursos HTTP
+
+O Liferay oferece diferentes mecanismos para disponibilizar funcionalidades por meio de serviços remotos. Dois conceitos importantes nesse contexto são JSONWS e REST.
+
+### JSONWS e RPC
+
+O **JSONWS** é o mecanismo do Liferay que permite expor métodos de serviços por meio de chamadas remotas, utilizando JSON como formato de comunicação.
+
+Ele está associado ao modelo **RPC (Remote Procedure Call)**, no qual o cliente solicita a execução de uma operação disponibilizada remotamente.
+
+Por exemplo, conceitualmente, o cliente pode solicitar a execução de um método como `addEntry(...)`.
+
+Nesse modelo, a operação é apresentada principalmente como uma chamada de método.
+
+### REST e recursos
+
+Em uma API REST, o contrato é organizado em torno de recursos e operações HTTP.
+
+Por exemplo:
+
+```http
+POST /entries
+```
+
+A requisição indica que o cliente deseja criar um recurso na coleção de entradas, conforme o contrato da API.
+
+A diferença fundamental não é que um mecanismo utiliza métodos e o outro não. Ambos podem envolver métodos de programação internamente. A diferença está na maneira como a interface de comunicação é modelada e apresentada ao consumidor.
+
+| Aspecto | JSONWS / RPC | REST |
 |---|---|---|
-| Estilo | **RPC** (*Remote Procedure Call*) sobre HTTP | **REST** |
-| Ideia | Você chama **métodos remotos** dos serviços do Service Builder | Você manipula **recursos** por URL + método HTTP |
-| Acoplamento | Forte com o **banco de dados**: as entidades do Service Builder representam tabelas | Independente do banco: o contrato é definido por você |
-| Gerada por | Service Builder | **REST Builder** |
+| Modelo de interação | Chamada de operações remotas | Interação com recursos |
+| Interface | Métodos e parâmetros | URLs, métodos HTTP e representações |
+| Contrato | Operações disponibilizadas pelo serviço | Recursos, operações, parâmetros e respostas |
+| No ecossistema Liferay | Associado à exposição remota de serviços | Pode ser implementado com REST Builder |
 
-> **RPC × REST em uma frase:** no RPC você diz **o que executar** (`addEntry(...)`); no REST você diz **sobre qual recurso** e **qual verbo** (`POST /entries`). Um não é necessariamente melhor que o outro: são ferramentas diferentes, como garfo e colher.
+O JSONWS frequentemente expõe operações relacionadas aos serviços do Liferay e pode refletir conceitos internos da aplicação. Entretanto, isso não significa que ele seja uma chamada direta ao banco de dados.
 
-Como o JSONWS reflete o banco de dados, mudar uma tabela muda a API. No REST você desenha o **contrato** da API separadamente, o que dá mais liberdade e estabilidade para quem a consome.
+Da mesma forma, uma API REST pode utilizar entidades do Service Builder internamente. REST não exige que a aplicação tenha um banco de dados específico nem garante, por si só, independência total da persistência.
 
-## 1.3 OpenAPI
+**Em resumo:** RPC enfatiza a chamada de uma operação remota; REST organiza a interface em torno de recursos e das operações definidas para eles.
 
-**OpenAPI** é uma **especificação** para **descrever** APIs REST em um arquivo (normalmente YAML). Nele você declara:
+## 1.3 OpenAPI: o contrato da API
 
-- os **caminhos** (`paths`): `/foo`, `/foo/{fooId}`, `/foo/{fooId}/goos`, `/goo/{gooId}`;
-- os **métodos** de cada caminho (`get`, `post`, `put`, `patch`, `delete`);
-- os **schemas**: o formato dos objetos (`Foo` e `Goo`, com seus campos e tipos).
+O **OpenAPI** é uma especificação utilizada para descrever APIs HTTP, especialmente APIs REST, de maneira estruturada.
 
-Pense no OpenAPI como a **planta de uma casa**: ela não é a casa, mas descreve exatamente como ela deve ser. Quem lê a planta (pessoas ou ferramentas) sabe o que esperar.
+Em vez de depender exclusivamente de documentação escrita em linguagem natural, uma API pode ter seu contrato descrito em um arquivo YAML ou JSON que ferramentas conseguem interpretar.
 
-## 1.4 O que é o REST Builder
+Entre outras informações, o contrato pode definir:
 
-O **REST Builder** é um **gerador de código** do Liferay. Ele lê a "planta" (OpenAPI) e gera o código Java para você. Seus dois arquivos de entrada principais são:
+- **Paths:** os caminhos disponíveis na API, como `/foo` e `/foo/{fooId}`.
+- **Operations:** os métodos HTTP disponíveis em cada caminho, como `get`, `post`, `put`, `patch` e `delete`.
+- **Parameters:** os parâmetros aceitos, incluindo parâmetros de caminho, consulta e cabeçalho.
+- **Request bodies:** os dados que podem ser enviados em uma requisição.
+- **Responses:** as respostas e os códigos de status esperados.
+- **Schemas:** os formatos dos dados utilizados pela API, incluindo campos, tipos e estruturas.
 
-| Arquivo | O que contém |
+Na API desta atividade, os schemas `Foo` e `Goo` descrevem os modelos de dados que o cliente e o servidor utilizam para representar esses recursos.
+
+Podemos pensar no OpenAPI como a planta de uma casa: ele descreve a estrutura esperada, mas não é a própria casa.
+
+O arquivo OpenAPI também não implementa automaticamente todas as regras de negócio. Ele descreve o contrato de comunicação; o comportamento efetivo depende da implementação correspondente.
+
+## 1.4 O que é o REST Builder?
+
+O **REST Builder** é uma ferramenta do Liferay que gera código a partir da definição de uma API REST.
+
+No projeto `liferay-r3b2`, os principais arquivos de entrada são:
+
+| Arquivo | Responsabilidade |
 |---|---|
-| `rest-config.yaml` | Informações básicas da API que será gerada (nome, pacote, caminho, etc.) |
-| `rest-openapi.yaml` | A **definição OpenAPI**: schemas `Foo` e `Goo` e as interações disponíveis |
+| `rest-config.yaml` | Contém informações de configuração da API utilizada pelo gerador, como identificadores e informações de organização do projeto. |
+| `rest-openapi.yaml` | Descreve o contrato da API, incluindo caminhos, operações, parâmetros, respostas e schemas. |
 
-O comando que dispara a geração é:
+Os detalhes exatos de configuração dependem da versão e da estrutura do projeto.
+
+No projeto desta atividade, o comando utilizado para executar a geração é:
 
 ```bash
 ./gradlew headless-r3b2-impl:buildREST
 ```
 
-Resultado: dezenas de arquivos Java e de propriedades são escritos nos módulos do projeto (você vê cada um deles listado no console como `Writing ...`).
+O REST Builder lê a definição e gera classes e outros arquivos necessários à estrutura da API. Entre os resultados podem estar DTOs, interfaces de recursos, classes-base, classes de cliente e outros artefatos previstos pela configuração do projeto.
 
-Fluxo mental:
+O processo pode ser representado assim:
 
+```text
+rest-config.yaml
+        +
+rest-openapi.yaml
+        |
+        v
+   REST Builder
+        |
+        v
+Código gerado para a API
+        |
+        +----> Contratos e DTOs
+        +----> Estrutura de implementação REST
+        +----> Client JAR
+        +----> Outros artefatos previstos
 ```
-rest-openapi.yaml  ──► buildREST ──► DTOs, Resources, client, GraphQL, testes...
- (você descreve)       (gerador)       (código pronto)
-```
 
-## 1.5 Os módulos do projeto liferay-r3b2
+O conjunto exato de arquivos gerados depende da configuração e da versão utilizada.
 
-O projeto é dividido em **módulos Gradle**, cada um com um papel:
+É importante distinguir duas atividades:
 
-| Módulo | O que tem | Vai para o Liferay? |
+1. **Gerar o código:** transformar a definição da API em estruturas de programação.
+2. **Implementar o comportamento:** escrever a lógica necessária para que as operações façam o que a aplicação exige.
+
+O REST Builder automatiza boa parte da estrutura, mas não substitui o trabalho de implementar o comportamento da API.
+
+## 1.5 Os módulos do projeto `liferay-r3b2`
+
+O projeto está dividido em módulos Gradle. Cada módulo possui uma responsabilidade específica.
+
+| Módulo | Responsabilidade | Precisa ser implantado no Liferay? |
 |---|---|---|
-| `headless-r3b2-api` | Interfaces e DTOs usados **dentro** do Liferay (ex.: `FooResource` em `com.acme.headless.r3b2.resource.v1_0`) | **Sim** (deploy) |
-| `headless-r3b2-impl` | As **implementações** (`FooResourceImpl`, `GooResourceImpl`), a aplicação JAX-RS, GraphQL e a configuração OpenAPI | **Sim** (deploy) |
-| `headless-r3b2-client` | A **biblioteca cliente** (client JAR) para quem usa a API **de fora**, por HTTP (ex.: `FooResource` em `com.acme.headless.r3b2.client.resource.v1_0`) | **Não** |
-| `headless-r3b2-test` | Esqueletos de testes de integração | **Não** |
+| `headless-r3b2-api` | Contém contratos, interfaces e DTOs utilizados pela implementação no servidor. | Sim |
+| `headless-r3b2-impl` | Contém a implementação da API e os componentes necessários para disponibilizá-la no Liferay. | Sim |
+| `headless-r3b2-client` | Contém a biblioteca Java utilizada por programas clientes para consumir a API por HTTP. | Não |
+| `headless-r3b2-test` | Contém estruturas e testes relacionados ao projeto, conforme sua configuração. | Não, para o consumo normal da API |
 
-> ⚠️ Repare que existem **dois** `FooResource`, em pacotes diferentes: um no **api** (para uso dentro da JVM do Liferay) e outro no **client** (para uso externo, por HTTP). **Nesta atividade você usa o do client.**
+Os módulos `api` e `impl` participam da disponibilização da API no servidor. Já o módulo `client` permite que outro programa Java consuma essa API.
 
-## 1.6 Arquivos gerados × arquivos que você implementa
+### Por que existem dois `FooResource`?
 
-| Tipo de arquivo | Tem `@generated`? | Regenerado pelo `buildREST`? | Você edita? |
-|---|---|---|---|
-| `FooResource.java`, `GooResource.java`, `BaseFooResourceImpl.java`... | **Sim** | **Sempre** | **Não** (suas alterações seriam apagadas) |
-| `FooResourceImpl.java`, `GooResourceImpl.java` | Não | **Só se não existirem** | **Sim**: é onde você escreve a lógica |
+Neste projeto, há classes com nomes semelhantes em pacotes diferentes.
 
-Os `*ResourceImpl.java` do REST Builder são parecidos com os `*ServiceImpl.java` do Service Builder: não são regenerados e são feitos para o desenvolvedor implementar. A diferença é que o REST Builder só tem implementações **remotas** (os "resources" são como os "remote services").
+O `FooResource` do módulo `api` pertence ao lado servidor da aplicação. Ele faz parte do contrato utilizado pela implementação REST dentro do Liferay.
 
-Cada método público de `FooResourceImpl` leva `@Override`, porque ele implementa um método declarado em `BaseFooResourceImpl`, que por sua vez é gerado a partir do `rest-openapi.yaml`.
+Já o `FooResource` do módulo `client` pertence à biblioteca cliente. Ele oferece métodos Java que permitem ao programa cliente fazer requisições à API remota.
+
+A semelhança dos nomes existe porque as duas classes participam do mesmo contrato, mas suas responsabilidades são diferentes.
+
+Na atividade deste primeiro PR, o programa utiliza as classes do pacote:
+
+```java
+com.acme.headless.r3b2.client.resource.v1_0
+```
+
+Portanto, é importante conferir o pacote dos imports: o código utiliza o cliente gerado, e não a interface de recurso interna do servidor.
+
+## 1.6 Código gerado e código implementado pelo desenvolvedor
+
+O REST Builder gera estruturas que servem de base para a API. Entretanto, nem todo arquivo gerado deve ser tratado da mesma maneira.
+
+No projeto, é importante distinguir:
+
+- **Código gerado e mantido pelo gerador:** contém estruturas que podem ser substituídas quando a geração é executada novamente.
+- **Classes de implementação:** são pontos de extensão destinados ao desenvolvedor escrever a lógica específica da aplicação.
+- **Código do cliente:** contém as classes utilizadas por programas externos para consumir a API.
+
+Em geral, classes como `FooResource.java`, classes-base e DTOs gerados não devem ser editados manualmente sem uma razão específica. Alterações nesses arquivos podem ser perdidas em uma nova geração.
+
+Já classes como `FooResourceImpl.java` são pontos de implementação destinados a receber a lógica da aplicação, conforme a estrutura gerada pelo projeto.
+
+Os métodos implementados podem utilizar `@Override` para indicar que sobrescrevem métodos declarados em uma classe-base ou implementam métodos definidos por uma interface.
+
+O comportamento exato da geração e da preservação de arquivos deve ser confirmado na estrutura do projeto e na versão utilizada. Não é recomendável presumir que todos os arquivos terminados em `Impl.java`, em qualquer projeto, sejam tratados de maneira idêntica.
+
+### Qual é a relação com o Service Builder?
+
+O Service Builder também gera código e disponibiliza pontos de extensão para o desenvolvedor.
+
+Entretanto, os dois geradores atuam em responsabilidades diferentes:
+
+- **Service Builder:** gera estruturas relacionadas às entidades, à persistência e aos serviços da aplicação.
+- **REST Builder:** gera estruturas relacionadas ao contrato e à disponibilização de uma API REST, além de artefatos de cliente.
+
+O `FooResourceImpl` não deve ser confundido com uma implementação de serviço de negócio. Ele pertence à camada de exposição HTTP e pode delegar operações às camadas de serviço apropriadas.
 
 ## 1.7 A API de exemplo: Foo e Goo
 
-A API `headless-r3b2` tem **dois schemas** com um relacionamento **pai → filho**:
+A API `headless-r3b2` utiliza dois recursos de exemplo: `Foo` e `Goo`.
 
-```
-Foo  (pai)
- └── Goo  (filho: pertence a um Foo, por isso tem fooId)
+No contrato desta atividade, `Goo` está associado a `Foo`. Esse relacionamento é representado pelo campo `fooId` e pelos caminhos de API que permitem criar e listar Goos associados a um Foo.
+
+Podemos visualizar o relacionamento assim:
+
+```text
+Foo
+ |
+ +---- Goo
+ |
+ +---- Goo
+ |
+ +---- Goo
 ```
 
-| Schema | Campos usados na atividade |
+Os campos relevantes para a atividade são:
+
+| Schema | Campos utilizados |
 |---|---|
-| `Foo` | `id` (gerado pelo servidor), `name`, `description` |
-| `Goo` | `id` (gerado pelo servidor), `name`, `description`, `fooId` |
+| `Foo` | `id`, `name`, `description` |
+| `Goo` | `id`, `name`, `description`, `fooId` |
 
-Endpoints (relativos a `http://localhost:8080/o/headless-r3b2/v1.0`):
+O campo `id` identifica o recurso. Na atividade, os identificadores são obtidos a partir das respostas do servidor, de acordo com o comportamento implementado.
 
-| Operação | Método | Caminho | Método no client JAR |
+O campo `fooId` identifica o Foo ao qual um Goo está associado.
+
+### Endpoints utilizados
+
+A URL-base da API é:
+
+```text
+http://localhost:8080/o/headless-r3b2/v1.0
+```
+
+Os caminhos abaixo são relativos a essa URL-base.
+
+| Operação | Método HTTP | Caminho | Método no client JAR |
 |---|---|---|---|
 | Criar Foo | `POST` | `/foo` | `fooResource.postFoo(foo)` |
 | Listar Foos | `GET` | `/foo` | `fooResource.getFooPage()` |
 | Buscar um Foo | `GET` | `/foo/{fooId}` | `fooResource.getFoo(fooId)` |
-| Atualizar Foo (completo) | `PUT` | `/foo/{fooId}` | `fooResource.putFoo(fooId, foo)` |
-| Atualizar Foo (parcial) | `PATCH` | `/foo/{fooId}` | `fooResource.patchFoo(fooId, foo)` |
+| Atualizar Foo | `PUT` | `/foo/{fooId}` | `fooResource.putFoo(fooId, foo)` |
+| Atualizar parcialmente um Foo | `PATCH` | `/foo/{fooId}` | `fooResource.patchFoo(fooId, foo)` |
 | Apagar Foo | `DELETE` | `/foo/{fooId}` | `fooResource.deleteFoo(fooId)` |
-| Criar Goo de um Foo | `POST` | `/foo/{fooId}/goos` | `gooResource.postFooGoo(fooId, goo)` |
+| Criar Goo associado a Foo | `POST` | `/foo/{fooId}/goos` | `gooResource.postFooGoo(fooId, goo)` |
 | Listar Goos de um Foo | `GET` | `/foo/{fooId}/goos` | `gooResource.getFooGoosPage(fooId)` |
 | Buscar um Goo | `GET` | `/goo/{gooId}` | `gooResource.getGoo(gooId)` |
-| Atualizar Goo (completo) | `PUT` | `/goo/{gooId}` | `gooResource.putGoo(gooId, goo)` |
-| Atualizar Goo (parcial) | `PATCH` | `/goo/{gooId}` | `gooResource.patchGoo(gooId, goo)` |
+| Atualizar Goo | `PUT` | `/goo/{gooId}` | `gooResource.putGoo(gooId, goo)` |
+| Atualizar parcialmente um Goo | `PATCH` | `/goo/{gooId}` | `gooResource.patchGoo(gooId, goo)` |
 | Apagar Goo | `DELETE` | `/goo/{gooId}` | `gooResource.deleteGoo(gooId)` |
 
-Observe o padrão REST: o Goo é **criado e listado dentro do Foo** (`/foo/{fooId}/goos`), mas **buscado, alterado e apagado direto** pelo seu próprio id (`/goo/{gooId}`).
+Os nomes dos métodos Java correspondem ao cliente gerado para o contrato utilizado no projeto. Caso o OpenAPI seja alterado e o cliente seja gerado novamente, os métodos disponíveis podem mudar.
 
-> **PUT × PATCH:** `PUT` **substitui** o recurso inteiro (por isso, no código, o `putGoo` envia também o `fooId`); `PATCH` altera **só os campos enviados** (no código, só a `description`).
+Observe que o Goo pode ser criado e listado por meio de caminhos associados ao Foo, mas também possui um identificador próprio para operações individuais.
 
-## 1.8 API Explorer: conferindo a API no navegador
+Isso ilustra uma característica importante das APIs REST: um recurso pode participar de uma relação com outro recurso e, ainda assim, ter operações próprias.
 
-Depois que o `headless-r3b2-api` e o `headless-r3b2-impl` são **implantados (deploy)**, a API passa a existir no Liferay. Para conferir:
+### PUT e PATCH
 
-1. Abra `http://localhost:8080/o/api`.
-2. Vá em **REST Applications** e procure por **`headless-r3b2/v1.0`**.
+Os métodos `PUT` e `PATCH` são utilizados para operações de atualização, mas possuem semânticas diferentes.
 
-Antes do deploy ela **não aparece** (o Liferay ainda não conhece essa API). Depois do deploy, o API Explorer mostra todos os endpoints de Foo e Goo, com os formatos e um botão para testar cada um pela interface.
+- **PUT:** normalmente representa a substituição da representação do recurso no estado desejado pelo cliente.
+- **PATCH:** representa uma atualização parcial, conforme as regras definidas para a operação.
 
-O tutorial pede que você exercite todos os endpoints de três maneiras: **pela interface (GUI)**, com **curl** e com **Postman**. É um ótimo aquecimento: assim você enxerga o HTTP "cru" antes de escondê-lo atrás do client JAR.
+Na atividade, o exemplo de `PATCH` envia apenas o campo `description`. Já a operação `PUT` deve respeitar os campos e o comportamento definidos no contrato e na implementação.
+
+Não se deve concluir que qualquer API REST sempre substitui todos os campos de uma mesma maneira em toda operação `PUT`: é necessário consultar o contrato específico e entender como o servidor processa os dados recebidos.
+
+## 1.8 API Explorer: verificando a API no navegador
+
+O **API Explorer** do Liferay permite consultar e testar APIs disponibilizadas pelo servidor.
+
+Para verificar a API desta atividade:
+
+1. Confirme que o Liferay DXP está em execução.
+2. Implante os módulos `headless-r3b2-api` e `headless-r3b2-impl`.
+3. Acesse `http://localhost:8080/o/api`.
+4. Procure pela API `headless-r3b2/v1.0`.
+
+A API precisa estar corretamente disponibilizada no servidor para que seus endpoints possam ser executados. Se ela não aparecer, é necessário investigar a implantação, a configuração e eventuais erros no Liferay.
+
+O API Explorer permite visualizar operações e, quando configurado e autorizado, enviar requisições de teste pela interface.
+
+O tutorial também propõe exercitar os endpoints com `curl` e Postman. Essas ferramentas são úteis para entender como a API se comporta antes de utilizar o cliente Java.
+
+Por exemplo, com o API Explorer, `curl` ou Postman, é possível observar a URL, o método HTTP, os cabeçalhos, o corpo da requisição e a resposta do servidor.
+
+Essa observação ajuda a compreender o que o client JAR automatiza posteriormente.
+
+**Importante:** o API Explorer, a API implantada e o client JAR são elementos diferentes. O Explorer é uma interface para consultar e testar a API; a implantação disponibiliza a API no servidor; o client JAR fornece uma biblioteca Java para consumi-la.
 
 ## 1.9 Client JAR × OSGi Resource
 
-Há duas formas de consumir uma API gerada pelo REST Builder:
+Nesta atividade, o programa utiliza o **client JAR**. Em outro PR, o foco será o consumo do recurso OSGi dentro do próprio Liferay.
 
-| | **Client JAR** (esta atividade) | **OSGi Resource** (outro PR) |
+Embora ambos possam utilizar classes relacionadas ao mesmo contrato REST, o modo de comunicação é diferente.
+
+| Aspecto | Client JAR | OSGi Resource |
 |---|---|---|
-| Onde roda seu código | **Fora** do Liferay (um programa Java comum) | **Dentro** do Liferay (ex.: um portlet) |
-| Como a chamada acontece | Por **HTTP** | Dentro da **mesma JVM** |
-| Autenticação | Você informa usuário e senha | Você informa o usuário logado (`themeDisplay.getUser()`) |
-| Pacote do `FooResource` | `...client.resource.v1_0` | `...resource.v1_0` |
-| Custo | Maior (rede + serialização JSON) | Menor (chamada de método direta) |
+| Onde o código consumidor é executado | Em um programa Java externo | Dentro do ambiente OSGi do Liferay |
+| Como a operação é chamada | Por HTTP, através do cliente gerado | Por chamada de método dentro do ambiente Java/OSGi |
+| Autenticação | Precisa configurar credenciais ou outro mecanismo apropriado para a API remota | Pode utilizar o contexto do usuário já autenticado, conforme a implementação |
+| Pacote de referência | `...client.resource.v1_0` | `...resource.v1_0` |
+| Comunicação | Envolve requisição, resposta e serialização | Não precisa atravessar HTTP quando utiliza uma chamada local |
 
-O **client JAR** é um arquivo `.jar` com as classes do módulo `headless-r3b2-client`. Quem o usa **não precisa** ser um projeto Gradle nem rodar dentro do Liferay: basta ter o JAR no **classpath**.
+No caso do client JAR, a biblioteca não executa a implementação REST dentro do processo do cliente. Ela fornece uma interface Java para enviar requisições ao servidor.
 
-> **Classpath** é a lista de lugares onde o Java procura as classes que o seu código importa. Se o JAR do client não estiver no classpath, o `import com.acme.headless.r3b2.client...` não compila.
+No caso de um OSGi Resource utilizado dentro do Liferay, o código pode acessar componentes disponíveis no ambiente OSGi e realizar chamadas internas. Isso não significa que toda chamada local seja automaticamente mais rápida ou que esteja livre de outras operações: o custo real depende do caminho executado.
+
+### O que é um JAR?
+
+**JAR (Java Archive)** é um formato de arquivo que empacota classes Java e outros recursos.
+
+O client JAR reúne as classes geradas para facilitar o consumo da API por outros programas Java.
+
+Para utilizá-lo, o programa precisa ter acesso ao JAR e às dependências exigidas por ele.
+
+### O que é classpath?
+
+O **classpath** é o conjunto de caminhos e arquivos nos quais o Java procura classes e recursos necessários à compilação ou execução de um programa.
+
+Se o client JAR não estiver disponível no classpath — ou nas configurações equivalentes do sistema de build —, o compilador não conseguirá resolver imports como:
+
+```java
+import com.acme.headless.r3b2.client.resource.v1_0.FooResource;
+```
+
+Além disso, o JAR do cliente pode depender de outras bibliotecas. Ter apenas o arquivo principal não garante que todas as dependências necessárias estejam disponíveis.
+
+Em projetos Gradle ou Maven, essas dependências podem ser declaradas e resolvidas pelo sistema de build. Em uma compilação manual, é necessário disponibilizar os arquivos necessários explicitamente.
 
 ## 1.10 O padrão Builder
 
-No código você vai ver:
+No código da atividade, você encontrará uma construção semelhante a esta:
 
 ```java
 FooResource fooResource = FooResource.builder()
-        .authentication("test@liferay.com", "learn")
-        .build();
+    .authentication("test@liferay.com", "learn")
+    .build();
 ```
 
-Esse é o **padrão Builder**: em vez de um construtor gigante, você **configura passo a passo** (`.authentication(...)`) e finaliza com `.build()`, que devolve o objeto pronto.
+Esse código utiliza o **padrão Builder**, um padrão de projeto que permite construir e configurar objetos em etapas.
 
-Pontos importantes:
+Em vez de exigir que todos os parâmetros sejam fornecidos diretamente em um único construtor, o Builder disponibiliza métodos para configurar o objeto e, ao final, construir a instância.
 
-- `FooResource.builder()` devolve um **`FooResource.Builder`**.
-- `.authentication(usuario, senha)` configura a **Basic Authentication** (usuário e senha enviados em cada requisição).
-- `.build()` devolve o `FooResource` já pronto para uso.
-- ⚠️ Como na atividade de JavaScript, Basic Auth só é aceitável em **ambiente local de treinamento** ou sobre HTTPS.
+No exemplo:
+
+1. `FooResource.builder()` inicia o processo de construção e devolve um objeto Builder.
+2. `.authentication(...)` configura a autenticação do cliente.
+3. `.build()` constrói e devolve a instância de `FooResource`.
+
+O objeto retornado é o cliente que será utilizado para chamar as operações disponíveis na API.
+
+A implementação gerada pode oferecer outras opções de configuração. É necessário consultar as classes geradas para conhecer os métodos disponíveis e os valores padrão.
+
+### Autenticação e segurança
+
+O método `.authentication(usuario, senha)` configura a autenticação básica HTTP (Basic Authentication) no cliente gerado para esta atividade.
+
+Em termos gerais, a autenticação básica transmite as credenciais em um cabeçalho HTTP, utilizando uma representação codificada em Base64. Essa codificação não é criptografia.
+
+Por isso, credenciais não devem ser transmitidas em conexões HTTP desprotegidas em ambientes reais. A autenticação precisa ser utilizada com HTTPS e com as demais medidas de segurança apropriadas.
+
+As credenciais `test@liferay.com` e `learn` são exemplos do ambiente de treinamento, e não devem ser tratadas como credenciais universais de instalações Liferay.
 
 ## 1.11 Pré-requisitos do ambiente
 
-| Ferramenta / etapa | Para quê |
-|---|---|
-| **Liferay DXP rodando** em `localhost:8080` | O servidor que a API consulta |
-| **Projeto `liferay-r3b2`** configurado como projeto Gradle/OSGi | Ele contém os módulos `api`, `impl`, `client` e `test` |
-| **`buildREST` executado** e **`api` + `impl` implantados** | Sem isso, a API não existe no Liferay |
-| **Client JAR gerado** (`./gradlew headless-r3b2-client:jar`) | É a biblioteca que o seu código usa |
-| **JDK** (compilador `javac` e `java`) | Compilar e executar o código |
-| **Git** e conta no **GitHub** | Versionar e enviar o PR |
-| Um editor (ex.: VS Code) | Escrever o código |
+Antes de executar o código, confira os seguintes requisitos.
 
-Verifique:
+| Ferramenta ou etapa | Finalidade |
+|---|---|
+| Liferay DXP em execução | Disponibilizar a API em `localhost:8080` |
+| Projeto `liferay-r3b2` configurado | Fornecer os módulos e a definição da API |
+| REST Builder executado | Gerar as estruturas correspondentes ao contrato |
+| Módulos `api` e `impl` implantados | Disponibilizar a API no servidor |
+| Client JAR gerado | Fornecer as classes Java do cliente |
+| JDK compatível | Compilar e executar o programa Java |
+| Dependências do cliente | Permitir a compilação e execução das classes utilizadas |
+| Git e conta no GitHub | Versionar as alterações e enviar o PR |
+| Editor de código | Escrever e revisar o programa |
+
+Para verificar se Java e Git estão disponíveis no terminal:
 
 ```bash
 java -version
@@ -229,18 +476,27 @@ javac -version
 git --version
 ```
 
-E confirme no navegador que `http://localhost:8080/o/api` lista **`headless-r3b2/v1.0`**.
+O JDK deve ser compatível com a versão de Java exigida pelo projeto e pelas bibliotecas utilizadas.
+
+Antes de executar o programa, confirme também que a API `headless-r3b2/v1.0` está disponível no API Explorer e que o usuário utilizado tem as permissões necessárias para realizar as operações.
 
 ## Recursos adicionais
 
-Os arquivos abaixo aprofundam conceitos usados nesta etapa. Leia-os como complemento quando quiser explorar cada assunto com mais detalhes:
+Os materiais abaixo aprofundam conceitos usados nesta atividade. Os links levam a documentos existentes no repositório ou a referências oficiais.
 
-- [Cliente e servidor](./Cliente%20e%20Servidor.md): papéis de cliente e servidor e como trocam requisições e respostas.
-- [HTTP](./HTTP.md): métodos, cabeçalhos, corpo das mensagens e códigos de status.
-- [API](./API.md): APIs como contratos de comunicação entre sistemas.
-- [REST](./REST.md): recursos, URLs e métodos HTTP em APIs REST.
+### Fundamentos da comunicação
 
----
+- [Cliente e servidor](../JavaScript/Cliente%20e%20Servidor.md): papéis, requisições e respostas.
+- [HTTP](../JavaScript/HTTP.md): métodos, URLs, cabeçalhos, corpos e códigos de status.
+- [REST](../JavaScript/REST.md): recursos, representações e métodos HTTP.
+- [API](../JavaScript/API.md): conceito de interface e contrato entre sistemas.
+
+### Documentação oficial
+
+- [REST Builder — documentação do Liferay](https://learn.liferay.com/w/dxp/integration/headless-apis/rest-builder): documentação oficial sobre geração de APIs REST no Liferay.
+- [OpenAPI Specification](https://spec.openapis.org/oas/latest.html): especificação oficial do formato OpenAPI.
+- [HTTP — MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/HTTP): referência sobre o protocolo HTTP e suas operações.
+
 
 # Etapa 2 – O código
 
