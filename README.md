@@ -23,15 +23,15 @@ Um bom ponto de partida é o guia de início, que também explica como trabalhar
 
 ## Organização
 
-Os conceitos estão reunidos em `docs/theory/`, independentemente da trilha em que são usados. As pastas de cada trilha contêm os guias de atividade/PR e um `README.md` como índice. Os textos estão em português; nomes de arquivos e pastas usam inglês e `kebab-case`.
+Os conceitos estão reunidos em `docs/theory/`, independentemente da trilha em que são usados. As pastas de cada item contêm os guias de atividade/PR e um `README.md` como índice.
 
 ```text
 docs/
 ├── getting-started/   início e Pull Requests
 ├── theory/            conceitos compartilhados
-├── javascript/        guias de atividade/PR de JavaScript
-├── rest-builder/      guias de atividade/PR de REST Builder
-└── service-builder/   guias de atividade/PR de Service Builder
+├── javascript/        PRs de JavaScript
+├── rest-builder/      PRs de REST Builder
+└── service-builder/   PRs de Service Builder
 ```
 
 ---
@@ -42,10 +42,10 @@ docs/
 
 - [Guia de início e Pull Requests](docs/getting-started/README.md): como começar e como trabalhar com Pull Requests.
 
-### Trilhas de estudo
+### Itens do Basic
 
-- [Índice dos conceitos](docs/theory/README.md): materiais teóricos compartilhados entre as trilhas.
-- [JavaScript](docs/javascript/README.md): guias de atividade e PRs.
-- [REST Builder](docs/rest-builder/README.md): guias de atividade e PRs.
-- [Service Builder](docs/service-builder/README.md): guias de atividade e PRs.
+- [Índice dos conceitos](docs/theory/README.md)
+- [JavaScript](docs/javascript/README.md)
+- [REST Builder](docs/rest-builder/README.md)
+- [Service Builder](docs/service-builder/README.md)
 
