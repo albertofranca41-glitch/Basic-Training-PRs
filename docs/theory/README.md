@@ -10,14 +10,14 @@ Este índice reúne os materiais conceituais compartilhados para melhor entendim
 - [REST](./rest.md): recursos e princípios de APIs REST.
 - [JSON](./json.md): representação e troca de dados estruturados.
 
-## Liferay and REST Builder
-
-- [JSONWS and RPC](./jsonws-and-rpc.md): chamadas remotas de operações e o mecanismo JSONWS do Liferay.
-- [OpenAPI](./openapi.md): descrição estruturada de APIs HTTP.
-- [DTOs and Schemas](./dtos-and-schemas.md): modelos de dados e objetos de transferência.
-
 ## Liferay and Service Builder
 
 - [Liferay Request Flow](./liferay-request-flow.md): caminho de uma requisição pelas camadas da aplicação.
 - [OSGi in Liferay](./osgi-in-liferay.md): modularidade e serviços OSGi no Liferay.
 - [Service Builder Introduction](./service-builder-introduction.md): geração de serviços e persistência.
+  
+## Liferay and REST Builder
+
+- [JSONWS and RPC](./jsonws-and-rpc.md): chamadas remotas de operações e o mecanismo JSONWS do Liferay.
+- [OpenAPI](./openapi.md): descrição estruturada de APIs HTTP.
+- [DTOs and Schemas](./dtos-and-schemas.md): modelos de dados e objetos de transferência.
