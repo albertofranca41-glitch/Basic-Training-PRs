@@ -1,6 +1,6 @@
 # Theory Guides
 
-Este índice reúne os materiais conceituais compartilhados entre as trilhas. Os textos estão em português; os nomes dos arquivos e das pastas seguem o padrão inglês em `kebab-case`.
+Este índice reúne os materiais conceituais compartilhados para melhor entendimento das atividades que serão enviadas.
 
 ## Web and API Fundamentals
 
