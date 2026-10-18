@@ -46,6 +46,6 @@ docs/
 
 - [Índice dos conceitos](docs/theory/README.md)
 - [JavaScript](docs/javascript/README.md)
-- [REST Builder](docs/rest-builder/README.md)
 - [Service Builder](docs/service-builder/README.md)
+- [REST Builder](docs/rest-builder/README.md)
 
