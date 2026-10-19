@@ -354,8 +354,6 @@ Entender esse padrão uma vez é entender as seis funções.
 
 ## 2.2 Código completo comentado
 
-> A lógica é exatamente a do código da atividade; apenas padronizei a indentação e acrescentei comentários.
-
 ```javascript
 // =====================================================================
 // 1. CONFIGURAÇÃO
