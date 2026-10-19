@@ -25,7 +25,7 @@ Um bom ponto de partida é o guia de início, que também explica como trabalhar
 
 ## Organização
 
-Os conceitos estão reunidos em `docs/theory/`, independentemente da trilha em que são usados. As pastas de cada item contêm os guias de atividade/PR e um `README.md` como índice.
+Os conceitos estão reunidos em `docs/theory/`, independentemente do item em que são usados. As pastas de cada item contêm os guias de atividade/PR e um `README.md` como índice.
 
 ```text
 docs/
