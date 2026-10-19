@@ -354,6 +354,7 @@ Entender esse padrão uma vez é entender as seis funções.
 
 ## 2.2 Código completo comentado
 
+
 ```javascript
 // =====================================================================
 // 1. CONFIGURAÇÃO
