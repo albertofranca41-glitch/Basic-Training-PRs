@@ -1,4 +1,4 @@
-<h1 align="center">Liferay Basic Training</h1>
+<h1 align="center">Basic Training Liferay</h1>
 
 <p align="center">
   Guias de estudo para o Projeto Soli Deo Gloria
@@ -20,6 +20,8 @@ Os guias podem ser lidos de duas formas:
 - **Para acompanhar:** consulte o guia correspondente enquanto desenvolve o Pull Request.
 
 Um bom ponto de partida é o guia de início, que também explica como trabalhar com Pull Requests.
+
+>Os códigos deste repositório são exemplos de estudo para dar um norte aos alunos e mostrar como os conceitos teóricos podem ser aplicados na prática. Eles não devem ser seguidos cegamente: a mesma lógica pode ser implementada de várias formas, e os exemplos contém escolhas que podem ser aprimoradas ou refinadas. Use-os para compreender os conceitos e orientar sua implementação, avaliando como cada solução se aplica ao contexto da atividade.
 
 ## Organização
 
