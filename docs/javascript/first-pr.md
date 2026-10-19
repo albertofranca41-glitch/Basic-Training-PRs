@@ -23,6 +23,7 @@ Ele está dividido em **2 etapas**:
   - [1.7 fetch](#17-fetch)
   - [1.8 A Headless Delivery API do Liferay](#18-a-headless-delivery-api-do-liferay)
   - [1.9 Pré-requisitos do ambiente](#19-pré-requisitos-do-ambiente)
+- [Recursos adicionais](#recursos-adicionais)
     
 - [Etapa 2 – O código](#etapa-2--o-código)
   - [2.1 Visão geral](#21-visão-geral)
