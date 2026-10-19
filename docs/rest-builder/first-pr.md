@@ -535,7 +535,9 @@ O fluxo do `main` é:
 7. }
 ```
 
-> O `finally` é o coração da organização do código: **o que foi criado é sempre limpo no final**, mesmo se uma etapa do meio lançar exceção.
+> O bloco `try/finally` é uma proteção extra deste exercício: tenta limpar os dados de teste mesmo se uma etapa falhar. Ele **não é necessário para usar o client JAR ou executar as operações REST**; foi incluído para deixar o código mais robusto.
+
+Para entender o fluxo principal, basta acompanhar as chamadas de criação, consulta e atualização. O `finally` e os métodos de exclusão cuidam da limpeza automática dos dados de teste.
 
 ## 2.2 Código completo comentado
 
@@ -836,11 +838,9 @@ FooResource fooResource = FooResource.builder()
 
 ### Parte 3 – `Long fooId = null;` e `Long gooId = null;`
 
-Os IDs são declarados **antes** do `try` e começam como `null`. Por quê?
+Neste exemplo, os IDs são declarados **antes** do `try` e começam como `null`. Isso permite que o bloco `finally` saiba quais objetos chegaram a ser criados e podem ser apagados. Usamos `Long` (objeto), e não `long` (primitivo), porque `Long` pode representar esse estado inicial com `null`.
 
-- Eles são usados no bloco `finally`, que está **fora** do `try`; uma variável declarada dentro do `try` não existe no `finally`.
-- `null` significa "ainda não foi criado". Assim, o `finally` sabe o que precisa (ou não) ser apagado.
-- Usamos `Long` (objeto), e não `long` (primitivo), justamente porque o primitivo **não pode ser `null`**.
+O uso de `try/finally` é opcional para a atividade: ele foi escolhido para tornar o exemplo mais robusto e fazer a limpeza mesmo quando ocorre uma exceção.
 
 ### Parte 4 – O bloco `try { ... } finally { ... }`
 
@@ -852,7 +852,7 @@ try {
 }
 ```
 
-Diferente do `try/catch`, aqui **não há `catch`**: se algo falhar, a exceção continua subindo (e o programa mostra o erro), mas o `finally` **sempre executa antes**. Resultado: **não ficam Foos e Goos "órfãos"** de teste no seu Liferay, mesmo quando algo dá errado no meio.
+Diferente do `try/catch`, aqui **não há `catch`**: se algo falhar, a exceção continua subindo (e o programa mostra o erro), mas o `finally` **sempre executa antes**. Neste exercício, isso ajuda a evitar Foos e Goos de teste esquecidos no Liferay quando algo dá errado no meio. Esse bloco é uma medida de robustez, não um requisito para as chamadas do client JAR.
 
 É por isso também que `main` declara `throws Exception`: as exceções que não tratamos aqui são repassadas.
 
