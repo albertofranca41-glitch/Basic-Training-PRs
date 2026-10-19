@@ -317,7 +317,7 @@ Os arquivos abaixo aprofundam os conceitos apresentados nesta etapa. Leia-os com
 - [HTTP](../theory/http.md): detalha métodos, cabeçalhos, corpo das mensagens e códigos de status.
 - [API](../theory/api.md): apresenta APIs como contratos de comunicação entre sistemas e como são usadas no backend.
 - [REST](../theory/rest.md): aprofunda recursos, URLs e métodos HTTP em APIs REST.
-- [JSON](../../theory/json.md): Aprofunda o conceito de JSON.
+- [JSON](../theory/json.md): Aprofunda o conceito de JSON.
 
 ---
 
