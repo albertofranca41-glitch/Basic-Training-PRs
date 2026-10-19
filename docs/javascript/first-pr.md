@@ -298,14 +298,13 @@ A listagem devolve um objeto **paginado**:
 | Ferramenta | Para quê |
 |---|---|
 | **Liferay DXP rodando** em `localhost:8080` | O servidor que a API consulta |
-| **Node.js 18 ou superior** | Executar o JavaScript no terminal (traz `fetch` e `btoa` nativos) |
+| **Navegador moderno** | Abrir o HTML de teste e executar o JavaScript no contexto da página |
 | **Git** e conta no **GitHub** | Versionar e enviar o PR |
 | Um editor (ex.: VS Code) | Escrever o código |
 
 Verifique:
 
 ```bash
-node --version    # deve mostrar v18 ou maior
 git --version
 ```
 
@@ -632,7 +631,7 @@ Passo a passo de qualquer função (usando `postBlog` como exemplo):
 | 6 | `body: JSON.stringify({...})` | Converte o objeto em texto JSON para enviar |
 | 7 | `if (!res.ok) throw new Error(...)` | Se o status não for 2xx, **lança** um erro manualmente |
 | 8 | `const data = await res.json()` | Lê o corpo da resposta e converte em objeto JS |
-| 9 | `console.log(data)` | Mostra o resultado no terminal |
+| 9 | `console.log(data)` | Mostra o resultado no console do navegador |
 | 10 | `return data.id` | Devolve o id do blog criado (uma `async` function devolve isso dentro de uma Promise) |
 | 11 | `} catch (err) {` | Recebe qualquer erro (rede, status ruim, JSON inválido) |
 | 12 | `console.error(err); return null;` | Registra o erro e devolve `null` para quem chamou saber que falhou |
@@ -669,7 +668,7 @@ Se `id` for `42`, vira `http://localhost:8080/o/headless-delivery/v1.0/blog-post
 
 ## 2.4 Como executar e testar
 
-O arquivo só **define** funções; nada roda até você **chamá-las**. Acrescente no final do arquivo uma função principal que executa o ciclo completo, na ordem:
+O arquivo só **define** funções; nada roda até você **chamá-las**. Para executar o ciclo completo em sequência, pode acrescentar ao final do arquivo uma função principal como esta:
 
 ```javascript
 // =====================================================================
@@ -694,13 +693,13 @@ const main = async () => {
 main();
 ```
 
-> Cada `await` faz a função esperar a anterior terminar. Isso é importante: não dá para buscar o blog antes de ele ter sido criado.
+Cada `await` faz a função esperar a anterior terminar. Isso é importante: não dá para buscar o blog antes de ele ter sido criado.
 
-Para testar as alterações no próprio navegador, use o arquivo [`test-blogs.html`](test-blogs.html) que acompanha esta pasta. Abra o link para consultar ou baixar o arquivo e copie-o para a pasta do seu JavaScript:
+Para validar o PR, porém, **priorize o teste pelo navegador com o arquivo HTML**: a documentação oficial do Basic Training pede que a atividade seja testada dessa forma. Use o [`test-blogs.html`](test-blogs.html) que acompanha esta pasta. O HTML chama cada função CRUD pelos botões, permitindo testar as operações e acompanhar as requisições feitas pelo navegador:
 
 1. Deixe o **Liferay rodando** em `localhost:8080` e confirme o **ID do seu site**. Ajuste `urlBlogPostings` no seu JavaScript se o ID for diferente de `20117`.
 2. Copie `test-blogs.html` para a pasta onde está o seu arquivo `PR.js` (ou o JavaScript com as funções CRUD). O HTML carrega `./PR.js`, então os dois arquivos precisam ficar lado a lado. Se o seu arquivo tiver outro nome, altere o atributo `src` da tag `<script>` no HTML.
-3. Para usar os botões do HTML, deixe as funções disponíveis no escopo global e não execute `main()` automaticamente ao carregar o JavaScript. O HTML chama cada operação separadamente.
+3. Ao testar pelo HTML, deixe as funções CRUD disponíveis para ele e não execute `main()` automaticamente ao carregar o JavaScript. O HTML chama cada operação separadamente.
 4. Abra a cópia de `test-blogs.html` no navegador. Use **Criar blog** e **Listar blogs** para testar; para buscar, atualizar ou excluir, informe antes um ID no campo. Lembre-se de que excluir remove o blog do Liferay.
 5. Abra as ferramentas do desenvolvedor com **F12** (ou clique com o botão direito e escolha **Inspecionar**). Na aba **Console**, veja os `console.log`/erros; na aba **Network (Rede)**, acompanhe as requisições, respostas e códigos HTTP. O resultado da operação também aparece na página.
 
@@ -735,11 +734,10 @@ Depois que tudo funcionar, estas melhorias deixam o código mais profissional (e
 | `Error: 404` | URL ou `id` errados; site inexistente | Confira o site ID e o id do blog |
 | `Error: 400` | Corpo inválido ou faltando campo obrigatório | Envie `headline` e `articleBody` no `POST`/`PUT` |
 | `Error: 403` | Usuário sem permissão | Use um usuário com permissão no site |
-| `TypeError: fetch failed` / `ECONNREFUSED` | Liferay desligado ou porta errada | Suba o Liferay e confira `localhost:8080` |
-| `fetch is not defined` | Node antigo | Atualize para Node 18+ |
+| `Failed to fetch` | Liferay desligado, endereço incorreto ou bloqueio de CORS | Confira `localhost:8080`, o site ID e as configurações de CORS do tutorial |
 | `Unexpected end of JSON input` | Tentou ler JSON de resposta sem corpo (204) | Trate o `204` antes do `res.json()` |
-| Nada aparece no terminal | Esqueceu de **chamar** as funções | Adicione o `main()` |
-| `undefined` no id | `postBlog` falhou e devolveu `null` | Veja o erro impresso e corrija a criação |
+| Os botões não chamam as funções | O JavaScript não carregou ou as funções não estão disponíveis para o HTML | Confira o nome e o caminho do arquivo JavaScript no atributo `src` e deixe as funções acessíveis ao HTML |
+| `undefined` no id | `postBlog` falhou e devolveu `null` | Veja o erro no console do navegador e corrija a criação |
 
 ### Para praticar
 
