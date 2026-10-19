@@ -310,6 +310,8 @@ O fluxo do `main` é:
 8. }
 ```
 
+> O bloco `try/finally` e os métodos de exclusão são proteções extras deste exercício: tentam limpar os dados de teste mesmo se alguma operação falhar. **Não são necessários para usar o client JAR ou executar as operações de CRUD**; foram incluídos para deixar o código mais robusto.
+
 > Diferença em relação ao primeiro PR: lá o `main` chamava cada `GET`/`PUT`/`PATCH` diretamente. Aqui, cada recurso tem **um método de CRUD** que executa o ciclo inteiro e devolve o `id` criado. O `main` fica curto e só orquestra.
 
 ## 2.2 Código completo comentado
@@ -882,6 +884,8 @@ Long kbArticleId = null;
 ```
 
 Mesmo raciocínio do primeiro PR: os IDs são declarados **antes** do `try` e começam como `null`, para que o `finally` saiba **o que chegou a ser criado**. Usa-se `Long` (objeto), e não `long` (primitivo), porque só o objeto aceita `null`.
+
+O uso de `try/finally` é opcional para a atividade. Ele e a lógica de exclusão foram incluídos para tornar o exemplo mais robusto e tentar limpar os recursos de teste mesmo quando ocorre uma exceção.
 
 ### Parte 5 – O `try { ... } finally { ... }` e a ordem de exclusão
 
