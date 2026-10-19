@@ -1,4 +1,4 @@
-<h1 align="center">Basic Training Liferay</h1>
+<h1 align="center">Liferay Basic Training</h1>
 
 <p align="center">
   Guias de estudo para o Projeto Soli Deo Gloria
