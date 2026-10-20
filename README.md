@@ -21,7 +21,7 @@ Os guias podem ser lidos de duas formas:
 
 Um bom ponto de partida é o guia de início, que também explica como trabalhar com Pull Requests.
 
->Aviso: Os códigos deste repositório são exemplos de estudo para dar um norte aos alunos e mostrar como os conceitos teóricos podem ser aplicados na prática. Eles não devem ser seguidos cegamente: a mesma lógica pode ser implementada de várias formas, e os exemplos contém escolhas que podem ser aprimoradas ou refinadas. Use-os para compreender os conceitos e orientar sua implementação, avaliando como cada solução se aplica ao contexto da atividade.
+>Aviso: Os códigos deste repositório são exemplos de estudo, criados para orientar os alunos e mostrar como os conceitos teóricos podem ser aplicados na prática. Eles não devem ser seguidos cegamente: a mesma lógica pode ser implementada de várias formas, e os exemplos contêm escolhas que podem ser aprimoradas ou refinadas. Nenhum dos códigos que montei é perfeito; vários aspectos podem ser melhorados. Use-os para compreender os conceitos e orientar sua implementação, jamais como muleta para evitar o esforço de encontrar soluções para os problemas do seu próprio código.
 
 ## Organização
 
