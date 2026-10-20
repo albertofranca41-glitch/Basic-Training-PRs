@@ -1,8 +1,8 @@
 # Segundo PR de JavaScript
 
-## Etapa 3 – O código
+## Etapa 2 – O código
 
-### 3.1 Visão geral
+### 2.1 Visão geral
 
 O arquivo permite selecionar um arquivo no navegador e enviá-lo para o Documents and Media do Liferay usando a Headless Delivery API.
 
@@ -32,7 +32,7 @@ O fluxo geral é:
 5. `uploadDoc(file)` prepara os dados e envia a requisição.
 6. A resposta é exibida na página.
 
-### 3.2 Código completo comentado
+### 2.2 Código completo comentado
 
 A lógica é a mesma da atividade; apenas organizei a indentação e acrescentei comentários para facilitar o estudo.
 
@@ -109,8 +109,10 @@ A lógica é a mesma da atividade; apenas organizei a indentação e acrescentei
       // Converte a resposta JSON em um objeto JavaScript.
       const data = await res.json();
 
-      // Exibe a resposta da API na página.
-      output.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+      // Exibe a resposta da API como texto, sem interpretá-la como HTML.
+      const pre = document.createElement("pre");
+      pre.textContent = JSON.stringify(data, null, 2);
+      output.replaceChildren(pre);
     } catch (err) {
       console.error(err);
     }
@@ -142,7 +144,7 @@ A lógica é a mesma da atividade; apenas organizei a indentação e acrescentei
 </html>
 ```
 
-### 3.3 Explicação por partes
+### 2.3 Explicação por partes
 
 ### Parte 1 – Elementos HTML e DOM
 
@@ -224,14 +226,16 @@ if (!res.ok) {
 
 const data = await res.json();
 
-output.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+const pre = document.createElement("pre");
+pre.textContent = JSON.stringify(data, null, 2);
+output.replaceChildren(pre);
 ```
 
 Depois da requisição, o código verifica se a resposta HTTP indica sucesso. Se não indicar, lança um erro, que será tratado pelo `catch`.
 
 Quando a resposta contém JSON, `res.json()` converte esse conteúdo em um objeto JavaScript. Já `JSON.stringify(data, null, 2)` transforma o objeto em texto formatado, facilitando a leitura na página.
 
-**Atenção:** esse trecho pressupõe que o endpoint retorna um corpo JSON. Se a API responder sem conteúdo, será necessário tratar esse caso antes de chamar `res.json()`. Além disso, como a resposta é inserida com `innerHTML`, em um código de produção seria mais seguro criar um elemento `<pre>` e inserir o texto com `textContent`, evitando interpretar o conteúdo retornado como HTML.
+**Atenção:** esse trecho pressupõe que o endpoint retorna um corpo JSON. Se a API responder sem conteúdo, será necessário tratar esse caso antes de chamar `res.json()`. O `<pre>` exibe o JSON formatado, e `textContent` o insere como texto, sem interpretá-lo como HTML.
 
 ### Parte 5 – Evento `submit`
 
@@ -259,7 +263,7 @@ O `addEventListener()` registra uma função que será executada quando ocorrer 
 
 Essa separação deixa cada parte com uma responsabilidade clara: o evento trata da interação com o usuário, enquanto `uploadDoc()` cuida da comunicação com a API.
 
-### 3.4 Como executar e testar
+### 2.4 Como executar e testar
 
 1. Deixe o Liferay rodando em `localhost:8080` e confirme o ID do site. Se necessário, ajuste `urlPostDoc`.
 2. Salve o código em um arquivo HTML, por exemplo, `upload-document.html`.

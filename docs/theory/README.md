@@ -14,6 +14,7 @@ Este índice reúne os materiais conceituais compartilhados para melhor entendim
 
 - [Liferay Request Flow](./liferay-request-flow.md): caminho de uma requisição pelas camadas da aplicação.
 - [OSGi in Liferay](./osgi-in-liferay.md): modularidade e serviços OSGi no Liferay.
+- [Portlet](./portlet.md): conceito, ciclo de vida e integração de portlets no Liferay.
 - [Service Builder Introduction](./service-builder-introduction.md): geração de serviços e persistência.
   
 ## Liferay and REST Builder
