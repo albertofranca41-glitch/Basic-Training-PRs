@@ -1008,30 +1008,18 @@ java -classpath .:../headless-r3b2-client/build/libs/* Test
 
 **Dica:** para ver o efeito de cada passo no Liferay, use o API Explorer (`http://localhost:8080/o/api`) em paralelo, ou rode temporariamente o programa sem o `finally` de exclusão e confira os registros criados.
 
-## 2.5 Como enviar o PR
 
-O tutorial pede: *"Modifique o arquivo Java para usar o client JAR para acessar todos os endpoints relacionados a foos e goos. Envie um pull request do seu arquivo para o **brianchandotcom**."*
-
-Checklist antes de enviar:
-
-1. **Todos** os endpoints de Foo e Goo estão cobertos (os 12 da tabela da seção 1.7).
-2. O programa **compila e executa** sem erros, e a saída mostra cada operação.
-3. As credenciais são as do ambiente **local de treinamento** (nunca credenciais reais).
-4. O arquivo enviado é apenas o `.java` modificado (não envie `.class`, JARs nem a pasta `build`).
-5. Siga o fluxo habitual de Git do curso: sincronize o fork, crie o branch, faça o commit e abra o PR para o Brian.
-
-## 2.6 Pontos de melhoria
+## 2.5 Pontos de melhoria
 
 Depois que tudo funcionar, estas melhorias deixam o código mais profissional:
 
 1. **Retornar os dados.** Os métodos `get*` só imprimem. Devolver o objeto (`return fooResource.getFoo(fooId);`) permite reaproveitá-lo, por exemplo para **verificar** que o `PATCH` alterou só a descrição.
 2. **Validar, não só imprimir.** Compare os campos recebidos com os esperados (ex.: após o `PATCH`, `name` deve continuar `"Different name"`).
 3. **Evitar valores repetidos.** `"test@liferay.com"` e `"learn"` aparecem duas vezes. Guarde-os em constantes (`private static final String`).
-4. **Credenciais.** Aqui são as do ambiente local de treinamento, então é aceitável. Em projetos reais, **nunca** versione senhas: use variáveis de ambiente.
 5. **Mensagens de erro mais claras** nos `catch`, incluindo a mensagem da exceção (`e.getMessage()`).
 6. **Pergunta do tutorial:** qual é o **benefício** de invocar um serviço dentro da JVM (OSGi Resource) em vez de por HTTP (client JAR)? Pense nos custos de rede e de serialização JSON que o client JAR paga em toda chamada.
 
-## 2.7 Erros comuns
+## 2.6 Erros comuns
 
 | Sintoma | Causa provável | Como resolver |
 |---|---|---|
