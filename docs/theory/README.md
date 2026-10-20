@@ -19,6 +19,7 @@ Este índice reúne os materiais conceituais compartilhados para melhor entendim
   
 ## Liferay and REST Builder
 
+- [REST Builder no Liferay](./rest-builder.md): ciclo de geração, módulos da API e diferença entre Resources do servidor e do cliente.
 - [JSONWS and RPC](./jsonws-and-rpc.md): chamadas remotas de operações e o mecanismo JSONWS do Liferay.
 - [OpenAPI](./openapi.md): descrição estruturada de APIs HTTP.
 - [DTOs and Schemas](./dtos-and-schemas.md): modelos de dados e objetos de transferência.

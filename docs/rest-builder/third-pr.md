@@ -391,6 +391,7 @@ Antes de começar, confirme que a API `headless-r3b2/v1.0` aparece no API Explor
 
 ## Recursos adicionais
 
+- [REST Builder no Liferay](../theory/rest-builder.md): módulos da API e distinção entre Resources do servidor e do cliente.
 - [Cliente e servidor](../theory/client-server.md): papéis, requisições e respostas.
 - [HTTP](../theory/http.md): métodos, URLs, cabeçalhos, corpos e códigos de status.
 - [REST](../theory/rest.md): recursos, representações e métodos HTTP.

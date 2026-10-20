@@ -264,6 +264,7 @@ git --version
 
 Estes materiais aprofundam os conceitos da atividade e já foram citados no guia do primeiro PR:
 
+- [REST Builder no Liferay](../theory/rest-builder.md): módulos gerados e papel do client JAR no consumo de uma API.
 - [JSON](../theory/json.md)
 - [OpenAPI](../theory/openapi.md)
 - [DTOs e Schemas](../theory/dtos-and-schemas.md)

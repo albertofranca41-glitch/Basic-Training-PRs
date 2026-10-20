@@ -198,6 +198,7 @@ Antes de executar a atividade, confirme:
 
 - [Document API Basics — Liferay Learn](https://learn.liferay.com/en/w/dxp/integration/headless-apis/digital-asset-management-apis/document-api-basics): upload, consulta, atualização e exclusão de documentos; inclui exemplos de `DocumentResource` e pastas.
 - [Knowledge Base API Basics — Liferay Learn](https://learn.liferay.com/w/dxp/integration/headless-apis/content-management-apis/knowledge-base-api-basics): criação e consulta de artigos e operações por ID.
+- [REST Builder no Liferay](../theory/rest-builder.md): módulos da API e distinção entre Resources do servidor e do cliente.
 - [API Explorer do seu ambiente](http://localhost:8080/o/api): confira os endpoints, schemas e operações presentes na versão instalada (Funciona somente se o container Liferay estiver rodando e se você fez o login corretamente da sua conta `test@liferay.com`).
 - [Portlet](../theory/portlet.md), [REST](../theory/rest.md), [HTTP](../theory/http.md), [DTOs e Schemas](../theory/dtos-and-schemas.md), [API](../theory/api.md) e [JSON](../theory/json.md): conceitos já trabalhados nos guias anteriores.
 

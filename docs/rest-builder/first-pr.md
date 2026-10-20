@@ -486,6 +486,7 @@ Os materiais abaixo aprofundam os conceitos da atividade. Os quatro primeiros do
 
 ### Conceitos de REST Builder
 
+- [REST Builder no Liferay](../theory/rest-builder.md): ciclo de geração, módulos `api`, `impl` e `client`, e diferença entre Resources do servidor e do cliente.
 - [JSON](../theory/json.md): formato usado para representar e transportar dados entre sistemas.
 - [JSONWS e RPC](../theory/jsonws-and-rpc.md): chamadas remotas de operações e sua relação com o JSONWS do Liferay.
 - [OpenAPI](../theory/openapi.md): descrição estruturada dos caminhos, operações, parâmetros e dados de uma API.
