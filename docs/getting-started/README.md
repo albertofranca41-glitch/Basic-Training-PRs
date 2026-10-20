@@ -30,15 +30,33 @@ Antes de tudo, vale entender os dois remotes envolvidos nesse fluxo:
 | **`upstream`** | O repositório original, de onde as atividades partem | Fonte da verdade — nunca recebe push direto |
 | **`origin`** | O seu fork (cópia pessoal no seu GitHub) | Onde você envia (`push`) suas branches e de onde abre o PR |
 
-> 💡 **No seu caso:** o `upstream` costuma apontar para o repositório da atividade (por exemplo, sob a conta **brianchandotcom**), enquanto o `origin` é o seu fork pessoal desse repositório.
+> 💡 **No seu caso:** o `upstream` deve apontar para o repositório original da atividade, sob a conta **brianchandotcom**, enquanto o `origin` deve apontar para o seu fork pessoal.
 
-Se ainda não tiver o `upstream` configurado localmente, adicione uma única vez com:
+Se o `upstream` já existir, mas apontar para a URL errada, corrija-o com:
 
 ```bash
-git remote add upstream <URL-do-repositorio-original>
+git remote set-url upstream https://github.com/brianchandotcom/liferay-basic-training.git
 ```
 
-Você pode conferir os remotes atuais a qualquer momento com `git remote -v`.
+Se o remote `upstream` ainda não existir, adicione-o em vez disso:
+
+```bash
+git remote add upstream https://github.com/brianchandotcom/liferay-basic-training.git
+```
+
+Configure o `origin` para apontar ao seu fork. Substitua `<seu-usuario>` pelo seu nome de usuário no GitHub:
+
+```bash
+git remote set-url origin https://github.com/<seu-usuario>/liferay-basic-training.git
+```
+
+Se o remote `origin` ainda não existir, adicione-o com a mesma URL do seu fork:
+
+```bash
+git remote add origin https://github.com/<seu-usuario>/liferay-basic-training.git
+```
+
+Você pode conferir as URLs configuradas a qualquer momento com `git remote -v`. O `upstream` deve mostrar o repositório `brianchandotcom`; o `origin`, o seu usuário do GitHub.
 
 ---
 
