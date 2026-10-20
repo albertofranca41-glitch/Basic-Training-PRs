@@ -111,7 +111,7 @@ Na atividade:
 1. **Tudo é um recurso**, identificado por uma URL (um blog, um usuário, um produto).
 2. Você usa os **métodos HTTP** para dizer o que fazer com o recurso (`GET`, `POST`...).
 3. Os dados trafegam em um formato padrão, normalmente **JSON**.
-4. O servidor é ***stateless***: cada requisição traz tudo o que o servidor precisa saber (inclusive a autenticação); ele não "lembra" da requisição anterior.
+4. O servidor é ***stateless***: para processar uma requisição, não depende de estado de sessão do cliente guardado entre requisições. Cada requisição deve trazer o contexto necessário para ser entendida; a autenticação pode ser enviada em cada uma, mas isso é um aspecto relacionado, não a definição de *stateless*.
 
 Exemplo de como as URLs REST costumam ser organizadas:
 

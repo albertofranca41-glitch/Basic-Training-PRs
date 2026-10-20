@@ -2,7 +2,7 @@
 
 Este guia continua o guia do primeiro PR. Lá você implementou consultas para `H7G5Entry` usando os **finders** gerados pelo Service Builder, dividiu a lógica entre Local Service e Remote Service e testou tudo com um portlet e com `curl`.
 
-Nesta segunda parte, a atividade pede que você **explore `DynamicQuery` para substituir o uso dos finders** nas consultas. A motivação é entender uma alternativa mais flexível: os finders geram consultas SQL fixas, que o banco consegue otimizar com índices, enquanto as dynamic queries dão ao desenvolvedor mais maneiras de recuperar dados.
+Nesta segunda parte, a atividade pede que você **explore `DynamicQuery` para substituir o uso dos finders** nas consultas. A motivação é entender uma alternativa mais flexível: os finders são declarados previamente para consultas conhecidas, enquanto as dynamic queries permitem montar combinações de filtros em tempo de execução. O desempenho de ambas depende da consulta resultante, dos índices disponíveis e do plano escolhido pelo banco; nenhum dos dois mecanismos é sempre mais rápido.
 
 Como a arquitetura, o `service.xml`, o Remote Service e o JSONWS já foram explicados no primeiro guia, aqui o foco é **a teoria de DynamicQuery** e **o código que mudou**.
 
@@ -87,14 +87,14 @@ Nesta atividade só usamos `eq` e `conjunction`.
 | Aspecto | Finder (1º PR) | DynamicQuery (2º PR) |
 |---|---|---|
 | Onde é definido | No `service.xml`, antes do `buildService` | No código Java, em tempo de execução |
-| SQL | Fixo, gerado pelo Service Builder | Montado a cada chamada |
-| Índices | O Service Builder cria índices SQL para as colunas dos finders | Não cria índices por conta própria |
+| Consulta | O finder é declarado no `service.xml` e sua implementação é gerada | A estrutura da consulta é montada no código em tempo de execução |
+| Índices | A disponibilidade de índices depende do esquema e da configuração do banco | A mesma regra se aplica; o banco pode usar índices compatíveis com a consulta |
 | Resultado único | `findBy...` devolve a entidade ou lança `NoSuchH7G5EntryException` | Devolve sempre uma lista; a exceção precisa ser lançada manualmente |
 | Valores nulos | Trata `null` e texto vazio de forma especial (`IS NULL`) | `eq` com `null` não corresponde a nenhum registro |
 | Ordenação | Segue a ordenação padrão definida para a entidade, se houver | Nenhuma, a menos que você adicione uma ordem |
 | Flexibilidade | Só as combinações declaradas no `service.xml` | Qualquer combinação de filtros |
 
-> **Sobre os índices:** eles existem porque os finders continuam declarados no `service.xml`. As colunas continuam indexadas, mas o índice é consequência do finder, não da DynamicQuery. Uma consulta nova, com colunas que nenhum finder cobre, não teria esse benefício.
+> **Sobre desempenho:** índices pertencem ao banco de dados e não são exclusivos de finders. O otimizador pode utilizá-los para uma consulta criada por finder ou por `DynamicQuery`, se forem adequados ao SQL resultante. Para comparar desempenho, é preciso considerar a consulta gerada, os índices disponíveis e o plano de execução.
 
 ## 1.4 Pontos positivos e negativos
 
@@ -107,11 +107,11 @@ Nesta atividade só usamos `eq` e `conjunction`.
 
 **Pontos negativos**
 
-- Sem os índices e o SQL otimizado dos finders, consultas em tabelas grandes podem ser mais lentas.
+- Em consultas complexas ou sobre tabelas grandes, pode ser necessário inspecionar o SQL e o plano de execução para avaliar o desempenho e os índices adequados.
 - O tratamento de "não encontrado" é responsabilidade do desenvolvedor.
 - Os nomes de propriedade são strings: um erro de digitação só aparece em tempo de execução, não na compilação.
 - Casos como valores nulos e ordenação precisam ser tratados explicitamente.
-- A consulta é montada a cada chamada, o que gera mais código repetido que um finder.
+- É necessário montar explicitamente as condições no código, o que pode aumentar a complexidade em consultas com muitos filtros.
 
 Por isso, a regra prática é: **use finders para consultas frequentes e previsíveis; use DynamicQuery quando a consulta precisa de mais flexibilidade.**
 
@@ -178,9 +178,9 @@ import org.osgi.service.component.annotations.Component;
  *
  * <ul>
  * <li>
- * O finder gerado cria uma consulta SQL fixa, que o banco pode otimizar com
- * índices. A <code>DynamicQuery</code> é montada em tempo de execução, o que
- * dá mais liberdade para combinar filtros, mas sem esse benefício.
+ * O finder é declarado previamente, enquanto a <code>DynamicQuery</code> é
+ * montada em tempo de execução. O desempenho de ambas depende da consulta
+ * resultante, dos índices disponíveis e do plano escolhido pelo banco.
  * </li>
  * <li>
  * Nos finders de retorno único, o Service Builder lança

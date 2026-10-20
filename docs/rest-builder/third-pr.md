@@ -6,7 +6,7 @@ Ele está dividido em **2 etapas**:
 
 | Etapa | O que você vai aprender |
 |---|---|
-| **Etapa 1 – Teoria** | O que é um portlet e qual é a função dele aqui, OSGi (`@Component` e `@Reference`), Factory e Builder do lado do servidor, `ThemeDisplay`, autenticação por usuário, e **tudo o que muda em relação ao `Test.java`** do primeiro PR |
+| **Etapa 1 – Teoria** | O que é um portlet e qual é a função dele aqui, OSGi (`@Component` e `@Reference`), Factory e Builder do lado do servidor, `ThemeDisplay`, contexto do usuário e permissões, e **tudo o que muda em relação ao `Test.java`** do primeiro PR |
 | **Etapa 2 – O código** | O código completo do `R3B2Portlet`, comentado, explicado parte por parte, e como criar o módulo, implantar e conferir o resultado |
 
 
@@ -42,7 +42,7 @@ Ele está dividido em **2 etapas**:
 
 # Etapa 1 – Teoria
 
-No primeiro PR, o código Java era um programa **externo** ao Liferay, que conversava com a API por **HTTP**. Agora o código passa a rodar **dentro** do Liferay. Isso muda **onde** o código roda, **como** ele é iniciado, **como** ele se autentica e **como** ele obtém o `FooResource`. Esta etapa explica cada uma dessas mudanças.
+No primeiro PR, o código Java era um programa **externo** ao Liferay, que conversava com a API por **HTTP**. Agora o código passa a rodar **dentro** do Liferay. Isso muda **onde** o código roda, **como** ele é iniciado e **como** ele obtém o `FooResource` e recebe o contexto do usuário. Esta etapa explica cada uma dessas mudanças.
 
 ## 1.1 Revisão rápida: o que você já sabe do PR anterior
 
@@ -108,7 +108,7 @@ Pense assim: **o `doView` é o novo `main`**, e **o portlet é o "palco" que o L
 
 > Essa comparação vale para este exercício: `doView` não é um ponto de entrada único como `main`; é chamado pelo Liferay quando o portlet precisa ser renderizado.
 
-Isso também explica por que o portlet nos dá algo que o programa externo não tinha: o **contexto do portal**. Ao ser chamado pelo Liferay durante a renderização de uma página, o portlet recebe o `RenderRequest`, de onde se obtém o **usuário logado** (seção 1.7). É esse usuário que será usado para executar as operações, sem precisar de usuário e senha no código.
+Isso também explica por que o portlet nos dá algo que o programa externo não tinha: o **contexto do portal**. Ao ser chamado pelo Liferay durante a renderização de uma página, o portlet recebe o `RenderRequest`, de onde se obtém o **usuário logado** (seção 1.7). Esse usuário é fornecido como contexto aos resources, sem precisar colocar credenciais HTTP no código.
 
 > Neste exercício o portlet é um **veículo** para exercitar o OSGi Resource. Em uma aplicação real, um portlet existiria para exibir ou coletar informações do usuário.
 
@@ -198,15 +198,15 @@ R3B2Portlet:  _fooResourceFactory.create()  ->  .user(usuário)  ->  .build()
 
 ### Por que existe uma Factory?
 
-Um `FooResource` do lado do servidor precisa saber **para qual usuário** está executando (para checar permissões, por exemplo). Esse usuário só é conhecido **no momento da requisição**. Então, em vez de o OSGi injetar um `FooResource` pronto e fixo, ele injeta a **Factory**, e você cria um `FooResource` sob medida **a cada requisição**, informando o usuário com `.user(...)`.
+O `FooResource` do lado do servidor pode precisar do contexto do usuário associado à requisição, por exemplo, para que a implementação aplique verificações de permissão. Esse usuário só é conhecido **no momento da requisição**. Então, em vez de o OSGi injetar um `FooResource` pronto e fixo, ele injeta a **Factory**, e você cria um `FooResource` para aquela execução, informando o usuário com `.user(...)`. A chamada a `.user(...)` fornece esse contexto; não garante, por si só, que toda operação faça uma verificação de autorização.
 
 ### Comparando os dois Builders
 
 | Aspecto | `FooResource.builder()` (client) | `_fooResourceFactory.create()` (OSGi) |
 |---|---|---|
 | Como se obtém o Builder | Método estático `builder()` | Chamando `create()` na Factory injetada |
-| Informa quem é o usuário | `.authentication(login, senha)` | `.user(User)` |
-| O que é enviado ao servidor | Credenciais em um cabeçalho HTTP | Nada: o objeto `User` é usado diretamente na JVM |
+| Como o contexto do usuário é fornecido | Credenciais configuradas para autenticação HTTP | `.user(User)` associa o usuário ao contexto local do resource |
+| Comunicação desse contexto | Credenciais são enviadas em cabeçalhos HTTP | O objeto `User` é fornecido dentro da JVM; não há cabeçalho HTTP |
 | Termina com | `.build()` | `.build()` |
 
 O `.build()` é igual nos dois casos: o padrão **Builder** continua o mesmo, e só mudam a origem do Builder e a configuração do usuário. O Builder gerado pode oferecer outras opções além de `.user(...)`; consulte a classe gerada em `headless-r3b2-api` para conhecê-las.
@@ -232,12 +232,12 @@ Esta é uma das mudanças mais importantes em relação ao `Test.java`.
 |---|---|---|
 | Quem faz as operações | O usuário cujas credenciais estão no código | O **usuário logado** que abriu a página |
 | Credenciais no código | Sim (`"test@liferay.com"`, `"learn"`) | **Não** |
-| Como o Liferay identifica o usuário | Basic Authentication (cabeçalho HTTP) | O objeto `User` repassado em `.user(...)` |
+| Como o contexto do usuário chega ao resource | Basic Authentication na requisição HTTP | O objeto `User` fornecido em `.user(...)` |
 
 Duas consequências:
 
 1. **Não há senha no código.** Isso elimina o risco de enviar credenciais em um PR ou de deixá-las expostas no repositório.
-2. **As permissões são as do usuário logado.** Se o usuário que abriu a página não tiver permissão para criar, alterar ou apagar Foos e Goos, as chamadas falham (normalmente com uma exceção de permissão, registrada no log). Por isso, ao testar, abra a página com um usuário que tenha as permissões necessárias (por exemplo, o administrador do ambiente de treinamento).
+2. **O resource recebe o usuário logado como contexto.** A autorização efetiva depende das verificações implementadas pelo resource e pelas camadas que ele chama. Se essas verificações forem aplicadas e o usuário não tiver a permissão necessária, a operação poderá falhar. Por isso, ao testar, use um usuário autorizado para as operações previstas (por exemplo, o administrador do ambiente de treinamento).
 
 > Usuário visitante (não logado) também é um `User` para o Liferay, mas normalmente sem permissão para essas operações. Teste logado.
 
@@ -252,9 +252,9 @@ Quando você usa o client JAR, **cada chamada** paga:
 3. **Autenticação** da requisição.
 4. **Conversão** da resposta JSON de volta em objeto Java (desserialização).
 
-Com o OSGi Resource, você chama o método **diretamente na mesma JVM**: não há rede, não há conversão para JSON e a autenticação é substituída pelo usuário já conhecido.
+Com o OSGi Resource, você chama o método **diretamente na mesma JVM**: não há transporte HTTP nem conversão para JSON nessa fronteira. O `.user(...)` fornece o contexto do usuário ao resource; a aplicação de autorização continua dependendo das verificações implementadas pelo resource e pelas camadas que ele chama.
 
-**Benefício principal:** menos custo (rede e serialização) por chamada, e um código mais simples de autenticar.
+**Benefício principal:** menos custo de comunicação (rede e serialização) por chamada e, neste exemplo, não é preciso configurar credenciais HTTP no portlet. A autorização ainda depende das verificações feitas pela implementação.
 
 Dois cuidados para não exagerar na conclusão:
 
@@ -265,7 +265,7 @@ Dois cuidados para não exagerar na conclusão:
 |---|---|---|
 | Onde o código roda | Programa externo | Dentro do Liferay (mesma JVM) |
 | Comunicação | HTTP + JSON | Chamada de método |
-| Autenticação | Credenciais no código | Usuário do contexto (`.user(...)`) |
+| Contexto do usuário | Credenciais usadas na autenticação HTTP | Usuário fornecido ao resource por `.user(...)`; autorização depende da implementação |
 | Ponto de entrada | `main` | Componente OSGi (aqui, um portlet) |
 | Obtenção do resource | `FooResource.builder()` | `@Reference` na Factory + `create()` |
 
@@ -282,7 +282,7 @@ Esta tabela reúne **todas** as diferenças entre o código do primeiro PR e o d
 | 5 | Imports de `Foo`/`Goo` | `...client.dto.v1_0` | `...dto.v1_0` |
 | 6 | Imports de `FooResource`/`GooResource` | `...client.resource.v1_0` | `...resource.v1_0` |
 | 7 | Como cria o resource | `FooResource.builder()` | `_fooResourceFactory.create()` (Factory via `@Reference`) |
-| 8 | Autenticação | `.authentication("test@liferay.com", "learn")` | `.user(themeDisplay.getUser())` |
+| 8 | Identidade/contexto do usuário | `.authentication("test@liferay.com", "learn")` configura autenticação HTTP | `.user(themeDisplay.getUser())` fornece contexto local ao resource |
 | 9 | Credenciais no código | Sim | Não |
 | 10 | Como chega ao usuário | Fixo no código | `ThemeDisplay`, via `renderRequest.getAttribute(WebKeys.THEME_DISPLAY)` |
 | 11 | Como a chamada é feita | HTTP + JSON | Chamada direta de método na JVM |
@@ -712,7 +712,7 @@ public class R3B2Portlet extends GenericPortlet {
 	private FooResource.Factory _fooResourceFactory;
 	// injeção de dependência via OSGi: o container fornece a implementação
 	// registrada de FooResource.Factory, usada para construir um FooResource
-	// autenticado (via .create().user(...).build())
+	// associado ao contexto do usuário (via .create().user(...).build())
 
 	@Reference
 	private GooResource.Factory _gooResourceFactory;
@@ -788,7 +788,7 @@ FooResource fooResource = fooResourceBuilder.user(
 | # | Linha | O que acontece |
 |---|---|---|
 | 1 | `_fooResourceFactory.create()` | A Factory (injetada pelo OSGi) cria um **Builder** |
-| 2 | `.user(themeDisplay.getUser())` | Informa o usuário em nome de quem as operações serão executadas |
+| 2 | `.user(themeDisplay.getUser())` | Fornece ao resource o contexto do usuário; a autorização depende das verificações implementadas |
 | 3 | `.build()` | Constrói o `FooResource` |
 
 O mesmo é feito para `GooResource`. Substitui o `.authentication("test@liferay.com", "learn")` do `Test.java`: **não há senha no código**.
