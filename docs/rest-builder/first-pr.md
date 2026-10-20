@@ -549,6 +549,10 @@ import com.acme.headless.r3b2.client.dto.v1_0.Goo;
 import com.acme.headless.r3b2.client.resource.v1_0.FooResource;
 import com.acme.headless.r3b2.client.resource.v1_0.GooResource;
 
+/**
+ * @author Walter Neto
+ */
+
 public class Test {
 
     public static void main(String[] args) throws Exception {

@@ -346,6 +346,10 @@ import java.util.Map;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 
+/**
+ * @author Alberto
+ */
+
 public class Test {
 
     private static final Log log = LogFactoryUtil.getLog(Test.class);
