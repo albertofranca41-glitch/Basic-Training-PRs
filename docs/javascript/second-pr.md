@@ -55,6 +55,8 @@ A lógica é a mesma da atividade; apenas organizei a indentação e acrescentei
     <div id="output"></div>
 
 <script>
+  // Author: Alberto
+  
   // ================================================================
   // 1. CONFIGURAÇÃO
   // ================================================================
