@@ -271,6 +271,7 @@ Estes materiais aprofundam os conceitos da atividade e já foram citados no guia
 - [HTTP](../theory/http.md)
 - [REST](../theory/rest.md)
 - [API](../theory/api.md)
+- [API Explorer do seu ambiente](http://localhost:8080/o/api)
 
 ---
 

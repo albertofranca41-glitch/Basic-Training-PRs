@@ -190,13 +190,15 @@ Antes de executar a atividade, confirme:
 
 > **Atenção:** o código tenta excluir os objetos no `finally`, mas uma falha de permissão ou de rede/serviço pode impedir a limpeza. Execute em ambiente de desenvolvimento e confira os logs.
 
+> O bloco `try/catch/finally` não é necessário para usar os Resources OSGi nem para executar as operações CRUD. Neste exercício, o `catch` registra a falha e o `finally` tenta limpar os dados de teste; se uma operação falhar, a limpeza é uma proteção adicional, não uma garantia.
+
 ---
 
 ## Recursos adicionais
 
 - [Document API Basics — Liferay Learn](https://learn.liferay.com/en/w/dxp/integration/headless-apis/digital-asset-management-apis/document-api-basics): upload, consulta, atualização e exclusão de documentos; inclui exemplos de `DocumentResource` e pastas.
 - [Knowledge Base API Basics — Liferay Learn](https://learn.liferay.com/w/dxp/integration/headless-apis/content-management-apis/knowledge-base-api-basics): criação e consulta de artigos e operações por ID.
-- [API Explorer do seu ambiente](http://localhost:8080/o/api): confira os endpoints, schemas e operações presentes na versão instalada.
+- [API Explorer do seu ambiente](http://localhost:8080/o/api): confira os endpoints, schemas e operações presentes na versão instalada (Funciona somente se o container Liferay estiver rodando e se você fez o login corretamente da sua conta `test@liferay.com`).
 - [Portlet](../theory/portlet.md), [REST](../theory/rest.md), [HTTP](../theory/http.md), [DTOs e Schemas](../theory/dtos-and-schemas.md), [API](../theory/api.md) e [JSON](../theory/json.md): conceitos já trabalhados nos guias anteriores.
 
 ---

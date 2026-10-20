@@ -317,6 +317,7 @@ Os arquivos abaixo aprofundam os conceitos apresentados nesta etapa. Leia-os com
 - [API](../theory/api.md): apresenta APIs como contratos de comunicação entre sistemas e como são usadas no backend.
 - [REST](../theory/rest.md): aprofunda recursos, URLs e métodos HTTP em APIs REST.
 - [JSON](../theory/json.md): Aprofunda o conceito de JSON.
+- [API Explorer do seu ambiente](http://localhost:8080/o/api): confira os endpoints, schemas e operações presentes na versão instalada (Funciona somente se o container Liferay estiver rodando e se você fez o login corretamente da sua conta `test@liferay.com`).
 
 ---
 

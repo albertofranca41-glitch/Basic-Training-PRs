@@ -497,6 +497,7 @@ Os materiais abaixo aprofundam os conceitos da atividade. Os quatro primeiros do
 - [HTTP](../theory/http.md): métodos, URLs, cabeçalhos, corpos e códigos de status.
 - [REST](../theory/rest.md): recursos, representações e métodos HTTP.
 - [API](../theory/api.md): conceito de interface e contrato entre sistemas.
+- [API Explorer do seu ambiente](http://localhost:8080/o/api): confira os endpoints, schemas e operações presentes na versão instalada (Funciona somente se o container Liferay estiver rodando e se você fez o login corretamente da sua conta `test@liferay.com`).
 
 
 # Etapa 2 – O código
