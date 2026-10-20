@@ -397,6 +397,7 @@ Antes de começar, confirme que a API `headless-r3b2/v1.0` aparece no API Explor
 - [API](../theory/api.md): conceito de interface e contrato entre sistemas.
 - [JSON](../theory/json.md): formato usado para representar e transportar dados.
 - [DTOs e Schemas](../theory/dtos-and-schemas.md): objetos de transferência e modelos de dados descritos no contrato.
+- [Portlet](../theory/portlet.md): Conceito de Portlet dentro do contexto do Liferay.
 - [JVM (Wikipedia)](https://en.wikipedia.org/wiki/Java_virtual_machine): a máquina virtual onde o portlet e o Liferay rodam juntos.
 - [Chamada local × chamada remota (Stack Overflow)](https://stackoverflow.com/questions/7538951/what-is-the-performance-difference-between-a-jvm-method-call-and-a-remote-call): indicado pelo tutorial para responder à pergunta da seção 1.9.
 
