@@ -449,7 +449,7 @@ Esse conceito será importante quando você estudar **autenticação e APIs**.
 
 ---
 
-# 15. HTTP não define a lógica da aplicação
+# 13. HTTP não define a lógica da aplicação
 
 Outro ponto fundamental:
 
@@ -489,7 +489,7 @@ Portanto:
 
 ---
 
-# 16. O que você deve guardar sobre HTTP
+# 14. O que você deve guardar sobre HTTP
 
 Se fosse necessário condensar todo esse conceito em alguns pontos:
 
