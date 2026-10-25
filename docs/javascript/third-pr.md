@@ -24,40 +24,23 @@ Ele está dividido em **2 etapas**:
 ## Sumário
 
 - [Etapa 1 – Teoria](#etapa-1--teoria)
-
-- [1.1 React como widget na Liferay](#11-react-como-widget-na-liferay)
-
-- [1.2 Hooks usados no projeto](#12-hooks-usados-no-projeto)
-
-- [1.3 Clay UI](#13-clay-ui)
-
-- [1.4 A Headless Delivery API neste app](#14-a-headless-delivery-api-neste-app)
-
-- [1.5 fetch na prática](#15-fetch-na-prática)
-
-- [1.6 Build e deploy do widget](#16-build-e-deploy-do-widget)
-
+  - [1.1 React como widget na Liferay](#11-react-como-widget-na-liferay)
+  - [1.2 Hooks usados no projeto](#12-hooks-usados-no-projeto)
+  - [1.3 Clay UI](#13-clay-ui)
+  - [1.4 A Headless Delivery API neste app](#14-a-headless-delivery-api-neste-app)
+  - [1.5 fetch na prática](#15-fetch-na-prática)
+  - [1.6 Build e deploy do widget](#16-build-e-deploy-do-widget)
 - [Recursos adicionais](#recursos-adicionais)
-
 - [Etapa 2 – O código](#etapa-2--o-código)
-
-- [2.1 Visão geral](#21-visão-geral)
-
-- [2.2 O package.json](#22-o-packagejson)
-
-- [2.3 A camada de API (liferay.js)](#23-a-camada-de-api-liferayjs)
-
-- [2.4 O ponto de entrada (index.js)](#24-o-ponto-de-entrada-indexjs)
-
-- [2.5 O componente raiz (App.js)](#25-o-componente-raiz-appjs)
-
-- [2.6 BlogManager.jsx](#26-blogmanagerjsx)
-
-- [2.7 DocsManager.jsx](#27-docsmanagerjsx)
-
-- [2.8 KBManager.jsx](#28-kbmanagerjsx)
-
-- [2.9 Pontos de melhoria](#29-pontos-de-melhoria)
+  - [2.1 Visão geral](#21-visão-geral)
+  - [2.2 O package.json](#22-o-packagejson)
+  - [2.3 A camada de API (liferay.js)](#23-a-camada-de-api-liferayjs)
+  - [2.4 O ponto de entrada (index.js)](#24-o-ponto-de-entrada-indexjs)
+  - [2.5 O componente raiz (App.js)](#25-o-componente-raiz-appjs)
+  - [2.6 BlogManager.jsx](#26-blogmanagerjsx)
+  - [2.7 DocsManager.jsx](#27-docsmanagerjsx)
+  - [2.8 KBManager.jsx](#28-kbmanagerjsx)
+  - [2.9 Pontos de melhoria](#29-pontos-de-melhoria)
 
 ---
 
