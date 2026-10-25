@@ -1103,21 +1103,7 @@ export default function KBManager() {
 
 Depois que tudo funcionar, estas melhorias deixam o código mais profissional (e costumam ser bem vistas em revisões):
 
-### 1. Credenciais fixas no front-end
-
-`test@liferay.com:learn` está escrito no código, e **tudo o que vai para o navegador é visível** para quem abrir as ferramentas do desenvolvedor. Dentro de um widget, o usuário **já está logado**, então dá para aproveitar a sessão dele, com o token anti-CSRF da própria Liferay:
-
-```javascript
-// Em vez de enviar email:senha (Basic Auth), usa a SESSÃO do usuário logado.
-// "Liferay.authToken" é um token que a Liferay gera para proteger contra
-// ataques CSRF. A API aceita esse token no cabeçalho "x-csrf-token".
-const authHeader = () => ({
-	"x-csrf-token": Liferay.authToken,
-});
-// O cookie de sessão vai junto automaticamente, porque a URL é relativa
-// (mesma origem). Assim, as credenciais SAEM do código.
-```
-### 2. Sem tratamento de erro nos componentes
+### 1. Sem tratamento de erro nos componentes
 
 O `handleResponse` **lança** o erro, mas nenhum componente faz `try/catch`. Se a API falhar, o erro some no console e a tela não mostra nada (e, pior, o formulário é limpo como se tivesse dado certo). Exemplo para o `BlogManager`:
 
@@ -1146,7 +1132,7 @@ const handleSave = async () => {
 // E no JSX, mostra o erro (se houver) com o ClayAlert, que já está instalado:
 // {error && <ClayAlert displayType="danger" title="Erro">{error}</ClayAlert>}
 ```
-### 3. Dependências instaladas e não usadas
+### 2. Dependências instaladas e não usadas
 
 `@clayui/alert`, `@clayui/modal` e `@clayui/nav` estão no `package.json`, mas nenhum componente os importa. Duas oportunidades diretas:
 
@@ -1156,19 +1142,19 @@ const handleSave = async () => {
 
 Se não forem usadas, o ideal é removê-las do `package.json`.
 
-### 4. Sem paginação
+### 3. Sem paginação
 
 O `GET` devolve só a **primeira página** (em geral, 20 itens). Se existirem mais, eles não aparecem. A resposta traz `page`, `pageSize`, `totalCount` e `lastPage`, e a API aceita parâmetros como `?page=2&pageSize=20`, o que permite criar botões de "próxima página".
 
-### 5. Documents sem edição e sem link para o arquivo
+### 4. Documents sem edição e sem link para o arquivo
 
 O `DocsManager` só lista, envia e exclui. Dá para acrescentar a edição e um link para **abrir/baixar** o arquivo (a resposta da API traz a URL de conteúdo do documento). Vale também conferir no **API Explorer** (`/o/api`) da sua versão como a API espera os metadados do upload (título, descrição), já que o código atual os envia como campos soltos do formulário.
 
-### 6. Código repetido entre `BlogManager` e `KBManager`
+### 5. Código repetido entre `BlogManager` e `KBManager`
 
 Os dois componentes são quase idênticos. Uma solução é extrair um componente genérico (por exemplo, `ContentManager`) que receba por props os nomes dos campos e as funções da API. Outra é criar um **hook próprio** (`useCrud`) com o `load`, o `handleSave` e o `handleDelete`.
 
-### 7. Deploy com valores fixos
+### 6. Deploy com valores fixos
 
 O script `deploy` tem o nome do `.jar` e do container escritos à mão. Uma alternativa é ler o nome e a versão do próprio `package.json` (o npm expõe essas informações como variáveis de ambiente durante o script):
 
@@ -1184,11 +1170,9 @@ Assim, renomear o projeto ou mudar a versão não quebra mais o deploy.
 
 ### Para praticar
 
-1. Adicione o `try/catch` com `ClayAlert` ao `BlogManager` (item 2).
+1. Adicione o `try/catch` com `ClayAlert` ao `BlogManager` (item 1).
 
 2. Use o `ClayModal` para pedir confirmação antes de excluir um blog.
 
-3. Troque o Basic Auth pelo `x-csrf-token` no `liferay.js` (item 1) e confirme que o CRUD continua funcionando.
-
-4. Extraia um componente genérico que substitua `BlogManager` e `KBManager`.
+3. Extraia um componente genérico que substitua `BlogManager` e `KBManager`.
 
