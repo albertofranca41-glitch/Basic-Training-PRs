@@ -9,6 +9,13 @@ Este índice reúne os materiais conceituais compartilhados para melhor entendim
 - [HTTP](./http.md): requisições, respostas, métodos e códigos de status.
 - [REST](./rest.md): recursos e princípios de APIs REST.
 - [JSON](./json.md): representação e troca de dados estruturados.
+- [API Layer and Separation of Concerns](./api-layer-and-separation-of-concerns.md): organização da comunicação com APIs e separação entre interface e requisições.
+
+## React and User Interfaces
+
+- [React: JSX, Components, and Props](./react-jsx-components.md): estrutura de interfaces com JSX e componentes, e passagem de dados por props.
+- [React Hooks and Rendering](./react-hooks.md): estado, efeitos e renderização em componentes React.
+- [Clay UI](./clay.md): sistema de design da Liferay e uso de seus componentes React.
 
 ## Liferay and Service Builder
 
