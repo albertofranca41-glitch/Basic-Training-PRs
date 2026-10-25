@@ -367,4 +367,4 @@ A separação, entretanto, não garante automaticamente que o código esteja cor
 - [React — Passing Data Deeply with Context](https://react.dev/learn/passing-data-deeply-with-context)
 - [MDN — JavaScript Modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules)
 - [MDN — Using the Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch)
-- [Liferay — Headless Delivery API](https://learn.liferay.com/w/dxp/digital-asset-management/content-authoring-and-management/headless-apis/headless-delivery-api)
+- [Liferay — Headless APIs](https://learn.liferay.com/w/dxp/integration/headless-apis)

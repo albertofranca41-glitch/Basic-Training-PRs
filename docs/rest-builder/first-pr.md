@@ -7,7 +7,7 @@ Ele está dividido em **2 etapas**:
 | Etapa | O que você vai aprender |
 |---|---|
 | **Etapa 1 – Teoria** | Conceitos necessários: JSONWS × REST, OpenAPI, o que é o REST Builder, módulos gerados, client JAR e o padrão Builder |
-| **Etapa 2 – O código** | O código completo da atividade, comentado, explicado parte por parte, e como compilar, executar e enviar o PR |
+| **Etapa 2 – O código** | O código completo da atividade, comentado e explicado parte por parte, além de como compilar e executar |
 
 > Este guia cobre **somente o primeiro PR** de REST Builder: o uso do **client JAR** (seção "Client Resource" do tutorial). O uso do **OSGi Resource** (`R3B2Portlet`) é outro PR e não está aqui.
 
@@ -33,9 +33,8 @@ Ele está dividido em **2 etapas**:
   - [2.2 Código completo comentado](#22-código-completo-comentado)
   - [2.3 Explicação por partes](#23-explicação-por-partes)
   - [2.4 Como compilar e executar](#24-como-compilar-e-executar)
-  - [2.5 Como enviar o PR](#25-como-enviar-o-pr)
-  - [2.6 Pontos de melhoria](#26-pontos-de-melhoria)
-  - [2.7 Erros comuns](#27-erros-comuns)
+  - [2.5 Pontos de melhoria](#25-pontos-de-melhoria)
+  - [2.6 Erros comuns](#26-erros-comuns)
 
 ---
 
@@ -1022,8 +1021,8 @@ Depois que tudo funcionar, estas melhorias deixam o código mais profissional:
 1. **Retornar os dados.** Os métodos `get*` só imprimem. Devolver o objeto (`return fooResource.getFoo(fooId);`) permite reaproveitá-lo, por exemplo para **verificar** que o `PATCH` alterou só a descrição.
 2. **Validar, não só imprimir.** Compare os campos recebidos com os esperados (ex.: após o `PATCH`, `name` deve continuar `"Different name"`).
 3. **Evitar valores repetidos.** `"test@liferay.com"` e `"learn"` aparecem duas vezes. Guarde-os em constantes (`private static final String`).
-5. **Mensagens de erro mais claras** nos `catch`, incluindo a mensagem da exceção (`e.getMessage()`).
-6. **Pergunta do tutorial:** qual é o **benefício** de invocar um serviço dentro da JVM (OSGi Resource) em vez de por HTTP (client JAR)? Pense nos custos de rede e de serialização JSON que o client JAR paga em toda chamada.
+4. **Mensagens de erro mais claras** nos `catch`, incluindo a mensagem da exceção (`e.getMessage()`).
+5. **Pergunta do tutorial:** qual é o **benefício** de invocar um serviço dentro da JVM (OSGi Resource) em vez de por HTTP (client JAR)? Pense nos custos de rede e de serialização JSON que o client JAR paga em toda chamada.
 
 ## 2.6 Erros comuns
 

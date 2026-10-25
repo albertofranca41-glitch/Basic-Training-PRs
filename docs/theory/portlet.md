@@ -641,7 +641,7 @@ Os materiais abaixo aprofundam os conceitos apresentados neste documento.
 
 1. [Portlets — Liferay Learn](https://learn.liferay.com/w/dxp/development/traditional-java-based-development/core-frameworks/portlets): visão geral dos portlets e sua integração com o Liferay.
 2. [Using MVC — Liferay Learn](https://learn.liferay.com/w/dxp/development/traditional-java-based-development/developing-a-web-application/using-mvc): funcionamento do framework MVC Portlet, seus componentes e sua modularidade.
-3. [Using a JSP and MVC Portlet — Liferay Learn](https://learn.liferay.com/w//dxp/development/traditional-java-based-development/developing-a-web-application/using-mvc/using-a-jsp-and-mvc-portlet): exemplo de criação de um portlet MVC com JSP.
+3. [Using a JSP and MVC Portlet — Liferay Learn](https://learn.liferay.com/w/dxp/development/traditional-java-based-development/developing-a-web-application/using-mvc/using-a-jsp-and-mvc-portlet): exemplo de criação de um portlet MVC com JSP.
 4. [Rendering Views with MVC Portlet — Liferay Learn](https://learn.liferay.com/pt/w/dxp/development/traditional-java-based-development/developing-a-web-application/using-mvc/rendering-views-with-mvc-portlet): navegação entre visualizações.
-5. [Invoking Actions with MVC Portlet — Liferay Learn](https://learn.lxc.liferay.com/w/dxp/development/traditional-java-based-development/developing-a-web-application/using-mvc/invoking-actions-with-mvc-portlet): processamento de ações a partir da interface.
+5. [Invoking Actions with MVC Portlet — Liferay Learn](https://learn.liferay.com/w/dxp/development/traditional-java-based-development/developing-a-web-application/using-mvc/invoking-actions-with-mvc-portlet): processamento de ações a partir da interface.
 

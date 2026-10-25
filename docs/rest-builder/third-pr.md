@@ -1016,8 +1016,8 @@ Depois que tudo funcionar, estas melhorias deixam o código mais profissional:
 5. **Conferir o `putGoo`.** Verifique se ele deve enviar `fooId`, como no `Test.java`.
 6. **Validar, não só registrar.** Compare os campos recebidos com os esperados (ex.: após o `PATCH`, o `name` deve continuar `"PUT Foo"`).
 7. **Usar `isDebugEnabled`.** É comum, no Liferay, proteger logs com concatenação de `String` usando `if (_log.isDebugEnabled()) { ... }`, para não montar a mensagem quando o `DEBUG` está desligado.
-9. **Evitar valores repetidos.** Os nomes e descrições (`"POST Foo"`, `"Posted Foo from R3B2Portlet"`, ...) podem virar constantes.
-10. **Mensagens de erro mais claras.** Inclua o contexto (qual operação, qual ID) na mensagem do `catch` principal, em vez de apenas `"Error: "`.
+8. **Evitar valores repetidos.** Os nomes e descrições (`"POST Foo"`, `"Posted Foo from R3B2Portlet"`, ...) podem virar constantes.
+9. **Mensagens de erro mais claras.** Inclua o contexto (qual operação, qual ID) na mensagem do `catch` principal, em vez de apenas `"Error: "`.
 
 ## 2.6 Erros comuns
 

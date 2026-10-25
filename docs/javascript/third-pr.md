@@ -2092,6 +2092,3 @@ Assim, renomear o projeto ou mudar a versão não quebra mais o deploy.
 
 4. Extraia um componente genérico que substitua `BlogManager` e `KBManager`.
 
----
-
-⋮⋮⋮⋮⋮⋮⋮⋮
