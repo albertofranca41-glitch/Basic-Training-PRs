@@ -61,13 +61,9 @@ Para isso, o projeto precisa ser transformado em um **módulo OSGi** (o formato 
 A Liferay não conhece o seu `App`. O que ela conhece é o **ponto de entrada** do projeto, que é o arquivo indicado no campo `main` do `package.json` (aqui, `index.js`). Esse arquivo precisa **exportar uma função** chamada `main`. Quando o widget aparece na página, a Liferay chama essa função e passa um objeto com informações do widget. A que nos interessa é o **`portletElementId`**: o `id` de um `<div>` vazio que a Liferay reservou na página para o seu widget.
 
 ```
-
 Página da Liferay
-
 └── <div id="...portletElementId..."> ← a Liferay cria esse espaço vazio
-
 └── <App /> ← o seu código desenha aqui dentro
-
 ```
 
 ### O `package.json` como "cola" do projeto
@@ -105,27 +101,18 @@ Os componentes do projeto são **funções**. Para que uma função "lembre" de 
 ### `useState`
 
 ```js
-
 const [headline, setHeadline] = useState("");
-
 // ↑ valor atual ↑ função para trocar o valor ↑ valor inicial
-
 ```
-
 Nunca altere a variável diretamente (`headline = "x"` não funciona). Sempre use a função `setHeadline("x")`: é isso que avisa o React para redesenhar a tela.
 
 ### `useEffect` e o array de dependências
 
 ```js
-
 useEffect(() => {
-
-load();
-
+	load();
 }, []); // ← array vazio: executa UMA vez, quando o componente aparece
-
 ```
-
 O segundo argumento controla **quando** o efeito roda. Com `[]`, ele roda só na primeira vez. Sem o array, rodaria a cada redesenho, o que causaria um laço de requisições.
 
 ### Componentes controlados
@@ -133,11 +120,8 @@ O segundo argumento controla **quando** o efeito roda. Com `[]`, ele roda só na
 Um **input controlado** é aquele cujo valor vem do estado do React, e não do próprio HTML:
 
 ```jsx
-
-<*ClayInput* *value*={headline} *onChange*={(*e*) => setHeadline(e.target.value)} />
-
+<ClayInput value={headline} onChange={(e) => setHeadline(e.target.value)} />;
 ```
-
 O ciclo é: o usuário digita → `onChange` dispara → `setHeadline` atualiza o estado → o React redesenha o input com o novo valor. Assim o estado é sempre a "fonte da verdade" do que está no formulário, e fica fácil limpar o campo (`setHeadline("")`) ou preenchê-lo para edição.
 
 ## 1.3 Clay UI
@@ -223,11 +207,8 @@ O `fetch`, o JSON e o `async/await` funcionam como no guia de JavaScript. Aqui h
 O app envia `email:senha` em Base64 no cabeçalho `Authorization`, como na atividade de JavaScript:
 
 ```js
-
-"Basic " + btoa("test@liferay.com:learn")
-
+"Basic " + btoa("test@liferay.com:learn");
 ```
-
 > ⚠️ **Base64 não é criptografia.** Isso só é aceitável em ambiente de treinamento. Veja os [pontos de melhoria](#29-pontos-de-melhoria) para a alternativa correta dentro de um widget.
 
 ### Upload com `FormData`
@@ -235,13 +216,9 @@ O app envia `email:senha` em Base64 no cabeçalho `Authorization`, como na ativi
 Para enviar um **arquivo**, o corpo da requisição não é JSON: é um formulário do tipo **multipart**, montado com `FormData`:
 
 ```js
-
 const formData = new FormData();
-
 formData.append("file", file); // o arquivo escolhido pelo usuário
-
 ```
-
 E aqui há uma regra importante: **não defina o `Content-Type` manualmente.** Um formulário multipart precisa de um *boundary* (um separador gerado automaticamente) dentro do cabeçalho. Se você fixar `"Content-Type": "multipart/form-data"` à mão, o separador some e o servidor não consegue ler o arquivo. Deixando o navegador montar o cabeçalho, ele já coloca o valor certo.
 
 Por isso o upload usa só `authHeader()` (sem `Content-Type`), e não `jsonHeaders()`.
@@ -257,9 +234,7 @@ O código que você escreve (JSX, imports de módulos) **não roda direto** na L
 ### O script `build`
 
 ```
-
 babel --source-maps -d build src && npm run copy-assets && liferay-npm-bundler
-
 ```
 
 | Passo | O que acontece |
@@ -281,9 +256,7 @@ Nesta atividade, o projeto deve poder ser compilado, empacotado e enviado para o
 ### O script `deploy`
 
 ```
-
 npm run build && docker cp dist/test-react-1.0.0.jar liferay:/opt/liferay/deploy
-
 ```
 
 Ele roda o `build` e depois **copia o `.jar`** para a pasta de deploy da Liferay **dentro do container Docker**. A Liferay fica "olhando" essa pasta: assim que o arquivo aparece, ela instala o módulo automaticamente, sem precisar reiniciar o servidor. Portanto, o comando usado no fluxo normal da atividade é `npm run deploy`, que executa as etapas necessárias em sequência.
@@ -345,51 +318,30 @@ Os links abaixo complementam os conceitos apresentados nesta etapa e ajudam a co
 O projeto tem **uma camada de API**, **três componentes de tela** (um por recurso) e dois arquivos que montam tudo:
 
 ```
-
 src/
-
 ├── index.js ← ponto de entrada (a Liferay chama a função main)
-
 ├── App.js ← junta os três componentes na mesma tela
-
 ├── api/
-
 │ └── liferay.js ← TODAS as chamadas HTTP (fetch) ficam aqui
-
 └── components/
-
 ├── BlogManager.jsx ← CRUD de Blogs
-
 ├── DocsManager.jsx ← listar, enviar e excluir Documents
-
 └── KBManager.jsx ← CRUD de Knowledge Base
-
 ```
 
 O caminho dos dados em qualquer operação é sempre o mesmo:
 
 ```
-
 Componente (botão clicado)
-
 │ chama
-
 ▼
-
 Função de liferay.js (ex.: createBlog)
-
 │ fetch
-
 ▼
-
 Headless Delivery API (Liferay)
-
 │ resposta JSON
-
 ▼
-
 Componente guarda no estado (useState) → a tela é redesenhada
-
 ```
 
 A separação é proposital: os componentes só cuidam da **tela**, e o `liferay.js` só cuida da **comunicação**. Se a URL da API mudar, você corrige em um único lugar.
@@ -423,47 +375,26 @@ O `package.json` do projeto já vem com uma estrutura pronta. Na atividade, voc�
 ### Trecho 1: as dependências do Clay
 
 ```jsonc
-
 // ATENÇÃO: JSON de verdade NÃO aceita comentários. Eles estão aqui só
-
 // para explicar; no arquivo real, não escreva os comentários.
-
 "dependencies": {
-
 // Alertas (mensagens de aviso/erro). Instalado, mas ainda não usado no código.
-
 "@clayui/alert": "3.1.0",
-
 // Botões. USADO em todos os componentes (ClayButton).
-
 "@clayui/button": "3.3.0",
-
 // Formulários e inputs. USADO em todos os componentes (ClayForm, ClayInput).
-
 "@clayui/form": "3.1.0",
-
 // Janelas modais (pop-ups). Instalado, mas ainda não usado no código.
-
 "@clayui/modal": "3.1.0",
-
 // Navegação (menus, abas). Instalado, mas ainda não usado no código.
-
 "@clayui/nav": "3.1.0",
-
 // Tabelas. USADO em todos os componentes (ClayTable).
-
 "@clayui/table": "3.1.0",
-
 // React e ReactDOM já vinham no projeto. A versão 16.8.6 é a primeira
-
 // linha que suporta hooks (useState, useEffect, useRef).
-
 "react": "16.8.6",
-
 "react-dom": "16.8.6"
-
 },
-
 ```
 
 Os versões estão **sem `^`** de propósito (veja a [seção 1.3](#13-clay-ui)). Hoje o projeto usa `button`, `form` e `table`; os outros três pacotes ficam disponíveis para melhorias futuras (veja a [seção 2.9](#29-pontos-de-melhoria)).
@@ -471,55 +402,32 @@ Os versões estão **sem `^`** de propósito (veja a [seção 1.3](#13-clay-ui))
 ### Trecho 2: o bloco `overrides`
 
 ```jsonc
-
 // (comentários só para explicação; não existem no arquivo real)
-
 "overrides": {
-
 // Pacotes "internos" do Clay. Os pacotes principais (button, form, table)
-
 // dependem deles. Sem fixar, o npm poderia instalar versões diferentes
-
 // do MESMO pacote para cada dependente, e isso gera conflito.
-
 "@clayui/icon": "3.0.4", // ícones usados pelos botões e campos
-
 "@clayui/shared": "3.1.0", // utilitários compartilhados entre os pacotes
-
 // Aqui o "button" aparece de novo: ele também é dependência de outros
-
 // pacotes do Clay. Fixar no override garante UMA ÚNICA versão na árvore.
-
 "@clayui/button": "3.3.0",
-
 "@clayui/link": "3.1.0" // links estilizados, usados internamente
-
 },
-
 ```
 
 ### Trecho 3: o script `deploy`
 
 ```jsonc
-
 "scripts": {
-
 // (build, copy-assets, translate e start já vinham no projeto)
-
 // 1) "npm run build" → compila e gera o .jar dentro de dist/
-
 // 2) "&&" → só continua se o build terminou sem erro
-
 // 3) "docker cp" → copia um arquivo do seu computador para dentro de um container
-
 // dist/test-react-1.0.0.jar → ORIGEM: o .jar gerado pelo build
-
 // liferay:/opt/liferay/deploy → DESTINO: container "liferay", pasta de deploy
-
 "deploy": "npm run build && docker cp dist/test-react-1.0.0.jar liferay:/opt/liferay/deploy"
-
 }
-
 ```
 
 > ⚠️ **Atenção ao nome do `.jar`: ele está fixo no script.** O arquivo gerado em `dist/` segue o `name` e a `version` do `package.json` (`<name>-<version>.jar`), e o `name` costuma coincidir com o nome da pasta do projeto. Se você renomear a pasta, o `name` ou a `version`, o `docker cp` **não vai achar o arquivo** e o deploy falha. Ajuste o nome no script sempre que isso mudar.
@@ -545,345 +453,174 @@ Estas partes só precisam de uma menção, porque já vieram prontas:
 Este arquivo concentra **todas** as chamadas à API. Tem quatro partes: configuração, funções auxiliares, e as funções de cada recurso.
 
 ```javascript
-
 // =====================================================================
-
 // 1. CONFIGURAÇÃO
-
 // =====================================================================
-
 // Caminho base da Headless Delivery API.
-
 // É RELATIVO (começa em "/o/..."), sem "http://localhost:8080", porque este
-
 // código roda DENTRO de uma página da Liferay: o navegador já sabe qual é
-
 // o servidor. Isso também evita problemas de CORS.
-
 const BASE_URL = "/o/headless-delivery/v1.0";
-
 // Devolve o ID do site em que o widget está colocado.
-
 // "Liferay" é um objeto global que a própria Liferay injeta em todas as páginas.
-
 // Diferente do guia de JavaScript (onde o ID 20117 era fixo no código), aqui o ID
-
 // é descoberto na hora, então o widget funciona em qualquer site.
-
 // É uma FUNÇÃO (e não uma constante) para o valor ser lido só quando for usado.
-
-const getSiteId = () =>
-
-Liferay.ThemeDisplay.getScopeGroupId();
-
+const getSiteId = () => Liferay.ThemeDisplay.getScopeGroupId();
 // Credenciais do ambiente LOCAL de treinamento (nunca use credenciais reais aqui).
-
 const EMAIL = "test@liferay.com";
-
 const PASSWORD = "learn";
-
 // =====================================================================
-
 // 2. FUNÇÕES AUXILIARES
-
 // =====================================================================
-
 // Cabeçalho de autenticação Basic. btoa() converte "email:senha" para Base64.
-
 // Os parênteses em volta das chaves "({ ... })" fazem a arrow function
-
 // devolver um OBJETO (sem eles, o JavaScript acharia que "{}" é o corpo da função).
-
 const authHeader = () => ({
-
-Authorization: "Basic " + btoa(`${EMAIL}:${PASSWORD}`),
-
+	Authorization: "Basic " + btoa(`${EMAIL}:${PASSWORD}`),
 });
-
 // Cabeçalhos para requisições que ENVIAM JSON:
-
 // - "...authHeader()" copia (spread) o Authorization para dentro do novo objeto
-
 // - "Content-Type" avisa ao servidor que o corpo está em formato JSON
-
 const jsonHeaders = () => ({
-
-...authHeader(),
-
-"Content-Type": "application/json",
-
+	...authHeader(),
+	"Content-Type": "application/json",
 });
-
 // Trata a resposta de QUALQUER requisição. Recebe o objeto Response do fetch.
-
 // É "async" porque lê o corpo da resposta, o que também leva tempo.
-
 const handleResponse = async (response) => {
-
-// O fetch NÃO considera 404/500 como erro (só falha de rede). Por isso
-
-// checamos response.ok (true para status 200–299) e lançamos o erro nós mesmos.
-
-if (!response.ok) {
-
-// Lê o corpo como TEXTO para incluir a mensagem do servidor no erro.
-
-const text = await response.text();
-
-// Lançar um erro faz a Promise ser REJEITADA, e quem chamou a função
-
-// pode capturar isso com try/catch.
-
-throw new Error(`HTTP ${response.status}: ${text}`);
-
-}
-
-// 204 = sucesso SEM corpo (típico do DELETE). Não existe JSON para ler:
-
-// chamar response.json() aqui lançaria "Unexpected end of JSON input".
-
-if (response.status === 204) {
-
-return null;
-
-}
-
-// Caso normal: converte o corpo (texto JSON) em objeto JavaScript.
-
-return response.json();
-
+	// O fetch NÃO considera 404/500 como erro (só falha de rede). Por isso
+	// checamos response.ok (true para status 200–299) e lançamos o erro nós mesmos.
+	if (!response.ok) {
+		// Lê o corpo como TEXTO para incluir a mensagem do servidor no erro.
+		const text = await response.text();
+		// Lançar um erro faz a Promise ser REJEITADA, e quem chamou a função
+		// pode capturar isso com try/catch.
+		throw new Error(`HTTP ${response.status}: ${text}`);
+	}
+	// 204 = sucesso SEM corpo (típico do DELETE). Não existe JSON para ler:
+	// chamar response.json() aqui lançaria "Unexpected end of JSON input".
+	if (response.status === 204) {
+		return null;
+	}
+	// Caso normal: converte o corpo (texto JSON) em objeto JavaScript.
+	return response.json();
 };
-
 // =====================================================================
-
 // 3. BLOGS
-
 // =====================================================================
-
 // Padrão de todas as funções abaixo: arrow function SEM chaves, ou seja,
-
 // o resultado de "fetch(...).then(handleResponse)" é devolvido direto
-
 // (return implícito). Cada função devolve uma PROMISE, e os componentes
-
 // usam "await" para esperar o resultado.
-
 // GET: lista os blogs do site (endpoint da COLEÇÃO, com o ID do site).
-
 export const getBlogs = () =>
-
-fetch(`${BASE_URL}/sites/${getSiteId()}/blog-postings`, {
-
-headers: jsonHeaders(),
-
-}).then(handleResponse);
-
+	fetch(`${BASE_URL}/sites/${getSiteId()}/blog-postings`, {
+		headers: jsonHeaders(),
+	}).then(handleResponse);
 // POST: cria um blog. As chaves curtas "{ headline, articleBody }" são o
-
 // atalho para "{ headline: headline, articleBody: articleBody }".
-
 export const createBlog = (headline, articleBody) =>
-
-fetch(`${BASE_URL}/sites/${getSiteId()}/blog-postings`, {
-
-method: "POST",
-
-headers: jsonHeaders(),
-
-// JSON.stringify converte o objeto em TEXTO, porque o corpo da
-
-// requisição precisa ser texto.
-
-body: JSON.stringify({
-
-headline,
-
-articleBody,
-
-}),
-
-}).then(handleResponse);
-
+	fetch(`${BASE_URL}/sites/${getSiteId()}/blog-postings`, {
+		method: "POST",
+		headers: jsonHeaders(),
+		// JSON.stringify converte o objeto em TEXTO, porque o corpo da
+		// requisição precisa ser texto.
+		body: JSON.stringify({
+			headline,
+			articleBody,
+		}),
+	}).then(handleResponse);
 // PUT: substitui um blog existente. Note a URL: SEM "sites/{id}", porque
-
 // o id do blog já o identifica (endpoint de UM item).
-
 export const updateBlog = (id, headline, articleBody) =>
-
-fetch(`${BASE_URL}/blog-postings/${id}`, {
-
-method: "PUT",
-
-headers: jsonHeaders(),
-
-body: JSON.stringify({
-
-headline,
-
-articleBody,
-
-}),
-
-}).then(handleResponse);
-
+	fetch(`${BASE_URL}/blog-postings/${id}`, {
+		method: "PUT",
+		headers: jsonHeaders(),
+		body: JSON.stringify({
+			headline,
+			articleBody,
+		}),
+	}).then(handleResponse);
 // DELETE: apaga um blog. Sem corpo, então usamos só authHeader()
-
 // (não precisa de Content-Type). A resposta é 204, tratada no handleResponse.
-
 export const deleteBlog = (id) =>
-
-fetch(`${BASE_URL}/blog-postings/${id}`, {
-
-method: "DELETE",
-
-headers: authHeader(),
-
-}).then(handleResponse);
-
+	fetch(`${BASE_URL}/blog-postings/${id}`, {
+		method: "DELETE",
+		headers: authHeader(),
+	}).then(handleResponse);
 // =====================================================================
-
 // 4. DOCUMENTS
-
 // =====================================================================
-
 // GET: lista os documentos do site.
-
 export const getDocuments = () =>
-
-fetch(`${BASE_URL}/sites/${getSiteId()}/documents`, {
-
-headers: jsonHeaders(),
-
-}).then(handleResponse);
-
+	fetch(`${BASE_URL}/sites/${getSiteId()}/documents`, {
+		headers: jsonHeaders(),
+	}).then(handleResponse);
 // POST: envia um ARQUIVO. Aqui a função tem chaves { }, então precisa de
-
 // "return" explícito (há várias instruções antes do fetch).
-
 export const uploadDoc = (file) => {
-
-// FormData monta um formulário "multipart", o formato para enviar arquivos.
-
-const formData = new FormData();
-
-// "file" é o arquivo escolhido pelo usuário (um objeto File do navegador).
-
-formData.append("file", file);
-
-// Campos de texto que acompanham o arquivo: título (o próprio nome do
-
-// arquivo) e uma descrição fixa.
-
-formData.append("title", file.name);
-
-formData.append("description", "Uploaded via React App");
-
-return fetch(`${BASE_URL}/sites/${getSiteId()}/documents`, {
-
-method: "POST",
-
-// SÓ authHeader(), SEM Content-Type. O navegador monta sozinho o
-
-// "multipart/form-data; boundary=..." correto. Se você fixar o
-
-// Content-Type à mão, o separador some e o upload falha.
-
-headers: authHeader(),
-
-// Aqui o corpo é o próprio FormData, e NÃO um JSON.stringify.
-
-body: formData,
-
-}).then(handleResponse);
-
+	// FormData monta um formulário "multipart", o formato para enviar arquivos.
+	const formData = new FormData();
+	// "file" é o arquivo escolhido pelo usuário (um objeto File do navegador).
+	formData.append("file", file);
+	// Campos de texto que acompanham o arquivo: título (o próprio nome do
+	// arquivo) e uma descrição fixa.
+	formData.append("title", file.name);
+	formData.append("description", "Uploaded via React App");
+	return fetch(`${BASE_URL}/sites/${getSiteId()}/documents`, {
+		method: "POST",
+		// SÓ authHeader(), SEM Content-Type. O navegador monta sozinho o
+		// "multipart/form-data; boundary=..." correto. Se você fixar o
+		// Content-Type à mão, o separador some e o upload falha.
+		headers: authHeader(),
+		// Aqui o corpo é o próprio FormData, e NÃO um JSON.stringify.
+		body: formData,
+	}).then(handleResponse);
 };
-
 // DELETE: apaga um documento pelo id.
-
 export const deleteDoc = (id) =>
-
-fetch(`${BASE_URL}/documents/${id}`, {
-
-method: "DELETE",
-
-headers: authHeader(),
-
-}).then(handleResponse);
-
+	fetch(`${BASE_URL}/documents/${id}`, {
+		method: "DELETE",
+		headers: authHeader(),
+	}).then(handleResponse);
 // =====================================================================
-
 // 5. KNOWLEDGE BASE
-
 // =====================================================================
-
 // Mesma lógica dos Blogs. A única diferença é o nome do recurso na URL
-
 // ("knowledge-base-articles") e o campo do título ("title", e não "headline").
-
 // GET: lista os artigos do site.
-
 export const getKBArticles = () =>
-
-fetch(`${BASE_URL}/sites/${getSiteId()}/knowledge-base-articles`, {
-
-headers: jsonHeaders(),
-
-}).then(handleResponse);
-
+	fetch(`${BASE_URL}/sites/${getSiteId()}/knowledge-base-articles`, {
+		headers: jsonHeaders(),
+	}).then(handleResponse);
 // POST: cria um artigo.
-
 export const createKBArticle = (title, articleBody) =>
-
-fetch(`${BASE_URL}/sites/${getSiteId()}/knowledge-base-articles`, {
-
-method: "POST",
-
-headers: jsonHeaders(),
-
-body: JSON.stringify({
-
-title,
-
-articleBody,
-
-}),
-
-}).then(handleResponse);
-
+	fetch(`${BASE_URL}/sites/${getSiteId()}/knowledge-base-articles`, {
+		method: "POST",
+		headers: jsonHeaders(),
+		body: JSON.stringify({
+			title,
+			articleBody,
+		}),
+	}).then(handleResponse);
 // PUT: substitui um artigo existente.
-
 export const updateKBArticle = (id, title, articleBody) =>
-
-fetch(`${BASE_URL}/knowledge-base-articles/${id}`, {
-
-method: "PUT",
-
-headers: jsonHeaders(),
-
-body: JSON.stringify({
-
-title,
-
-articleBody,
-
-}),
-
-}).then(handleResponse);
-
+	fetch(`${BASE_URL}/knowledge-base-articles/${id}`, {
+		method: "PUT",
+		headers: jsonHeaders(),
+		body: JSON.stringify({
+			title,
+			articleBody,
+		}),
+	}).then(handleResponse);
 // DELETE: apaga um artigo.
-
 export const deleteKBArticle = (id) =>
-
-fetch(`${BASE_URL}/knowledge-base-articles/${id}`, {
-
-method: "DELETE",
-
-headers: authHeader(),
-
-}).then(handleResponse);
-
+	fetch(`${BASE_URL}/knowledge-base-articles/${id}`, {
+		method: "DELETE",
+		headers: authHeader(),
+	}).then(handleResponse);
 ```
-
 ### Resumo das funções
 
 | Função | Método | URL | Corpo | Observação |
@@ -915,119 +652,64 @@ headers: authHeader(),
 ## 2.4 O ponto de entrada (index.js)
 
 ```javascript
-
 // "React" precisa estar no escopo para o JSX funcionar: o Babel transforma
-
 // "<App />" em uma chamada React.createElement(App).
-
 import React from "react";
-
 // ReactDOM é quem "desenha" os componentes React dentro de uma página HTML.
-
 import ReactDOM from "react-dom";
-
 // O componente raiz da aplicação (o próximo arquivo).
-
 import App from "./App";
-
 // Função que a LIFERAY chama quando o widget aparece na página.
-
 // "export default" é o que torna esta função o ponto de entrada.
-
 //
-
 // O parâmetro "{portletElementId}" é uma DESESTRUTURAÇÃO: a Liferay passa um
-
 // objeto com várias informações do widget, e aqui pegamos só a propriedade
-
 // "portletElementId" (o id do <div> reservado para este widget).
-
-export default function main({portletElementId}) {
-
-// ReactDOM.render(O_QUE_DESENHAR, ONDE_DESENHAR)
-
-ReactDOM.render(
-
-// 1º argumento: o componente raiz.
-
-<*App* />,
-
-// 2º argumento: o elemento HTML da página onde o React vai desenhar.
-
-// getElementById procura o <div> pelo id que a Liferay informou.
-
-document.getElementById(portletElementId)
-
-);
-
+export default function main({ portletElementId }) {
+	// ReactDOM.render(O_QUE_DESENHAR, ONDE_DESENHAR)
+	ReactDOM.render(
+		// 1º argumento: o componente raiz.
+		<App />,
+		// 2º argumento: o elemento HTML da página onde o React vai desenhar.
+		// getElementById procura o <div> pelo id que a Liferay informou.
+		document.getElementById(portletElementId),
+	);
 }
-
 ```
-
 > Em React 16, usa-se `ReactDOM.render`. Nas versões mais novas (18+), isso mudou para `createRoot`. O projeto fixa a versão 16.8.6, então `render` é o correto aqui.
 
 ## 2.5 O componente raiz (App.js)
 
 ```javascript
-
 import React from "react";
-
 // Cada gerenciador é um componente independente, em seu próprio arquivo.
-
 // O nome do arquivo precisa ser IGUAL ao do import (DocsManager, com "s").
-
 // Em sistemas que diferenciam maiúsculas de minúsculas (Linux/Docker),
-
 // "docsmanager" e "DocsManager" são arquivos diferentes.
-
 import BlogManager from "./components/BlogManager";
-
 import DocsManager from "./components/DocsManager";
-
 import KBManager from "./components/KBManager";
-
 // Um componente React é uma FUNÇÃO que devolve JSX (HTML dentro do JavaScript).
-
 export default function App() {
-
-return (
-
-// O JSX exige UM único elemento "pai". Este <div> só serve de
-
-// embrulho para os demais.
-
-<div>
-
-<h1>CRUD App</h1>
-
-{/* <hr /> é uma linha horizontal, só para separar as seções. */}
-
-<hr />
-
-{/* Cada tag abaixo "instancia" o componente: o React executa a
-
+	return (
+		// O JSX exige UM único elemento "pai". Este <div> só serve de
+		// embrulho para os demais.
+		<div>
+			<h1>CRUD App</h1>
+			{/* <hr /> é uma linha horizontal, só para separar as seções. */}
+			<hr />
+			{/* Cada tag abaixo "instancia" o componente: o React executa a
 função correspondente e desenha o resultado aqui. Cada um tem
-
 o seu PRÓPRIO estado e faz as suas PRÓPRIAS chamadas à API. */}
-
-<*BlogManager* />
-
-<hr />
-
-<*DocsManager* />
-
-<hr />
-
-<*KBManager* />
-
-</div>
-
-);
-
+			<BlogManager />
+			<hr />
+			<DocsManager />
+			<hr />
+			<KBManager />
+		</div>
+	);
 }
-
 ```
-
 > Os três gerenciadores **não se conhecem**. Cada um carrega os seus dados e atualiza a sua própria lista. É por isso que o `App` não precisa de estado nem de props.
 
 ## 2.6 BlogManager.jsx
@@ -1035,443 +717,198 @@ o seu PRÓPRIO estado e faz as suas PRÓPRIAS chamadas à API. */}
 Este é o componente mais completo e serve de modelo para o `KBManager`. Por isso ele é explicado **por inteiro**.
 
 ```jsx
-
 // Hooks do React: useState (guardar valores) e useEffect (rodar código
-
 // depois que o componente aparece na tela).
-
 import React, { useState, useEffect } from "react";
-
 // Componentes visuais do Clay. "ClayForm" é o export padrão do pacote;
-
 // "ClayInput" é um export nomeado, por isso vem entre chaves.
-
 import ClayButton from "@clayui/button";
-
 import ClayForm, { ClayInput } from "@clayui/form";
-
 import ClayTable from "@clayui/table";
-
 // As funções de requisição da camada de API. Os componentes NUNCA chamam
-
 // fetch diretamente: eles só usam estas funções.
-
-import {
-
-getBlogs,
-
-createBlog,
-
-updateBlog,
-
-deleteBlog
-
-} from "../api/liferay";
-
+import { getBlogs, createBlog, updateBlog, deleteBlog } from "../api/liferay";
 export default function BlogManager() {
-
-// -----------------------------------------------------------------
-
-// ESTADOS
-
-// -----------------------------------------------------------------
-
-// A lista de blogs vinda da API. Começa vazia ([]) até a resposta chegar.
-
-const [blogs, setBlogs] = useState([]);
-
-// Os dois campos do formulário. Começam como texto vazio.
-
-const [headline, setHeadline] = useState("");
-
-const [body, setBody] = useState("");
-
-// Guarda o id do blog que está sendo EDITADO. É o que diferencia
-
-// "criar" de "atualizar":
-
-// null → o formulário está criando um blog novo
-
-// número → o formulário está editando o blog com esse id
-
-const [editId, setEditId] = useState(null);
-
-// -----------------------------------------------------------------
-
-// CARREGAR A LISTA
-
-// -----------------------------------------------------------------
-
-// Busca os blogs na API e guarda no estado.
-
-const load = async () => {
-
-// Espera a resposta. O resultado é o objeto paginado da API:
-
-// { items: [...], page: 1, pageSize: 20, ... }
-
-const data = await getBlogs();
-
-// Os blogs estão em "data.items". O "|| []" é uma segurança: se
-
-// "items" não existir, usamos uma lista vazia em vez de undefined
-
-// (que quebraria o ".map" mais abaixo).
-
-setBlogs(data.items || []);
-
-};
-
-// Roda "load" UMA vez, logo que o componente aparece na tela.
-
-// O array vazio [] no final é o que garante "só uma vez".
-
-useEffect(() => {
-
-load();
-
-}, []);
-
-// -----------------------------------------------------------------
-
-// SALVAR (CRIAR OU ATUALIZAR)
-
-// -----------------------------------------------------------------
-
-// Chamada ao clicar no botão do formulário.
-
-const handleSave = async () => {
-
-// Se existe um editId, estamos EDITANDO: usa PUT (updateBlog).
-
-if (editId) {
-
-await updateBlog(
-
-editId,
-
-headline,
-
-body
-
-);
-
-}
-
-// Senão, estamos CRIANDO: usa POST (createBlog).
-
-else {
-
-await createBlog(
-
-headline,
-
-body
-
-);
-
-}
-
-// Depois de salvar, limpa o formulário e sai do "modo edição".
-
-setHeadline("");
-
-setBody("");
-
-setEditId(null);
-
-// Recarrega a lista para a tela mostrar o que mudou no servidor.
-
-load();
-
-};
-
-// -----------------------------------------------------------------
-
-// EDITAR
-
-// -----------------------------------------------------------------
-
-// Chamada ao clicar em "Editar" numa linha da tabela.
-
-// Recebe o OBJETO do blog daquela linha.
-
-const handleEdit = (blog) => {
-
-// Entra no "modo edição": o botão do formulário passa a dizer
-
-// "Atualizar" e o handleSave passa a usar o PUT.
-
-setEditId(blog.id);
-
-// Preenche o formulário com os dados atuais do blog.
-
-setHeadline(blog.headline);
-
-// "|| ''" evita passar undefined para um input controlado
-
-// (o React reclama quando um input alterna entre "sem valor" e "com valor").
-
-setBody(blog.articleBody || "");
-
-};
-
-// -----------------------------------------------------------------
-
-// EXCLUIR
-
-// -----------------------------------------------------------------
-
-// Chamada ao clicar em "Excluir". Recebe só o id.
-
-const handleDelete = async (id) => {
-
-await deleteBlog(id);
-
-// Recarrega a lista para o item apagado sumir da tela.
-
-load();
-
-};
-
-// -----------------------------------------------------------------
-
-// A TELA (JSX)
-
-// -----------------------------------------------------------------
-
-return (
-
-<div>
-
-<h2>Blogs</h2>
-
-{/* ---------- FORMULÁRIO ---------- */}
-
-<*ClayForm*>
-
-{/* ClayForm.Group agrupa um rótulo e o seu campo, com o
-
+	// -----------------------------------------------------------------
+	// ESTADOS
+	// -----------------------------------------------------------------
+	// A lista de blogs vinda da API. Começa vazia ([]) até a resposta chegar.
+	const [blogs, setBlogs] = useState([]);
+	// Os dois campos do formulário. Começam como texto vazio.
+	const [headline, setHeadline] = useState("");
+	const [body, setBody] = useState("");
+	// Guarda o id do blog que está sendo EDITADO. É o que diferencia
+	// "criar" de "atualizar":
+	// null → o formulário está criando um blog novo
+	// número → o formulário está editando o blog com esse id
+	const [editId, setEditId] = useState(null);
+	// -----------------------------------------------------------------
+	// CARREGAR A LISTA
+	// -----------------------------------------------------------------
+	// Busca os blogs na API e guarda no estado.
+	const load = async () => {
+		// Espera a resposta. O resultado é o objeto paginado da API:
+		// { items: [...], page: 1, pageSize: 20, ... }
+		const data = await getBlogs();
+		// Os blogs estão em "data.items". O "|| []" é uma segurança: se
+		// "items" não existir, usamos uma lista vazia em vez de undefined
+		// (que quebraria o ".map" mais abaixo).
+		setBlogs(data.items || []);
+	};
+	// Roda "load" UMA vez, logo que o componente aparece na tela.
+	// O array vazio [] no final é o que garante "só uma vez".
+	useEffect(() => {
+		load();
+	}, []);
+	// -----------------------------------------------------------------
+	// SALVAR (CRIAR OU ATUALIZAR)
+	// -----------------------------------------------------------------
+	// Chamada ao clicar no botão do formulário.
+	const handleSave = async () => {
+		// Se existe um editId, estamos EDITANDO: usa PUT (updateBlog).
+		if (editId) {
+			await updateBlog(editId, headline, body);
+		}
+		// Senão, estamos CRIANDO: usa POST (createBlog).
+		else {
+			await createBlog(headline, body);
+		}
+		// Depois de salvar, limpa o formulário e sai do "modo edição".
+		setHeadline("");
+		setBody("");
+		setEditId(null);
+		// Recarrega a lista para a tela mostrar o que mudou no servidor.
+		load();
+	};
+	// -----------------------------------------------------------------
+	// EDITAR
+	// -----------------------------------------------------------------
+	// Chamada ao clicar em "Editar" numa linha da tabela.
+	// Recebe o OBJETO do blog daquela linha.
+	const handleEdit = (blog) => {
+		// Entra no "modo edição": o botão do formulário passa a dizer
+		// "Atualizar" e o handleSave passa a usar o PUT.
+		setEditId(blog.id);
+		// Preenche o formulário com os dados atuais do blog.
+		setHeadline(blog.headline);
+		// "|| ''" evita passar undefined para um input controlado
+		// (o React reclama quando um input alterna entre "sem valor" e "com valor").
+		setBody(blog.articleBody || "");
+	};
+	// -----------------------------------------------------------------
+	// EXCLUIR
+	// -----------------------------------------------------------------
+	// Chamada ao clicar em "Excluir". Recebe só o id.
+	const handleDelete = async (id) => {
+		await deleteBlog(id);
+		// Recarrega a lista para o item apagado sumir da tela.
+		load();
+	};
+	// -----------------------------------------------------------------
+	// A TELA (JSX)
+	// -----------------------------------------------------------------
+	return (
+		<div>
+			<h2>Blogs</h2>
+			{/* ---------- FORMULÁRIO ---------- */}
+			<ClayForm>
+				{/* ClayForm.Group agrupa um rótulo e o seu campo, com o
 espaçamento padrão do Clay. */}
-
-<*ClayForm.Group*>
-
-{/* Em JSX, o atributo "for" do HTML se chama "htmlFor".
-
+				<ClayForm.Group>
+					{/* Em JSX, o atributo "for" do HTML se chama "htmlFor".
 Ele liga o rótulo ao input de mesmo "id": clicar no
-
 texto foca o campo, e leitores de tela entendem a relação. */}
-
-<label htmlFor="blog-headline">Título</label>
-
-<ClayInput
-
-id="blog-headline"
-
-placeholder="Título"
-
-// value + onChange = INPUT CONTROLADO: o texto exibido
-
-// vem sempre do estado.
-
-value={headline}
-
-// "e" é o evento; "e.target.value" é o texto digitado.
-
-// Cada tecla atualiza o estado, que redesenha o input.
-
-onChange={(e) =>
-
-setHeadline(e.target.value)
-
-}
-
-/>
-
-</ClayForm.Group>
-
-<*ClayForm.Group*>
-
-<label htmlFor="blog-body">Conteúdo</label>
-
-<ClayInput
-
-// "component" troca o elemento HTML que o Clay desenha:
-
-// aqui vira um <textarea> (campo de várias linhas).
-
-component="textarea"
-
-id="blog-body"
-
-placeholder="Conteúdo"
-
-value={body}
-
-onChange={(e) =>
-
-setBody(e.target.value)
-
-}
-
-/>
-
-</ClayForm.Group>
-
-<ClayButton
-
-// displayType define a cor/estilo do botão (primary = destaque).
-
-displayType="primary"
-
-onClick={handleSave}
-
-// type="button" evita que o botão tente "enviar" o formulário
-
-// e recarregar a página.
-
-type="button"
-
->
-
-{/* O texto muda conforme o modo: com editId (editando) mostra
-
+					<label htmlFor="blog-headline">Título</label>
+					<ClayInput
+						id="blog-headline"
+						placeholder="Título"
+						// value + onChange = INPUT CONTROLADO: o texto exibido
+						// vem sempre do estado.
+						value={headline}
+						// "e" é o evento; "e.target.value" é o texto digitado.
+						// Cada tecla atualiza o estado, que redesenha o input.
+						onChange={(e) => setHeadline(e.target.value)}
+					/>
+				</ClayForm.Group>
+				<ClayForm.Group>
+					<label htmlFor="blog-body">Conteúdo</label>
+					<ClayInput
+						// "component" troca o elemento HTML que o Clay desenha:
+						// aqui vira um <textarea> (campo de várias linhas).
+						component="textarea"
+						id="blog-body"
+						placeholder="Conteúdo"
+						value={body}
+						onChange={(e) => setBody(e.target.value)}
+					/>
+				</ClayForm.Group>
+				<ClayButton
+					// displayType define a cor/estilo do botão (primary = destaque).
+					displayType="primary"
+					onClick={handleSave}
+					// type="button" evita que o botão tente "enviar" o formulário
+					// e recarregar a página.
+					type="button"
+				>
+					{/* O texto muda conforme o modo: com editId (editando) mostra
 "Atualizar"; sem editId (criando) mostra "Criar". */}
-
-{editId ? "Atualizar" : "Criar"}
-
-</ClayButton>
-
-</ClayForm>
-
-<hr />
-
-{/* ---------- TABELA ---------- */}
-
-{/* As propriedades são estilos do Clay: bordas entre colunas, destaque
-
+					{editId ? "Atualizar" : "Criar"}
+				</ClayButton>
+			</ClayForm>
+			<hr />
+			{/* ---------- TABELA ---------- */}
+			{/* As propriedades são estilos do Clay: bordas entre colunas, destaque
 ao passar o mouse, rolagem em telas pequenas e linhas zebradas. */}
-
-<*ClayTable* *borderedColumns* *hover* *responsive* *striped*>
-
-{/* Cabeçalho da tabela */}
-
-<*ClayTable.Head*>
-
-<*ClayTable.Row*>
-
-<*ClayTable.Cell* *headingCell*>
-
-Título
-
-</ClayTable.Cell>
-
-<*ClayTable.Cell* *headingCell*>
-
-Ações
-
-</ClayTable.Cell>
-
-</ClayTable.Row>
-
-</ClayTable.Head>
-
-{/* Corpo: uma linha para cada blog */}
-
-<*ClayTable.Body*>
-
-{/* .map percorre a lista e devolve UMA linha de tabela para
-
+			<ClayTable borderedColumns hover responsive striped>
+				{/* Cabeçalho da tabela */}
+				<ClayTable.Head>
+					<ClayTable.Row>
+						<ClayTable.Cell headingCell>Título</ClayTable.Cell>
+						<ClayTable.Cell headingCell>Ações</ClayTable.Cell>
+					</ClayTable.Row>
+				</ClayTable.Head>
+				{/* Corpo: uma linha para cada blog */}
+				<ClayTable.Body>
+					{/* .map percorre a lista e devolve UMA linha de tabela para
 cada blog. O "key" é obrigatório em listas: ajuda o React
-
 a saber qual linha é qual quando a lista muda. Use um
-
 valor único e estável (o id). */}
-
-{blogs.map((blog) => (
-
-<*ClayTable.Row* *key*={blog.id}>
-
-<*ClayTable.Cell*>
-
-{blog.headline}
-
-</ClayTable.Cell>
-
-<*ClayTable.Cell*>
-
-{/* Grupo de botões, com espaço entre eles. */}
-
-<*ClayButton.Group* *spaced*>
-
-<ClayButton
-
-displayType="secondary"
-
-// Atenção: "() => handleEdit(blog)" e NÃO
-
-// "handleEdit(blog)". Sem a arrow function,
-
-// a função seria executada na hora de
-
-// desenhar a tela, e não no clique.
-
-onClick={() =>
-
-handleEdit(blog)
-
+					{blogs.map((blog) => (
+						<ClayTable.Row key={blog.id}>
+							<ClayTable.Cell>{blog.headline}</ClayTable.Cell>
+							<ClayTable.Cell>
+								{/* Grupo de botões, com espaço entre eles. */}
+								<ClayButton.Group spaced>
+									<ClayButton
+										displayType="secondary"
+										// Atenção: "() => handleEdit(blog)" e NÃO
+										// "handleEdit(blog)". Sem a arrow function,
+										// a função seria executada na hora de
+										// desenhar a tela, e não no clique.
+										onClick={() => handleEdit(blog)}
+										small
+										type="button"
+									>
+										Editar
+									</ClayButton>
+									<ClayButton
+										displayType="secondary"
+										onClick={() => handleDelete(blog.id)}
+										small
+										type="button"
+									>
+										Excluir
+									</ClayButton>
+								</ClayButton.Group>
+							</ClayTable.Cell>
+						</ClayTable.Row>
+					))}
+				</ClayTable.Body>
+			</ClayTable>
+		</div>
+	);
 }
-
-small
-
-type="button"
-
->
-
-Editar
-
-</ClayButton>
-
-<ClayButton
-
-displayType="secondary"
-
-onClick={() =>
-
-handleDelete(blog.id)
-
-}
-
-small
-
-type="button"
-
->
-
-Excluir
-
-</ClayButton>
-
-</ClayButton.Group>
-
-</ClayTable.Cell>
-
-</ClayTable.Row>
-
-))}
-
-</ClayTable.Body>
-
-</ClayTable>
-
-</div>
-
-);
-
-}
-
 ```
-
 ### O ciclo de vida do componente
 
 | Momento | O que acontece |
@@ -1503,317 +940,147 @@ O `DocsManager` segue a mesma ideia do `BlogManager` (estado, `load`, `useEffect
 3. Usa **`useRef`** para controlar um `<input type="file">` escondido.
 
 ```jsx
-
 // Aqui entra também o useRef.
-
 import React, { useState, useEffect, useRef } from "react";
-
 import ClayButton from "@clayui/button";
-
 import ClayForm, { ClayInput } from "@clayui/form";
-
 import ClayTable from "@clayui/table";
-
 // Só três funções: não há "update" para documentos neste app.
-
-import {
-
-getDocuments,
-
-uploadDoc,
-
-deleteDoc
-
-} from "../api/liferay";
-
+import { getDocuments, uploadDoc, deleteDoc } from "../api/liferay";
 export default function DocsManager() {
-
-// Lista de documentos vinda da API.
-
-const [documents, setDocuments] = useState([]);
-
-// O arquivo ESCOLHIDO pelo usuário (um objeto File), ou null se nenhum.
-
-const [file, setFile] = useState(null);
-
-// Referência ao <input type="file"> real. Diferente do useState, mudar
-
-// uma ref NÃO redesenha o componente. Usamos para dar comandos ao elemento
-
-// (abrir o seletor, limpar o valor).
-
-const fileInputRef = useRef(null);
-
-// Igual ao BlogManager: busca a lista e guarda no estado.
-
-const load = async () => {
-
-const data = await getDocuments();
-
-setDocuments(data.items || []);
-
-};
-
-useEffect(() => {
-
-load();
-
-}, []);
-
-// Chamada ao clicar em "Upload".
-
-const handleUpload = async () => {
-
-// Proteção: se não há arquivo, não faz nada. (O botão já fica
-
-// desabilitado nesse caso, mas é bom garantir também no código.)
-
-if (!file) {
-
-return;
-
-}
-
-// Envia o arquivo (POST multipart, em liferay.js).
-
-await uploadDoc(file);
-
-// Limpa o estado do arquivo escolhido...
-
-setFile(null);
-
-// ...e também o <input> real. O input de arquivo é "teimoso": o
-
-// navegador não deixa o React controlá-lo com "value", então
-
-// zeramos o valor direto pela ref. Sem isso, escolher o MESMO
-
-// arquivo de novo não dispararia o onChange.
-
-// O "if" evita erro caso a ref ainda não aponte para nada.
-
-if (fileInputRef.current) {
-
-fileInputRef.current.value = "";
-
-}
-
-load();
-
-};
-
-const handleDelete = async (id) => {
-
-await deleteDoc(id);
-
-load();
-
-};
-
-return (
-
-<div>
-
-<h2>Documents and Media</h2>
-
-<*ClayForm*>
-
-<*ClayForm.Group*>
-
-<label htmlFor="document-file">Arquivo</label>
-
-{/* O <input type="file"> padrão do navegador é difícil de
-
+	// Lista de documentos vinda da API.
+	const [documents, setDocuments] = useState([]);
+	// O arquivo ESCOLHIDO pelo usuário (um objeto File), ou null se nenhum.
+	const [file, setFile] = useState(null);
+	// Referência ao <input type="file"> real. Diferente do useState, mudar
+	// uma ref NÃO redesenha o componente. Usamos para dar comandos ao elemento
+	// (abrir o seletor, limpar o valor).
+	const fileInputRef = useRef(null);
+	// Igual ao BlogManager: busca a lista e guarda no estado.
+	const load = async () => {
+		const data = await getDocuments();
+		setDocuments(data.items || []);
+	};
+	useEffect(() => {
+		load();
+	}, []);
+	// Chamada ao clicar em "Upload".
+	const handleUpload = async () => {
+		// Proteção: se não há arquivo, não faz nada. (O botão já fica
+		// desabilitado nesse caso, mas é bom garantir também no código.)
+		if (!file) {
+			return;
+		}
+		// Envia o arquivo (POST multipart, em liferay.js).
+		await uploadDoc(file);
+		// Limpa o estado do arquivo escolhido...
+		setFile(null);
+		// ...e também o <input> real. O input de arquivo é "teimoso": o
+		// navegador não deixa o React controlá-lo com "value", então
+		// zeramos o valor direto pela ref. Sem isso, escolher o MESMO
+		// arquivo de novo não dispararia o onChange.
+		// O "if" evita erro caso a ref ainda não aponte para nada.
+		if (fileInputRef.current) {
+			fileInputRef.current.value = "";
+		}
+		load();
+	};
+	const handleDelete = async (id) => {
+		await deleteDoc(id);
+		load();
+	};
+	return (
+		<div>
+			<h2>Documents and Media</h2>
+			<ClayForm>
+				<ClayForm.Group>
+					<label htmlFor="document-file">Arquivo</label>
+					{/* O <input type="file"> padrão do navegador é difícil de
 estilizar. A solução: ESCONDÊ-LO (display: none) e
-
 abrir o seletor por um botão do Clay, via ref. */}
-
-<input
-
-id="document-file"
-
-// Liga este elemento à variável fileInputRef.
-
-ref={fileInputRef}
-
-style={{display: "none"}}
-
-type="file"
-
-// e.target.files é a lista de arquivos escolhidos;
-
-// pegamos o primeiro ([0]) e guardamos no estado.
-
-onChange={(e) =>
-
-setFile(e.target.files[0])
-
-}
-
-/>
-
-{/* ClayInput.Group coloca itens lado a lado (campo + botão). */}
-
-<*ClayInput.Group*>
-
-{/* Este item ocupa o espaço restante da linha. */}
-
-<*ClayInput.GroupItem*>
-
-{/* Campo SOMENTE LEITURA, só para mostrar o nome. */}
-
-<ClayInput
-
-readOnly
-
-// Operador ternário: se há arquivo, mostra o nome
-
-// dele; senão, mostra o aviso.
-
-value={file ? file.name : "Nenhum arquivo selecionado"}
-
-/>
-
-</ClayInput.GroupItem>
-
-{/* "shrink" faz este item ocupar só o tamanho do botão. */}
-
-<*ClayInput.GroupItem* *shrink*>
-
-<ClayButton
-
-displayType="secondary"
-
-// Simula um clique no <input> escondido, o que
-
-// abre a janela de escolha de arquivo.
-
-onClick={() =>
-
-fileInputRef.current.click()
-
-}
-
-type="button"
-
->
-
-Selecionar arquivo
-
-</ClayButton>
-
-</ClayInput.GroupItem>
-
-</ClayInput.Group>
-
-</ClayForm.Group>
-
-<ClayButton
-
-// Desabilitado enquanto não houver arquivo escolhido.
-
-disabled={!file}
-
-displayType="primary"
-
-onClick={handleUpload}
-
-type="button"
-
->
-
-Upload
-
-</ClayButton>
-
-</ClayForm>
-
-<hr />
-
-<*ClayTable* *borderedColumns* *hover* *responsive* *striped*>
-
-<*ClayTable.Head*>
-
-<*ClayTable.Row*>
-
-<*ClayTable.Cell* *headingCell*>
-
-Nome
-
-</ClayTable.Cell>
-
-<*ClayTable.Cell* *headingCell*>
-
-Ações
-
-</ClayTable.Cell>
-
-</ClayTable.Row>
-
-</ClayTable.Head>
-
-<*ClayTable.Body*>
-
-{documents.map((doc) => (
-
-<*ClayTable.Row* *key*={doc.id}>
-
-<*ClayTable.Cell*>
-
-{/* Mostra o título; se não existir, usa o nome
-
+					<input
+						id="document-file"
+						// Liga este elemento à variável fileInputRef.
+						ref={fileInputRef}
+						style={{ display: "none" }}
+						type="file"
+						// e.target.files é a lista de arquivos escolhidos;
+						// pegamos o primeiro ([0]) e guardamos no estado.
+						onChange={(e) => setFile(e.target.files[0])}
+					/>
+					{/* ClayInput.Group coloca itens lado a lado (campo + botão). */}
+					<ClayInput.Group>
+						{/* Este item ocupa o espaço restante da linha. */}
+						<ClayInput.GroupItem>
+							{/* Campo SOMENTE LEITURA, só para mostrar o nome. */}
+							<ClayInput
+								readOnly
+								// Operador ternário: se há arquivo, mostra o nome
+								// dele; senão, mostra o aviso.
+								value={file ? file.name : "Nenhum arquivo selecionado"}
+							/>
+						</ClayInput.GroupItem>
+						{/* "shrink" faz este item ocupar só o tamanho do botão. */}
+						<ClayInput.GroupItem shrink>
+							<ClayButton
+								displayType="secondary"
+								// Simula um clique no <input> escondido, o que
+								// abre a janela de escolha de arquivo.
+								onClick={() => fileInputRef.current.click()}
+								type="button"
+							>
+								Selecionar arquivo
+							</ClayButton>
+						</ClayInput.GroupItem>
+					</ClayInput.Group>
+				</ClayForm.Group>
+				<ClayButton
+					// Desabilitado enquanto não houver arquivo escolhido.
+					disabled={!file}
+					displayType="primary"
+					onClick={handleUpload}
+					type="button"
+				>
+					Upload
+				</ClayButton>
+			</ClayForm>
+			<hr />
+			<ClayTable borderedColumns hover responsive striped>
+				<ClayTable.Head>
+					<ClayTable.Row>
+						<ClayTable.Cell headingCell>Nome</ClayTable.Cell>
+						<ClayTable.Cell headingCell>Ações</ClayTable.Cell>
+					</ClayTable.Row>
+				</ClayTable.Head>
+				<ClayTable.Body>
+					{documents.map((doc) => (
+						<ClayTable.Row key={doc.id}>
+							<ClayTable.Cell>
+								{/* Mostra o título; se não existir, usa o nome
 do arquivo. O "||" devolve o primeiro valor
-
 que não for vazio/undefined. */}
-
-{doc.title || doc.fileName}
-
-</ClayTable.Cell>
-
-{/* Só um botão (Excluir): não há edição, então não
-
+								{doc.title || doc.fileName}
+							</ClayTable.Cell>
+							{/* Só um botão (Excluir): não há edição, então não
 precisa do ClayButton.Group. */}
-
-<*ClayTable.Cell*>
-
-<ClayButton
-
-displayType="secondary"
-
-onClick={() =>
-
-handleDelete(doc.id)
-
+							<ClayTable.Cell>
+								<ClayButton
+									displayType="secondary"
+									onClick={() => handleDelete(doc.id)}
+									small
+									type="button"
+								>
+									Excluir
+								</ClayButton>
+							</ClayTable.Cell>
+						</ClayTable.Row>
+					))}
+				</ClayTable.Body>
+			</ClayTable>
+		</div>
+	);
 }
-
-small
-
-type="button"
-
->
-
-Excluir
-
-</ClayButton>
-
-</ClayTable.Cell>
-
-</ClayTable.Row>
-
-))}
-
-</ClayTable.Body>
-
-</ClayTable>
-
-</div>
-
-);
-
-}
-
 ```
-
 ### O que muda em relação ao BlogManager
 
 | Ponto | BlogManager | DocsManager |
@@ -1863,95 +1130,49 @@ O `KBManager` é **praticamente uma cópia** do `BlogManager`: a estrutura, o ci
 ### Os trechos que mudam, comentados
 
 ```jsx
-
 // IMPORTS: as funções da API agora são as da Knowledge Base.
-
 import {
-
-getKBArticles,
-
-createKBArticle,
-
-updateKBArticle,
-
-deleteKBArticle
-
+	getKBArticles,
+	createKBArticle,
+	updateKBArticle,
+	deleteKBArticle,
 } from "../api/liferay";
-
 export default function KBManager() {
-
-// Lista de artigos (no BlogManager era "blogs").
-
-const [articles, setArticles] = useState([]);
-
-// "title" e "content" no lugar de "headline" e "body".
-
-const [title, setTitle] = useState("");
-
-const [content, setContent] = useState("");
-
-// Mesmo papel do BlogManager: null = criando, número = editando.
-
-const [editId, setEditId] = useState(null);
-
-const load = async () => {
-
-const data = await getKBArticles();
-
-setArticles(data.items || []);
-
-};
-
-// handleSave: a MESMA lógica, trocando só as funções chamadas.
-
-const handleSave = async () => {
-
-if (editId) {
-
-await updateKBArticle(editId, title, content);
-
+	// Lista de artigos (no BlogManager era "blogs").
+	const [articles, setArticles] = useState([]);
+	// "title" e "content" no lugar de "headline" e "body".
+	const [title, setTitle] = useState("");
+	const [content, setContent] = useState("");
+	// Mesmo papel do BlogManager: null = criando, número = editando.
+	const [editId, setEditId] = useState(null);
+	const load = async () => {
+		const data = await getKBArticles();
+		setArticles(data.items || []);
+	};
+	// handleSave: a MESMA lógica, trocando só as funções chamadas.
+	const handleSave = async () => {
+		if (editId) {
+			await updateKBArticle(editId, title, content);
+		} else {
+			await createKBArticle(title, content);
+		}
+		setTitle("");
+		setContent("");
+		setEditId(null);
+		load();
+	};
+	// handleEdit: o título do artigo vem de "article.title"
+	// (no blog era "blog.headline"). O corpo continua sendo "articleBody"
+	// nos dois recursos.
+	const handleEdit = (article) => {
+		setEditId(article.id);
+		setTitle(article.title);
+		setContent(article.articleBody || "");
+	};
+	// ... handleDelete, o JSX do formulário e a tabela seguem o mesmo
+	// formato do BlogManager, trocando os nomes conforme a tabela acima.
 }
-
-else {
-
-await createKBArticle(title, content);
-
-}
-
-setTitle("");
-
-setContent("");
-
-setEditId(null);
-
-load();
-
-};
-
-// handleEdit: o título do artigo vem de "article.title"
-
-// (no blog era "blog.headline"). O corpo continua sendo "articleBody"
-
-// nos dois recursos.
-
-const handleEdit = (article) => {
-
-setEditId(article.id);
-
-setTitle(article.title);
-
-setContent(article.articleBody || "");
-
-};
-
-// ... handleDelete, o JSX do formulário e a tabela seguem o mesmo
-
-// formato do BlogManager, trocando os nomes conforme a tabela acima.
-
-}
-
 ```
-
 > Repare que `useEffect`, `handleDelete` e todo o JSX seguem o mesmo molde. Se você entendeu o `BlogManager`, entendeu o `KBManager`.
 
 ## 2.9 Pontos de melhoria
@@ -1963,83 +1184,44 @@ Depois que tudo funcionar, estas melhorias deixam o código mais profissional (e
 `test@liferay.com:learn` está escrito no código, e **tudo o que vai para o navegador é visível** para quem abrir as ferramentas do desenvolvedor. Dentro de um widget, o usuário **já está logado**, então dá para aproveitar a sessão dele, com o token anti-CSRF da própria Liferay:
 
 ```javascript
-
 // Em vez de enviar email:senha (Basic Auth), usa a SESSÃO do usuário logado.
-
 // "Liferay.authToken" é um token que a Liferay gera para proteger contra
-
 // ataques CSRF. A API aceita esse token no cabeçalho "x-csrf-token".
-
 const authHeader = () => ({
-
-"x-csrf-token": Liferay.authToken,
-
+	"x-csrf-token": Liferay.authToken,
 });
-
 // O cookie de sessão vai junto automaticamente, porque a URL é relativa
-
 // (mesma origem). Assim, as credenciais SAEM do código.
-
 ```
-
 ### 2. Sem tratamento de erro nos componentes
 
 O `handleResponse` **lança** o erro, mas nenhum componente faz `try/catch`. Se a API falhar, o erro some no console e a tela não mostra nada (e, pior, o formulário é limpo como se tivesse dado certo). Exemplo para o `BlogManager`:
 
 ```jsx
-
 // Novo estado para guardar a mensagem de erro (null = sem erro).
-
 const [error, setError] = useState(null);
-
 const handleSave = async () => {
-
-// try: tenta fazer o que está dentro...
-
-try {
-
-if (editId) {
-
-await updateBlog(editId, headline, body);
-
-}
-
-else {
-
-await createBlog(headline, body);
-
-}
-
-// Só limpa o formulário se TUDO deu certo.
-
-setHeadline("");
-
-setBody("");
-
-setEditId(null);
-
-setError(null);
-
-load();
-
-}
-
-// ...e se qualquer await acima lançar erro, o fluxo cai aqui.
-
-catch (err) {
-
-setError(err.message);
-
-}
-
+	// try: tenta fazer o que está dentro...
+	try {
+		if (editId) {
+			await updateBlog(editId, headline, body);
+		} else {
+			await createBlog(headline, body);
+		}
+		// Só limpa o formulário se TUDO deu certo.
+		setHeadline("");
+		setBody("");
+		setEditId(null);
+		setError(null);
+		load();
+	} catch (err) {
+		// ...e se qualquer await acima lançar erro, o fluxo cai aqui.
+		setError(err.message);
+	}
 };
-
 // E no JSX, mostra o erro (se houver) com o ClayAlert, que já está instalado:
-
 // {error && <ClayAlert displayType="danger" title="Erro">{error}</ClayAlert>}
-
 ```
-
 ### 3. Dependências instaladas e não usadas
 
 `@clayui/alert`, `@clayui/modal` e `@clayui/nav` estão no `package.json`, mas nenhum componente os importa. Duas oportunidades diretas:
@@ -2067,17 +1249,11 @@ Os dois componentes são quase idênticos. Uma solução é extrair um component
 O script `deploy` tem o nome do `.jar` e do container escritos à mão. Uma alternativa é ler o nome e a versão do próprio `package.json` (o npm expõe essas informações como variáveis de ambiente durante o script):
 
 ```jsonc
-
 // (comentário só para explicação)
-
 // $npm_package_name e $npm_package_version são preenchidos pelo npm com os
-
 // valores do próprio package.json. Em Linux/macOS (shell sh/bash) isso funciona;
-
 // no Windows (cmd), a sintaxe de variável é outra (%npm_package_name%).
-
 "deploy": "npm run build && docker cp dist/$npm_package_name-$npm_package_version.jar liferay:/opt/liferay/deploy"
-
 ```
 
 Assim, renomear o projeto ou mudar a versão não quebra mais o deploy.
