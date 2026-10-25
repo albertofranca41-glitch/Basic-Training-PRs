@@ -6,11 +6,8 @@ Este guia ensina, do zero, a fazer a atividade em que você cria um **widget em 
 Ele está dividido em **2 etapas**:
 
 | Etapa | O que você vai aprender |
-
 |---|---|
-
 | **Etapa 1 – Teoria** | Conceitos necessários: React como widget na Liferay, hooks, Clay UI, os endpoints da API usados no app, `fetch` (autenticação, upload e status 204) e como o widget é construído e implantado |
-
 | **Etapa 2 – O código** | Os arquivos da atividade, um a um, com código comentado e explicado parte por parte |
 
 > Este guia **não ensina a enviar o PR**: isso você já tem no seu próprio markdown. Aqui o foco é entender o assunto da atividade.
@@ -71,17 +68,11 @@ Página da Liferay
 No widget, o `package.json` não serve só para listar dependências. Ele também descreve o widget para a Liferay:
 
 | Bloco/campo | Para que serve |
-
 |---|---|
-
 | `main` | Aponta o arquivo de entrada (`index.js`) que exporta a função `main` |
-
 | `portlet` | Metadados do widget: nome (`javax.portlet.name`), categoria em que ele aparece, se pode ser colocado mais de uma vez na página (`instanceable`), papéis com acesso etc. |
-
 | `scripts` | Comandos que você roda com `npm run <nome>`: `build`, `deploy`, `start`... |
-
 | `dependencies` | Bibliotecas usadas **em tempo de execução** (React, Clay) |
-
 | `devDependencies` | Ferramentas usadas **só para construir** o projeto (Babel, bundler) |
 
 ## 1.2 Hooks usados no projeto
@@ -89,13 +80,9 @@ No widget, o `package.json` não serve só para listar dependências. Ele també
 Os componentes do projeto são **funções**. Para que uma função "lembre" de coisas entre uma renderização e outra, o React oferece os **hooks**. Eles foram introduzidos no React **16.8**, e a versão fixada no projeto (`16.8.6`) já os suporta.
 
 | Hook | O que faz | Onde aparece no projeto |
-
 |---|---|---|
-
 | `useState` | Guarda um valor e **redesenha o componente** quando ele muda | Listas (`blogs`, `documents`, `articles`), campos do formulário (`headline`, `body`...) e o `editId` |
-
 | `useEffect` | Executa um código **depois** que o componente é desenhado | Carregar a lista da API logo que o componente aparece na tela |
-
 | `useRef` | Guarda uma **referência** a um elemento HTML, sem causar redesenho | O `<input type="file">` escondido do `DocsManager` |
 
 ### `useState`
@@ -131,13 +118,9 @@ O ciclo é: o usuário digita → `onChange` dispara → `setHeadline` atualiza 
 Componentes usados neste projeto:
 
 | Componente | Pacote | Para que serve |
-
 |---|---|---|
-
 | `ClayButton` | `@clayui/button` | Botões (`displayType` define a cor: `primary`, `secondary`...) |
-
 | `ClayForm` e `ClayInput` | `@clayui/form` | Formulário, grupos de campos e inputs (inclusive `textarea`) |
-
 | `ClayTable` | `@clayui/table` | Tabelas com cabeçalho, linhas e células |
 
 ### Por que as versões ficam fixas
@@ -161,13 +144,9 @@ A API é a mesma do guia de JavaScript (`/o/headless-delivery/v1.0`). A diferen�
 ### Recurso × método no app
 
 | Recurso | Listar (GET) | Criar (POST) | Atualizar (PUT) | Excluir (DELETE) |
-
 |---|---|---|---|---|
-
 | **Blogs** (`blog-postings`) | Sim | Sim | Sim | Sim |
-
 | **Knowledge Base** (`knowledge-base-articles`) | Sim | Sim | Sim | Sim |
-
 | **Documents** (`documents`) | Sim | Sim (upload) | Não implementado | Sim |
 
 > Neste app, Documents só lista, envia e exclui. A edição de documentos não foi implementada.
@@ -177,11 +156,8 @@ A API é a mesma do guia de JavaScript (`/o/headless-delivery/v1.0`). A diferen�
 Assim como no guia de JavaScript, a API tem **dois níveis** de URL:
 
 | Nível | Formato | Usado para |
-
 |---|---|---|
-
 | **Coleção, dentro de um site** | `/sites/{siteId}/blog-postings` | **Listar** e **criar** |
-
 | **Um item específico** | `/blog-postings/{id}` | **Atualizar** e **excluir** |
 
 O mesmo padrão vale para `documents` e `knowledge-base-articles`.
@@ -189,13 +165,9 @@ O mesmo padrão vale para `documents` e `knowledge-base-articles`.
 ### Campos usados em cada recurso
 
 | Recurso | Campos enviados | Campos lidos na tela |
-
 |---|---|---|
-
 | Blog | `headline`, `articleBody` | `id`, `headline`, `articleBody` |
-
 | Knowledge Base | `title`, `articleBody` | `id`, `title`, `articleBody` |
-
 | Documents | arquivo (`file`), `title`, `description` | `id`, `title`, `fileName` |
 
 ## 1.5 fetch na prática
@@ -238,13 +210,9 @@ babel --source-maps -d build src && npm run copy-assets && liferay-npm-bundler
 ```
 
 | Passo | O que acontece |
-
 |---|---|
-
 | `babel ... -d build src` | **Compila** tudo o que está em `src/` (converte JSX e JavaScript moderno em JavaScript comum) e grava o resultado na pasta `build/`. `--source-maps` gera arquivos que ajudam a depurar |
-
 | `npm run copy-assets` | Copia os arquivos estáticos do projeto (CSS, idiomas...) para dentro do pacote |
-
 | `liferay-npm-bundler` | **Empacota** o resultado e as dependências do `node_modules` em um **`.jar`** dentro da pasta `dist/` |
 
 O `&&` faz cada comando só começar se o anterior terminar sem erro.
@@ -349,21 +317,13 @@ A separação é proposital: os componentes só cuidam da **tela**, e o `liferay
 O que foi feito em cada arquivo:
 
 | Arquivo | Situação | Papel |
-
 |---|---|---|
-
 | `package.json` | Linhas implementadas | Dependências do Clay, `overrides` e script `deploy` |
-
 | `src/api/liferay.js` | Criado e implementado | Funções de requisição para os três recursos |
-
 | `src/index.js` | Implementado | Entrega o `<App />` ao elemento da Liferay |
-
 | `src/App.js` | Criado e implementado | Monta a tela com os três gerenciadores |
-
 | `src/components/BlogManager.jsx` | Criado e implementado | Tela do CRUD de Blogs |
-
 | `src/components/DocsManager.jsx` | Criado e implementado | Tela de upload, listagem e exclusão de Documents |
-
 | `src/components/KBManager.jsx` | Criado e implementado | Tela do CRUD de Knowledge Base |
 
 Vamos seguir **da base para a interface**: primeiro o que sustenta o projeto (`package.json` e `liferay.js`), depois o que desenha a tela.
@@ -624,29 +584,17 @@ export const deleteKBArticle = (id) =>
 ### Resumo das funções
 
 | Função | Método | URL | Corpo | Observação |
-
 |---|---|---|---|---|
-
 | `getBlogs` | GET | `/sites/{siteId}/blog-postings` | Não | Lista paginada em `data.items` |
-
 | `createBlog` | POST | `/sites/{siteId}/blog-postings` | JSON | `headline` + `articleBody` |
-
 | `updateBlog` | PUT | `/blog-postings/{id}` | JSON | Substitui o recurso |
-
 | `deleteBlog` | DELETE | `/blog-postings/{id}` | Não | Resposta 204 |
-
 | `getDocuments` | GET | `/sites/{siteId}/documents` | Não | |
-
 | `uploadDoc` | POST | `/sites/{siteId}/documents` | **FormData** | Sem `Content-Type` manual |
-
 | `deleteDoc` | DELETE | `/documents/{id}` | Não | Resposta 204 |
-
 | `getKBArticles` | GET | `/sites/{siteId}/knowledge-base-articles` | Não | |
-
 | `createKBArticle` | POST | `/sites/{siteId}/knowledge-base-articles` | JSON | `title` + `articleBody` |
-
 | `updateKBArticle` | PUT | `/knowledge-base-articles/{id}` | JSON | |
-
 | `deleteKBArticle` | DELETE | `/knowledge-base-articles/{id}` | Não | |
 
 ## 2.4 O ponto de entrada (index.js)
@@ -912,19 +860,12 @@ valor único e estável (o id). */}
 ### O ciclo de vida do componente
 
 | Momento | O que acontece |
-
 |---|---|
-
 | Componente aparece | `useEffect` chama `load()` → `getBlogs()` → `setBlogs(...)` → a tabela é desenhada |
-
 | Usuário digita | `onChange` → `setHeadline` / `setBody` → o input é redesenhado com o novo texto |
-
 | Clica em **Criar** (`editId` é `null`) | `handleSave` → `createBlog` (POST) → limpa o formulário → `load()` |
-
 | Clica em **Editar** numa linha | `handleEdit` → `setEditId(id)` e preenche o formulário → o botão passa a dizer **Atualizar** |
-
 | Clica em **Atualizar** (`editId` tem valor) | `handleSave` → `updateBlog` (PUT) → limpa o formulário e volta a `editId = null` → `load()` |
-
 | Clica em **Excluir** | `handleDelete` → `deleteBlog` (DELETE) → `load()` |
 
 > **Um detalhe importante:** `handleSave` usa **o mesmo botão e o mesmo formulário** para criar e para atualizar. O `editId` é o "interruptor" entre os dois modos.
@@ -1084,21 +1025,13 @@ precisa do ClayButton.Group. */}
 ### O que muda em relação ao BlogManager
 
 | Ponto | BlogManager | DocsManager |
-
 |---|---|---|
-
 | Estados do formulário | `headline`, `body`, `editId` | `file` |
-
 | Campo de entrada | `ClayInput` de texto e `textarea` | `<input type="file">` escondido + botão que o aciona |
-
 | Salvar | `handleSave` (cria **ou** atualiza) | `handleUpload` (só envia) |
-
 | Editar | Sim (`handleEdit` + `editId`) | **Não** |
-
 | Hook extra | Nenhum | `useRef` |
-
 | Corpo da requisição | JSON | `FormData` (multipart) |
-
 | Texto da linha | `blog.headline` | `doc.title \|\| doc.fileName` |
 
 ## 2.8 KBManager.jsx
@@ -1108,23 +1041,14 @@ O `KBManager` é **praticamente uma cópia** do `BlogManager`: a estrutura, o ci
 ### O que muda em relação ao BlogManager
 
 | Ponto | BlogManager | KBManager |
-
 |---|---|---|
-
 | Nome do componente | `BlogManager` | `KBManager` |
-
 | Lista no estado | `blogs` / `setBlogs` | `articles` / `setArticles` |
-
 | Campo do título | `headline` / `setHeadline` | `title` / `setTitle` |
-
 | Campo do conteúdo | `body` / `setBody` | `content` / `setContent` |
-
 | Funções da API | `getBlogs`, `createBlog`, `updateBlog`, `deleteBlog` | `getKBArticles`, `createKBArticle`, `updateKBArticle`, `deleteKBArticle` |
-
 | Campo lido na API | `blog.headline` | `article.title` |
-
 | `id`s dos campos | `blog-headline`, `blog-body` | `kb-title`, `kb-content` |
-
 | Título da seção (`<h2>`) | `Blogs` | `Knowledge Base` |
 
 ### Os trechos que mudam, comentados
