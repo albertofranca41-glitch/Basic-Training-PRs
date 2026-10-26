@@ -70,6 +70,7 @@ git checkout master
 git reset --hard upstream/master
 git push --force origin master
 ```
+>Cada Pull Request do Basic Training deve conter apenas as alterações referentes à sua respectiva atividade. Por isso, antes de iniciar um novo PR, sincronizamos a branch master com o repositório original do Brian. Esse procedimento evita que commits de atividades anteriores, ainda não incorporados ao repositório original, sejam incluídos indevidamente no próximo Pull Request.
 
 ### O que cada comando faz
 
