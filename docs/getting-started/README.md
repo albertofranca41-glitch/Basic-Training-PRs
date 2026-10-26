@@ -62,7 +62,7 @@ Você pode conferir as URLs configuradas a qualquer momento com `git remote -v`.
 
 ## 🔄 Etapa 1 — Sincronizar o fork (`origin`) com o `upstream`
 
-Esse é o passo mais importante e deve ser feito **sempre antes de começar uma nova atividade**. O objetivo é garantir que sua branch `master` fique idêntica à do repositório original, evitando conflitos e histórico bagunçado.
+No fluxo deste treinamento, usamos este procedimento para manter a `master` do fork como um espelho descartável do repositório original antes de iniciar uma atividade. Ele só é adequado quando não há trabalho na `master` que precise ser preservado: `reset --hard` e `push --force` descartam diferenças e reescrevem o histórico. Sincronizar um fork em geral não exige sobrescrever o histórico; escolha um fluxo adequado ao trabalho que deseja manter.
 
 ```bash
 git fetch upstream
@@ -70,7 +70,7 @@ git checkout master
 git reset --hard upstream/master
 git push --force origin master
 ```
->Cada Pull Request do Basic Training deve conter apenas as alterações referentes à sua respectiva atividade. Por isso, antes de iniciar um novo PR, sincronizamos a branch master com o repositório original do Brian. Esse procedimento evita que commits de atividades anteriores, ainda não incorporados ao repositório original, sejam incluídos indevidamente no próximo Pull Request.
+> Cada Pull Request do Basic Training deve conter apenas as alterações referentes à sua respectiva atividade. Neste fluxo, sincronizar a `master` como espelho ajuda a evitar que commits de atividades anteriores, ainda não incorporados ao repositório original, sejam incluídos indevidamente no próximo Pull Request. Se houver trabalho que você precise manter, preserve-o antes de seguir este procedimento.
 
 ### O que cada comando faz
 
@@ -81,7 +81,7 @@ git push --force origin master
 | `git reset --hard upstream/master` | Reescreve sua `master` local para ficar **idêntica** à `master` do upstream, descartando qualquer diferença |
 | `git push --force origin master` | Sobrescreve a `master` do seu fork no GitHub com essa versão sincronizada |
 
-> ⚠️ **Atenção:** `reset --hard` e `push --force` são comandos destrutivos — eles descartam alterações locais e sobrescrevem o histórico remoto. Por isso:
+> ⚠️ **Atenção:** `reset --hard` e `push --force` são comandos destrutivos — eles descartam alterações locais e sobrescrevem o histórico remoto. Use esta sequência apenas se sua `master` for um espelho descartável do `upstream` e você não tiver trabalho nela que precise preservar. Por isso:
 > - Só rode essa sequência estando na `master` — **nunca** em uma branch com trabalho em andamento que você queira manter.
 > - Trate sua `master` sempre como um espelho do `upstream`; todo o seu trabalho real acontece em branches separadas (próxima etapa).
 
@@ -89,7 +89,7 @@ git push --force origin master
 
 ## 🌿 Etapa 2 — Criar uma nova branch
 
-Com a `master` sincronizada, crie uma branch nova para a atividade que você vai desenvolver:
+Depois de sincronizar a `master` conforme o fluxo deste treinamento, crie uma branch nova para a atividade que você vai desenvolver:
 
 ```bash
 git checkout -b nome-da-sua-branch
@@ -162,7 +162,7 @@ Isso envia sua branch (com os commits) para o seu fork no GitHub — ainda **nã
 Para copiar e colar quando já souber o fluxo de cor:
 
 ```bash
-# 1. Sincronizar o fork com o upstream
+# 1. (Fluxo do treinamento, se a master for um espelho descartável) Sincronizar o fork com o upstream
 git fetch upstream
 git checkout master
 git reset --hard upstream/master
@@ -190,7 +190,7 @@ git push origin nome-da-sua-branch
 ## ⚠️ Erros comuns e cuidados
 
 - **Rodar o `reset --hard` na branch errada:** confirme com `git branch` que está na `master` antes da Etapa 1 — se estiver em outra branch com trabalho não commitado, ele será perdido.
-- **Esquecer de sincronizar antes de começar:** pular a Etapa 1 pode fazer sua branch nascer desatualizada, gerando conflitos na hora do PR.
+- **Começar com a `master` desatualizada neste fluxo:** se você usa a `master` como espelho do upstream, sincronize-a antes de criar a branch da atividade. Se tiver trabalho que precisa preservar, não use a sequência destrutiva sem antes protegê-lo.
 - **Commitar direto na `master`:** trate a `master` sempre como somente leitura/espelho — todo trabalho deve estar em uma branch própria.
 - **Abrir o PR contra a branch errada:** confira sempre se o `base` do PR aponta para `upstream/master`.
 - **Abrir o PR no repositório errado:** o PR precisa ir para o repositório `upstream`, não para o seu próprio fork — é lá que ele fica visível para quem vai revisar a atividade.

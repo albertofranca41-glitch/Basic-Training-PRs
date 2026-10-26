@@ -86,7 +86,7 @@ Essa distinção é importante: **o cliente consome a API; não é ele que dispo
 
 ## 4. Resources OSGi e client JAR
 
-É importante distinguir o Resource que participa da exposição da API no servidor do Resource utilizado pelo cliente Java.
+É importante distinguir o Resource que participa da exposição da API no servidor do Resource cliente gerado para chamadas HTTP. Também há Resources da API disponibilizados no servidor como serviços OSGi, que podem ser obtidos por código executado dentro do próprio Liferay.
 
 ### Resource no servidor
 
@@ -104,9 +104,23 @@ FooResourceImpl
 Lógica da aplicação
 ```
 
-### Resource do cliente
+### Resource cliente (client JAR)
 
 No código consumidor, uma classe como `FooResource` pode oferecer métodos Java que representam operações da API:
+
+```java
+FooResource fooResource = FooResource.builder()
+    .authentication("usuario", "senha")
+    .build();
+
+Foo createdFoo = fooResource.postFoo(newFoo);
+```
+
+Nesse exemplo, `fooResource` é o Resource cliente do client JAR. `fooResource.postFoo(newFoo)` prepara uma chamada HTTP à API; a operação é processada pelo servidor. Esse padrão é usado por programas que consomem a API pela rede.
+
+### Resource OSGi no servidor
+
+Em um portlet ou outro componente executado dentro do Liferay, uma Factory de Resource pode ser injetada pelo OSGi e usada para construir o Resource local:
 
 ```java
 FooResource fooResource = _fooResourceFactory.create()
@@ -116,16 +130,15 @@ FooResource fooResource = _fooResourceFactory.create()
 Foo createdFoo = fooResource.postFoo(newFoo);
 ```
 
-Nesse exemplo, `fooResource.postFoo(newFoo)` é uma chamada ao cliente Java gerado. O cliente prepara a comunicação com a API; a operação é processada pelo servidor.
-
-A `Factory` permite construir o Resource cliente com a configuração necessária, como o contexto do usuário, conforme o cliente gerado e o ambiente de execução.
+Aqui, `fooResource` é um Resource da API obtido via OSGi, chamado dentro da mesma JVM. A chamada de método não atravessa HTTP; o usuário é fornecido como contexto local. Essa Factory não é o cliente HTTP do client JAR.
 
 Em resumo:
 
 - **Resource de implementação:** participa do processamento da API no servidor.
-- **Resource cliente:** permite chamar a API a partir de código Java.
+- **Resource cliente:** usa HTTP para chamar a API, geralmente a partir de um programa externo.
+- **Resource OSGi:** permite que código dentro do Liferay invoque a API localmente, na mesma JVM.
 - **OSGi:** fornece a infraestrutura modular na qual os bundles e componentes do Liferay são registrados e utilizados.
-- **Client JAR:** empacota classes que facilitam o consumo da API; não substitui a API implantada no servidor.
+- **Client JAR:** empacota classes que facilitam o consumo da API por HTTP; não substitui a API implantada no servidor.
 
 ---
 

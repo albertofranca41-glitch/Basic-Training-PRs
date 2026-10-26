@@ -259,7 +259,7 @@ Com o OSGi Resource, você chama o método **diretamente na mesma JVM**: não h�
 Dois cuidados para não exagerar na conclusão:
 
 - A chamada local **não é "de graça"**: a implementação em `FooResourceImpl` continua sendo executada, assim como as camadas abaixo dela (serviços, banco de dados). O ganho é nos custos de **comunicação**, não no trabalho da própria operação.
-- O OSGi Resource **só funciona para código que roda dentro do Liferay**. Um programa externo continua precisando do client JAR.
+- O OSGi Resource **só funciona para código que roda dentro do Liferay**. Um programa externo precisa acessar a API por HTTP; o client JAR é uma opção para consumidores Java, mas também é possível usar `fetch`, `curl` ou uma biblioteca HTTP de outra linguagem.
 
 | Aspecto | Client JAR | OSGi Resource |
 |---|---|---|

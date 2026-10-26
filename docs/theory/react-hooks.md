@@ -12,7 +12,7 @@ Os **Hooks** são funções especiais que permitem utilizar recursos do React em
 
 Esses recursos são importantes para compreender como uma aplicação React busca dados de uma API, atualiza suas informações e apresenta os resultados na interface.
 
-Este material utiliza conceitos compatíveis com o React 16.8.6, versão que introduziu os Hooks.
+Os Hooks foram introduzidos no React 16.8.0. Os exemplos deste material são compatíveis com o React 16.8.6.
 
 ## 2. O que é renderização?
 
