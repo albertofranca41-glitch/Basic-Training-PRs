@@ -16,6 +16,8 @@ Ele está dividido em **2 etapas**:
 
 > Os conceitos de HTTP, REST, JSON, Promises e `async/await` são os mesmos do guia da atividade de JavaScript. Aqui eles são só retomados quando necessário.
 
+> ⚠️ Antes de enviar o PR: confira se o `package-lock.json` foi adicionado ao `.gitignore`. As instruções estão na seção 2.1.
+
 ---
 
 ## Sumário
@@ -282,6 +284,43 @@ Os links abaixo complementam os conceitos apresentados nesta etapa e ajudam a co
 # Etapa 2 – O código
 
 ## 2.1 Visão geral
+
+### ⚠️ Atenção: configuração do `.gitignore`
+
+**Antes de começar a implementação, é importante realizar um pequeno ajuste no arquivo `.gitignore` do projeto.**
+
+Por padrão, quando a pasta React é criada, o arquivo `.gitignore` possui o seguinte conteúdo:
+
+```
+build/*
+dist/*
+node_modules/*
+liferay-npm-bundler-report.html
+.webpack/*
+```
+
+Entretanto, para esta atividade, é necessário adicionar também o arquivo `package-lock.json` à lista de arquivos ignorados pelo Git.
+
+Portanto, o `.gitignore` deverá ficar assim:
+
+```
+build/*
+dist/*
+node_modules/*
+liferay-npm-bundler-report.html
+.webpack/*
+package-lock.json
+```
+
+> **⚠️ IMPORTANTE PARA O ENVIO DA ATIVIDADE:** Certifique-se de que o `package-lock.json` esteja incluído no `.gitignore` antes de realizar o commit e enviar seu Pull Request. Esse arquivo não deve fazer parte da entrega desta atividade.
+
+> **Observação:** caso o `package-lock.json` já esteja sendo rastreado pelo Git, adicioná-lo ao `.gitignore` não será suficiente. Nesse caso, execute:
+> ```
+> git rm --cached package-lock.json
+> ```
+> Esse comando remove o arquivo do controle de versão, mas **não o exclui da sua máquina**.
+
+Essa exigência é específica desta atividade. Em projetos Node.js em geral, normalmente é recomendável versionar o `package-lock.json`, pois ele ajuda a garantir instalações reproduzíveis das dependências.
 
 O projeto tem **uma camada de API**, **três componentes de tela** (um por recurso) e dois arquivos que montam tudo:
 
