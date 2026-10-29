@@ -484,7 +484,7 @@ const updateSingleBlog = async (id) => {
     // Chamar res.json() sem corpo causaria erro, então tratamos antes.
     if (res.status === 204) {
       console.log("Blog updated.");
-      return;
+      return null;
     }
 
     const data = await res.json();
