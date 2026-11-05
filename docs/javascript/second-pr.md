@@ -1,5 +1,27 @@
 # Segundo PR de JavaScript
 
+## Sumário
+
+- [Etapa 1 – Teoria](#etapa-1--teoria)
+  - [1.1 Como o JavaScript encontra o formulário](#11-como-o-javascript-encontra-o-formulário)
+  - [1.2 Quando o botão é acionado, quem chama a função?](#12-quando-o-botão-é-acionado-quem-chama-a-função)
+  - [1.3 O que o campo de arquivo entrega ao código?](#13-o-que-o-campo-de-arquivo-entrega-ao-código)
+  - [1.4 Como o arquivo e seus metadados viajam juntos?](#14-como-o-arquivo-e-seus-metadados-viajam-juntos)
+  - [1.5 Como a resposta passa a aparecer na página?](#15-como-a-resposta-passa-a-aparecer-na-página)
+- [Recursos adicionais](#recursos-adicionais)
+- [Etapa 2 – O código](#etapa-2--o-código)
+  - [2.1 Visão geral](#21-visão-geral)
+  - [2.2 Código completo comentado](#22-código-completo-comentado)
+  - [2.3 Explicação por partes](#23-explicação-por-partes)
+    - [Parte 1 – Elementos HTML e DOM](#parte-1--elementos-html-e-dom)
+    - [Parte 2 – A função `uploadDoc(file)`](#parte-2--a-função-uploaddocfile)
+    - [Parte 3 – Enviando o arquivo com `fetch`](#parte-3--enviando-o-arquivo-com-fetch)
+    - [Parte 4 – Tratamento da resposta](#parte-4--tratamento-da-resposta)
+    - [Parte 5 – Evento `submit`](#parte-5--evento-submit)
+  - [2.4 Como executar e testar](#24-como-executar-e-testar)
+
+---
+
 ## Etapa 1 – Teoria
 
 O [primeiro PR](first-pr.md) explica HTTP, JSON, Basic Auth, `fetch` e `async/await`. Aqui vamos acompanhar o que acontece **no navegador**, desde o momento em que alguém escolhe um arquivo até a exibição do documento devolvido pelo Liferay.
@@ -52,6 +74,16 @@ output.replaceChildren(pre);
 1. **Criar o elemento.** `document.createElement("pre")` cria um elemento HTML `<pre>` em memória. A constante `pre` guarda uma referência a ele. Nesse momento ele ainda está fora da árvore da página. A tag foi escolhida porque preserva espaços e quebras de linha, o que torna a indentação visível.
 2. **Preencher o elemento.** `JSON.stringify(data, null, 2)` produz uma string a partir de `data`. O segundo argumento, `null`, indica que não aplicamos um filtro ou função de substituição. O terceiro, `2`, pede dois espaços de indentação por nível. A atribuição a `textContent` coloca essa string dentro do elemento como texto. Assim, um título como `<b>Relatório</b>` aparece com os sinais de menor e maior, sem virar uma tag em negrito.
 3. **Mostrar o resultado.** `output.replaceChildren(pre)` coloca o elemento pronto dentro de `<div id="output">`, substituindo seus filhos atuais. No primeiro upload bem-sucedido, a área estava vazia. No segundo, o novo `<pre>` ocupa o lugar do anterior. A própria `div` continua disponível para o próximo resultado.
+
+## Recursos adicionais
+
+- [Evento `submit` do formulário (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/submit_event) — veja em quais situações o navegador dispara o evento e como registrar uma função para recebê-lo.
+- [`event.preventDefault()` (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault) — aprofunde a diferença entre cancelar a ação padrão e interromper a propagação do evento.
+- [Upload de arquivos com `FormData` (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest_API/Using_FormData_Objects) — acompanhe exemplos de envio de arquivos e veja por que o navegador precisa definir o `Content-Type`.
+- [`replaceChildren()` (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/Element/replaceChildren) — veja como substituir os filhos de um elemento, como fazemos ao exibir o novo `<pre>` na área de resultado.
+- [API Explorer do Liferay local](http://localhost:8080/o/api) — com o Liferay em execução e a sessão iniciada, consulte a operação `POST /sites/{siteId}/documents` da Headless Delivery para conferir o corpo da requisição e a resposta esperada.
+
+---
 
 ## Etapa 2 – O código
 
