@@ -1,13 +1,26 @@
-# Segundo PR de JavaScript
+# Guia: Atividade de JavaScript com a Headless Delivery API (Upload de documentos)
+
+Neste segundo PR, você cria um formulário HTML para selecionar um arquivo, enviá-lo ao **Documents and Media** do Liferay e exibir a resposta da API na própria página.
+
+O guia está dividido em **2 etapas**:
+
+| Etapa | O que você vai aprender |
+|---|---|
+| **Etapa 1 – Teoria** | Como o navegador trata o envio do formulário, prepara o arquivo com `FormData` e atualiza o DOM. |
+| **Etapa 2 – O código** | Como as partes do exemplo funcionam juntas e como testar o upload no seu ambiente. |
+
+> Para revisar HTTP, JSON, Basic Auth, `fetch` e `async/await`, consulte o [primeiro PR de JavaScript](first-pr.md).
+
+---
 
 ## Sumário
 
 - [Etapa 1 – Teoria](#etapa-1--teoria)
-  - [1.1 Como o JavaScript encontra o formulário](#11-como-o-javascript-encontra-o-formulário)
-  - [1.2 Quando o botão é acionado, quem chama a função?](#12-quando-o-botão-é-acionado-quem-chama-a-função)
-  - [1.3 O que o campo de arquivo entrega ao código?](#13-o-que-o-campo-de-arquivo-entrega-ao-código)
-  - [1.4 Como o arquivo e seus metadados viajam juntos?](#14-como-o-arquivo-e-seus-metadados-viajam-juntos)
-  - [1.5 Como a resposta passa a aparecer na página?](#15-como-a-resposta-passa-a-aparecer-na-página)
+  - [1.1 O formulário HTML e o DOM](#11-o-formulário-html-e-o-dom)
+  - [1.2 O evento `submit` e o método `preventDefault()`](#12-o-evento-submit-e-o-método-preventdefault)
+  - [1.3 Seleção de arquivos com `FileList` e `File`](#13-seleção-de-arquivos-com-filelist-e-file)
+  - [1.4 Upload com `FormData` e `multipart/form-data`](#14-upload-com-formdata-e-multipartform-data)
+  - [1.5 Exibição da resposta com `<pre>`](#15-exibição-da-resposta-com-pre)
 - [Recursos adicionais](#recursos-adicionais)
 - [Etapa 2 – O código](#etapa-2--o-código)
   - [2.1 Visão geral](#21-visão-geral)
@@ -19,20 +32,24 @@
     - [Parte 4 – Tratamento da resposta](#parte-4--tratamento-da-resposta)
     - [Parte 5 – Evento `submit`](#parte-5--evento-submit)
   - [2.4 Como executar e testar](#24-como-executar-e-testar)
+  - [2.5 Pontos de melhoria](#25-pontos-de-melhoria)
+  - [2.6 Erros comuns](#26-erros-comuns)
 
 ---
 
-## Etapa 1 – Teoria
+# Etapa 1 – Teoria
 
-O [primeiro PR](first-pr.md) explica HTTP, JSON, Basic Auth, `fetch` e `async/await`. Aqui vamos acompanhar o que acontece **no navegador**, desde o momento em que alguém escolhe um arquivo até a exibição do documento devolvido pelo Liferay.
+Vamos acompanhar o que acontece **no navegador**, desde o momento em que alguém escolhe um arquivo até a exibição do documento devolvido pelo Liferay.
 
-### 1.1 Como o JavaScript encontra o formulário
+## 1.1 O formulário HTML e o DOM
 
-Ao ler o HTML, o navegador constrói o **DOM**, uma árvore de objetos que representa a página. No exemplo, o formulário contém o campo de arquivo e o botão. A `<div id="output">` fica fora do formulário e serve para mostrar o resultado.
+Ao ler o HTML, o navegador constrói o **DOM** (*Document Object Model*), uma árvore de objetos que representa a página. No exemplo, o formulário contém o campo de arquivo e o botão. A `<div id="output">` fica fora do formulário e serve para mostrar o resultado.
 
-`document.getElementById("myForm")` procura o elemento cujo atributo é `id="myForm"`. A constante `myForm` guarda uma referência ao formulário que já está na página. Por isso podemos registrar nele uma função que reage ao envio. A posição do `<script>` também importa. Quando o navegador chega a ele, já leu os três elementos. Se o ID estiver escrito de outra forma, a busca retorna `null` e a chamada seguinte a `myForm.addEventListener(...)` falha.
+`document.getElementById("myForm")` procura o elemento cujo atributo é `id="myForm"`. A constante `myForm` guarda uma referência ao formulário que já está na página. Por isso podemos registrar nele uma função que reage ao envio.
 
-### 1.2 Quando o botão é acionado, quem chama a função?
+> A posição do `<script>` também importa. Quando o navegador chega a ele, já leu os três elementos. Se o ID estiver escrito de outra forma, a busca retorna `null` e a chamada seguinte a `myForm.addEventListener(...)` falha.
+
+## 1.2 O evento `submit` e o método `preventDefault()`
 
 ```javascript
 myForm.addEventListener("submit", async (event) => {
@@ -43,25 +60,29 @@ myForm.addEventListener("submit", async (event) => {
 
 Ao carregar a página, o JavaScript executa `addEventListener` para **registrar** uma função. O primeiro argumento, `"submit"`, indica qual evento interessa. O segundo é a própria função, chamada de *callback*. O navegador guarda essa função e a chama a cada envio do formulário. Assim, abrir a página apenas deixa o formulário pronto para uso.
 
-Por que escutar o formulário? O clique acontece no botão, mas o botão tem `type="submit"` e aciona o envio do formulário. Escutar `submit` permite tratar o envio inclusive quando o botão é ativado pelo teclado. Quando o evento ocorre, o navegador passa à função um objeto com informações sobre aquele envio. O nome `event` é o parâmetro que usamos para acessar esse objeto.
+### Por que escutar o formulário?
 
-**O que aconteceria sem `event.preventDefault()`?** O navegador também tentaria fazer o envio nativo. Como o formulário do exemplo omite `action` e `method`, o destino padrão é a URL da própria página e o método padrão é `GET`. Essa navegação poderia interromper o upload ou fazer desaparecer a resposta exibida. O endereço em `urlPostDoc` só é usado quando nosso código chama `fetch`.
+O clique acontece no botão, mas o botão tem `type="submit"` e aciona o envio do formulário. Escutar `submit` permite tratar o envio inclusive quando o botão é ativado pelo teclado. Quando o evento ocorre, o navegador passa à função um objeto com informações sobre aquele envio. O nome `event` é o parâmetro que usamos para acessar esse objeto.
+
+### O efeito de `event.preventDefault()`
+
+Sem essa chamada, o navegador também tentaria fazer o envio nativo. Como o formulário do exemplo omite `action` e `method`, o destino padrão é a URL da própria página e o método padrão é `GET`. Essa navegação poderia interromper o upload ou fazer desaparecer a resposta exibida. O endereço em `urlPostDoc` só é usado quando nosso código chama `fetch`.
 
 `event.preventDefault()` cancela a ação padrão **desse envio**. A função continua na linha seguinte e pode validar o arquivo, executar o `POST` e atualizar a página. A chamada vem antes de qualquer `await` porque o navegador pode iniciar a ação padrão assim que termina de despachar o evento, enquanto uma função assíncrona ainda aguarda sua operação. Já o `return` usado na validação tem outra finalidade: encerrar a execução da função naquele ponto.
 
-### 1.3 O que o campo de arquivo entrega ao código?
+## 1.3 Seleção de arquivos com `FileList` e `File`
 
 O campo `<input type="file">` abre o seletor de arquivos. A escolha fica disponível em `fileInput.files`, uma coleção do tipo `FileList`. Escolher o arquivo apenas altera a seleção. O envio acontece depois, quando a função registrada lê `fileInput.files[0]`.
 
 Como o campo aceita um arquivo por vez, a posição zero contém o objeto `File` escolhido. Esse objeto dá acesso ao conteúdo do arquivo e a informações como `file.name`. Se a seleção estiver vazia, o acesso por índice resulta em `undefined`. Nesse caso, `if (!file)` entra no bloco, o alerta pede uma seleção e o `return` evita chamar `uploadDoc`.
 
-### 1.4 Como o arquivo e seus metadados viajam juntos?
+## 1.4 Upload com `FormData` e `multipart/form-data`
 
 `new FormData()` cria um conjunto vazio de campos. Cada chamada a `append(nome, valor)` acrescenta uma entrada. Na atividade, `append("file", file)` inclui o próprio arquivo, enquanto `append("title", file.name)` envia apenas seu nome como título. Por exemplo, ao selecionar `relatorio.pdf`, o servidor recebe tanto os bytes do PDF quanto o texto `relatorio.pdf`. A descrição e o identificador da pasta completam o corpo. O valor numérico passado a `append("folderId", 0)` é convertido em texto.
 
 Quando `fetch` recebe esse `FormData` como `body`, o navegador monta um corpo `multipart/form-data`. Cada campo ocupa uma parte identificada pelo nome usado em `append`. O navegador escolhe um delimitador (*boundary*), insere esse delimitador entre as partes e informa o mesmo valor no cabeçalho `Content-Type`. Por isso o exemplo deixa esse cabeçalho a cargo do navegador. Escrevê-lo manualmente como apenas `multipart/form-data` omite o delimitador de que o servidor precisa para separar os campos.
 
-### 1.5 Como a resposta passa a aparecer na página?
+## 1.5 Exibição da resposta com `<pre>`
 
 Depois de obter o objeto `data` com `await res.json()`, o código executa três operações distintas:
 
@@ -85,28 +106,17 @@ output.replaceChildren(pre);
 
 ---
 
-## Etapa 2 – O código
+# Etapa 2 – O código
 
-### 2.1 Visão geral
+## 2.1 Visão geral
 
-O arquivo permite selecionar um arquivo no navegador e enviá-lo para o Documents and Media do Liferay usando a Headless Delivery API.
+A página permite selecionar um arquivo no navegador e enviá-lo para o Documents and Media do Liferay usando a Headless Delivery API.
 
-O código está dividido em três partes:
-
-**Configuração e elementos HTML:**
-- `myForm`: formulário que recebe o evento de envio.
-- `fileInput`: campo usado para selecionar o arquivo.
-- `output`: elemento onde a resposta da API é exibida.
-- `urlPostDoc`: URL do endpoint de upload.
-- `email` e `senha`: credenciais do ambiente local.
-
-**Função de requisição:**
-
-`uploadDoc(file)` → envia o arquivo e seus metadados por meio de uma requisição `POST`.
-
-**Evento do formulário:**
-
-O `submit` é interceptado, o arquivo selecionado é recuperado e a função `uploadDoc(file)` é chamada.
+| Parte do código | Responsabilidade |
+|---|---|
+| Configuração | Localiza `myForm`, `fileInput` e `output` e define o endereço da API e as credenciais de treinamento. |
+| `uploadDoc(file)` | Monta o corpo da requisição, envia o documento e exibe a resposta do Liferay. |
+| Evento `submit` | Lê a seleção atual, verifica se há um arquivo e chama `uploadDoc(file)`. |
 
 O fluxo geral é:
 
@@ -117,7 +127,7 @@ O fluxo geral é:
 5. `uploadDoc(file)` prepara os dados e envia a requisição.
 6. A resposta é exibida na página.
 
-### 2.2 Código completo comentado
+## 2.2 Código completo comentado
 
 A lógica é a mesma da atividade; apenas organizei a indentação e acrescentei comentários para facilitar o estudo.
 
@@ -229,7 +239,7 @@ A lógica é a mesma da atividade; apenas organizei a indentação e acrescentei
 </html>
 ```
 
-### 2.3 Explicação por partes
+## 2.3 Explicação por partes
 
 ### Parte 1 – Elementos HTML e DOM
 
@@ -323,7 +333,7 @@ myForm.addEventListener("submit", async (event) => {
 
 Para acompanhar o fluxo, tente enviar o formulário com o campo vazio. O alerta aparece e a aba **Network** não registra um `POST` de upload. Selecione um arquivo e tente novamente. Agora a execução alcança `await uploadDoc(file)`, e você pode inspecionar a requisição e comparar a resposta com o texto exibido em `output`.
 
-### 2.4 Como executar e testar
+## 2.4 Como executar e testar
 
 1. Deixe o Liferay rodando em `localhost:8080` e confirme o ID do site. Se necessário, ajuste `urlPostDoc`.
 2. Salve o código em um arquivo HTML, por exemplo, `upload-document.html`.
@@ -332,11 +342,21 @@ Para acompanhar o fluxo, tente enviar o formulário com o campo vazio. O alerta 
 5. Confira se a resposta da API aparece na página e se o documento foi criado no Documents and Media.
 6. Abra as ferramentas do desenvolvedor com `F12`. Na aba **Console**, verifique os erros; na aba **Network (Rede)**, confira a requisição, o corpo enviado e o status HTTP.
 
-Se a requisição for bloqueada por CORS, verifique a configuração de CORS do Liferay e siga o procedimento indicado no Basic Training.
+## 2.5 Pontos de melhoria
 
-**Observações importantes:**
+- **Configuração do ambiente.** O exemplo fixa a URL e o ID do site no script. Centralizar esses valores facilita testar o formulário em outro site.
+- **Retorno ao usuário.** O `catch` registra a falha apenas no console. A área `output` também pode informar quando o upload falhar, principalmente se ela ainda estiver mostrando o último envio bem-sucedido.
 
-- O usuário autenticado precisa ter permissão para adicionar documentos ao destino.
-- O ID do site e o `folderId` precisam corresponder ao ambiente em que você está testando.
-- Basic Auth com Base64 não é criptografia. Use credenciais de treinamento apenas em um ambiente local e protegido; em produção, não exponha credenciais no código do navegador.
-- Se o servidor retornar um erro, consulte o status e a resposta na aba Network para identificar a causa.
+## 2.6 Erros comuns
+
+| Sintoma | O que conferir |
+|---|---|
+| A aba Network mostra `403` | Confira se o usuário autenticado tem permissão para adicionar documentos ao destino. |
+| O documento aparece em outro local | Verifique o ID do site na URL e o `folderId` enviado no corpo. |
+| O navegador informa um bloqueio de CORS | Confira a origem da página e a configuração de CORS indicada no Basic Training. |
+
+> Use as credenciais do exemplo apenas no ambiente local de treinamento. Elas ficam visíveis no JavaScript entregue ao navegador.
+
+### Para praticar
+
+Envie dois arquivos com nomes diferentes, um de cada vez. Compare as duas requisições na aba **Network** e inspecione a `div` de resultado na aba **Elements**. Por que a página mostra apenas o documento do último envio bem-sucedido?
