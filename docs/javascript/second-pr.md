@@ -102,7 +102,7 @@ output.replaceChildren(pre);
 - [`event.preventDefault()` (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault) — aprofunde a diferença entre cancelar a ação padrão e interromper a propagação do evento.
 - [Upload de arquivos com `FormData` (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest_API/Using_FormData_Objects) — acompanhe exemplos de envio de arquivos e veja por que o navegador precisa definir o `Content-Type`.
 - [`replaceChildren()` (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/Element/replaceChildren) — veja como substituir os filhos de um elemento, como fazemos ao exibir o novo `<pre>` na área de resultado.
-- [API Explorer do Liferay local](http://localhost:8080/o/api) — com o Liferay em execução e a sessão iniciada, consulte a operação `POST /sites/{siteId}/documents` da Headless Delivery para conferir o corpo da requisição e a resposta esperada.
+- [API Explorer do Liferay local](http://localhost:8080/o/api) — consulte a operação `POST /sites/{siteId}/documents` da Headless Delivery para conferir o corpo da requisição e a resposta esperada (Funciona somente se o container Liferay estiver rodando e se você fez o login corretamente da sua conta `test@liferay.com`).
 
 ---
 
