@@ -1,5 +1,58 @@
 # Segundo PR de JavaScript
 
+## Etapa 1 – Teoria
+
+O [primeiro PR](first-pr.md) explica HTTP, JSON, Basic Auth, `fetch` e `async/await`. Aqui vamos acompanhar o que acontece **no navegador**, desde o momento em que alguém escolhe um arquivo até a exibição do documento devolvido pelo Liferay.
+
+### 1.1 Como o JavaScript encontra o formulário
+
+Ao ler o HTML, o navegador constrói o **DOM**, uma árvore de objetos que representa a página. No exemplo, o formulário contém o campo de arquivo e o botão. A `<div id="output">` fica fora do formulário e serve para mostrar o resultado.
+
+`document.getElementById("myForm")` procura o elemento cujo atributo é `id="myForm"`. A constante `myForm` guarda uma referência ao formulário que já está na página. Por isso podemos registrar nele uma função que reage ao envio. A posição do `<script>` também importa. Quando o navegador chega a ele, já leu os três elementos. Se o ID estiver escrito de outra forma, a busca retorna `null` e a chamada seguinte a `myForm.addEventListener(...)` falha.
+
+### 1.2 Quando o botão é acionado, quem chama a função?
+
+```javascript
+myForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  // A leitura do arquivo e o upload vêm em seguida.
+});
+```
+
+Ao carregar a página, o JavaScript executa `addEventListener` para **registrar** uma função. O primeiro argumento, `"submit"`, indica qual evento interessa. O segundo é a própria função, chamada de *callback*. O navegador guarda essa função e a chama a cada envio do formulário. Assim, abrir a página apenas deixa o formulário pronto para uso.
+
+Por que escutar o formulário? O clique acontece no botão, mas o botão tem `type="submit"` e aciona o envio do formulário. Escutar `submit` permite tratar o envio inclusive quando o botão é ativado pelo teclado. Quando o evento ocorre, o navegador passa à função um objeto com informações sobre aquele envio. O nome `event` é o parâmetro que usamos para acessar esse objeto.
+
+**O que aconteceria sem `event.preventDefault()`?** O navegador também tentaria fazer o envio nativo. Como o formulário do exemplo omite `action` e `method`, o destino padrão é a URL da própria página e o método padrão é `GET`. Essa navegação poderia interromper o upload ou fazer desaparecer a resposta exibida. O endereço em `urlPostDoc` só é usado quando nosso código chama `fetch`.
+
+`event.preventDefault()` cancela a ação padrão **desse envio**. A função continua na linha seguinte e pode validar o arquivo, executar o `POST` e atualizar a página. A chamada vem antes de qualquer `await` porque o navegador pode iniciar a ação padrão assim que termina de despachar o evento, enquanto uma função assíncrona ainda aguarda sua operação. Já o `return` usado na validação tem outra finalidade: encerrar a execução da função naquele ponto.
+
+### 1.3 O que o campo de arquivo entrega ao código?
+
+O campo `<input type="file">` abre o seletor de arquivos. A escolha fica disponível em `fileInput.files`, uma coleção do tipo `FileList`. Escolher o arquivo apenas altera a seleção. O envio acontece depois, quando a função registrada lê `fileInput.files[0]`.
+
+Como o campo aceita um arquivo por vez, a posição zero contém o objeto `File` escolhido. Esse objeto dá acesso ao conteúdo do arquivo e a informações como `file.name`. Se a seleção estiver vazia, o acesso por índice resulta em `undefined`. Nesse caso, `if (!file)` entra no bloco, o alerta pede uma seleção e o `return` evita chamar `uploadDoc`.
+
+### 1.4 Como o arquivo e seus metadados viajam juntos?
+
+`new FormData()` cria um conjunto vazio de campos. Cada chamada a `append(nome, valor)` acrescenta uma entrada. Na atividade, `append("file", file)` inclui o próprio arquivo, enquanto `append("title", file.name)` envia apenas seu nome como título. Por exemplo, ao selecionar `relatorio.pdf`, o servidor recebe tanto os bytes do PDF quanto o texto `relatorio.pdf`. A descrição e o identificador da pasta completam o corpo. O valor numérico passado a `append("folderId", 0)` é convertido em texto.
+
+Quando `fetch` recebe esse `FormData` como `body`, o navegador monta um corpo `multipart/form-data`. Cada campo ocupa uma parte identificada pelo nome usado em `append`. O navegador escolhe um delimitador (*boundary*), insere esse delimitador entre as partes e informa o mesmo valor no cabeçalho `Content-Type`. Por isso o exemplo deixa esse cabeçalho a cargo do navegador. Escrevê-lo manualmente como apenas `multipart/form-data` omite o delimitador de que o servidor precisa para separar os campos.
+
+### 1.5 Como a resposta passa a aparecer na página?
+
+Depois de obter o objeto `data` com `await res.json()`, o código executa três operações distintas:
+
+```javascript
+const pre = document.createElement("pre");
+pre.textContent = JSON.stringify(data, null, 2);
+output.replaceChildren(pre);
+```
+
+1. **Criar o elemento.** `document.createElement("pre")` cria um elemento HTML `<pre>` em memória. A constante `pre` guarda uma referência a ele. Nesse momento ele ainda está fora da árvore da página. A tag foi escolhida porque preserva espaços e quebras de linha, o que torna a indentação visível.
+2. **Preencher o elemento.** `JSON.stringify(data, null, 2)` produz uma string a partir de `data`. O segundo argumento, `null`, indica que não aplicamos um filtro ou função de substituição. O terceiro, `2`, pede dois espaços de indentação por nível. A atribuição a `textContent` coloca essa string dentro do elemento como texto. Assim, um título como `<b>Relatório</b>` aparece com os sinais de menor e maior, sem virar uma tag em negrito.
+3. **Mostrar o resultado.** `output.replaceChildren(pre)` coloca o elemento pronto dentro de `<div id="output">`, substituindo seus filhos atuais. No primeiro upload bem-sucedido, a área estava vazia. No segundo, o novo `<pre>` ocupa o lugar do anterior. A própria `div` continua disponível para o próximo resultado.
+
 ## Etapa 2 – O código
 
 ### 2.1 Visão geral
@@ -154,17 +207,7 @@ const fileInput = document.getElementById("fileInput");
 const output = document.getElementById("output");
 ```
 
-O método `document.getElementById()` permite acessar elementos HTML pelo seu atributo `id`.
-
-Isso conecta o JavaScript à página: o código consegue detectar o envio do formulário, recuperar o arquivo selecionado e apresentar o resultado da requisição.
-
-O campo de arquivo possui uma particularidade:
-
-```javascript
-const file = fileInput.files[0];
-```
-
-A propriedade `files` contém os arquivos selecionados. Como a atividade permite selecionar um arquivo por vez, `[0]` acessa o primeiro elemento dessa coleção.
+As três referências acompanham o fluxo da atividade: `myForm` recebe o evento, `fileInput` fornece a seleção atual e `output` recebe o resultado.
 
 ### Parte 2 – A função `uploadDoc(file)`
 
@@ -181,9 +224,7 @@ const uploadDoc = async (file) => {
 
 A função recebe o arquivo selecionado como argumento. Em seguida, prepara os dados que serão enviados ao Liferay.
 
-O ponto principal dessa implementação é o uso de `FormData`.
-
-**`FormData`** é uma interface do JavaScript usada para construir um conjunto de campos que pode ser enviado em uma requisição HTTP. Nesse caso, ela permite combinar um arquivo binário com informações textuais.
+Confira quais dados a função associa a cada campo:
 
 | Campo | Finalidade |
 |---|---|
@@ -213,9 +254,7 @@ Observe duas diferenças em relação ao primeiro PR:
 - **Não usamos `JSON.stringify()`** para o corpo da requisição. O objeto `FormData` é enviado diretamente.
 - **Não definimos `Content-Type: application/json`**. O corpo não é JSON: é enviado como `multipart/form-data`.
 
-O navegador configura o tipo de conteúdo e acrescenta um parâmetro chamado *boundary*, que separa as diferentes partes do corpo da requisição. Definir manualmente esse cabeçalho pode impedir que o servidor interprete corretamente os dados enviados.
-
-A autenticação continua usando o cabeçalho `Authorization` com Basic Auth, como no primeiro PR.
+Na aba **Network**, confira o `boundary` em **Request Headers** e os nomes dos campos em **Payload**.
 
 ### Parte 4 – Tratamento da resposta
 
@@ -231,11 +270,7 @@ pre.textContent = JSON.stringify(data, null, 2);
 output.replaceChildren(pre);
 ```
 
-Depois da requisição, o código verifica se a resposta HTTP indica sucesso. Se não indicar, lança um erro, que será tratado pelo `catch`.
-
-Quando a resposta contém JSON, `res.json()` converte esse conteúdo em um objeto JavaScript. Já `JSON.stringify(data, null, 2)` transforma o objeto em texto formatado, facilitando a leitura na página.
-
-**Atenção:** esse trecho pressupõe que o endpoint retorna um corpo JSON. Se a API responder sem conteúdo, será necessário tratar esse caso antes de chamar `res.json()`. O `<pre>` exibe o JSON formatado, e `textContent` o insere como texto, sem interpretá-lo como HTML.
+A atualização de `output` ocorre somente depois de `res.ok` e da leitura de um corpo JSON válido. Se uma dessas etapas falhar, o fluxo vai para o `catch`, que registra o erro no console. Se um resultado anterior já estiver na página, ele continua visível.
 
 ### Parte 5 – Evento `submit`
 
@@ -254,14 +289,7 @@ myForm.addEventListener("submit", async (event) => {
 });
 ```
 
-O `addEventListener()` registra uma função que será executada quando ocorrer o evento `submit` do formulário.
-
-- `event.preventDefault()` impede o envio tradicional do formulário.
-- `fileInput.files[0]` recupera o arquivo selecionado.
-- A condição `if (!file)` interrompe a execução se nenhum arquivo tiver sido escolhido.
-- `await uploadDoc(file)` aguarda a conclusão da função de upload.
-
-Essa separação deixa cada parte com uma responsabilidade clara: o evento trata da interação com o usuário, enquanto `uploadDoc()` cuida da comunicação com a API.
+Para acompanhar o fluxo, tente enviar o formulário com o campo vazio. O alerta aparece e a aba **Network** não registra um `POST` de upload. Selecione um arquivo e tente novamente. Agora a execução alcança `await uploadDoc(file)`, e você pode inspecionar a requisição e comparar a resposta com o texto exibido em `output`.
 
 ### 2.4 Como executar e testar
 
